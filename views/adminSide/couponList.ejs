@@ -1,0 +1,89 @@
+
+<%-include("../adminLayout/adminHeader")    %>
+
+
+
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Users list</h2>
+        </div> 
+    </div>
+    <div class="card mb-4">
+        <header class="card-header">
+            <div class="row gx-3">
+                <!-- <div class="col-lg-4 col-md-6 me-auto">
+                    <input type="text" id="userNameSearchInput" placeholder="Search by Name..." class="form-control" />
+                </div> -->
+            </div>
+        </header>
+        <!-- card-header end// -->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Sl no</th>
+                            <th scope="col">Code</th>
+                            <th scope="col">Discount</th>
+                            <th scope="col">Max Price</th>
+                            <th scope="col">Create Date</th>
+                            <th scope="col">Exp Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" >Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+  
+
+                    <% for(var i=0;i<coupon.length;i++){ %>
+                        <tr>
+                            <td><%-i+1 %></td>
+                            <td><b><%-coupon[i].Code %></b></td>
+                            <td><%-coupon[i].Discount  %> %</td>
+                            <td><%-coupon[i].MaxPrice %></td>
+                            <td><%-coupon[i].createdDate.toLocaleDateString() %></td>    
+                            <td><%-coupon[i].expiryDate.toLocaleDateString() %></td> 
+                           
+                                <% if(coupon[i].status === true){ %>
+                                    <td class="text-success">
+                                        <h5>Active</h5>
+                                    </td>
+                                    <% }else{ %>
+                                        <td>
+                                            <h5 class="text-danger">Expired</h5>
+                                        </td>
+
+                                        <% } %>
+
+                                        <td><a href="/deleteCoupon?id=<%-coupon[i]._id %>"><button class="bg-danger ">Delete</button></a></td>
+                           
+                    </tr>
+   
+                        <% } %>
+      
+                    </tbody>
+                </table>
+                <!-- table-responsive.// -->
+            </div>
+        </div>
+        <!-- card-body end// -->
+    </div>
+    <!-- card end// -->
+    <!-- <div class="pagination-area mt-15 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-start">
+                <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                <li class="page-item"><a class="page-link" href="#">02</a></li>
+                <li class="page-item"><a class="page-link" href="#">03</a></li>
+                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                <li class="page-item"><a class="page-link" href="#">16</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+                </li>
+            </ul>
+        </nav>
+    </div> -->
+</section>

@@ -31,12 +31,45 @@ const saveCoupon = async (req, res) => {
     });
 
     await newCoupon.save();
+    res.redirect('/couponList')
   } catch (error) {
     console.log(error.message);
   }
 };
 
+
+//load coupon list page
+const viewCoupon = async(req,res)=>{
+  try {
+    const currentDate = Date.now();
+        await Coupon.updateMany({ expiryDate: { $gte: currentDate } }, { $set: { status: true } })
+        await Coupon.updateMany({ expiryDate: { $lte: currentDate } }, { $set: { status: false } })
+    const coupon = await Coupon.find({})
+    console.log(coupon);
+    res.render('./adminSide/couponList',{coupon})
+    
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
+// Delete Coupon 
+const deleteCoupon = async(req,res)=>{
+  try {
+    const id = req.query.id
+    const deleteItem = await Coupon.deleteOne({_id: new mongoose.Types.ObjectId(id)})
+    res.redirect('/couponList')
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+
 module.exports = {
   loadCouponPage,
   saveCoupon,
+  viewCoupon,
+  deleteCoupon
 };
