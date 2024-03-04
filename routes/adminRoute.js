@@ -60,7 +60,7 @@ admin_route.post('/unblockUserStatus',adminController.unBlockuser);
 
 
 //loadcoupon page
-admin_route.get('/adminCouponController',isAdminLogin,adminCouponController.loadCouponPage)
+admin_route.get('/Coupon',isAdminLogin,adminCouponController.loadCouponPage)
 // save coupon
 admin_route.post('/couponSave',adminCouponController.saveCoupon)
 admin_route.get('/couponList',isAdminLogin,adminCouponController.viewCoupon)

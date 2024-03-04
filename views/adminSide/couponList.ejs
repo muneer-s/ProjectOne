@@ -58,7 +58,7 @@
 
                                         <% } %>
 
-                                        <td><a href="/deleteCoupon?id=<%-coupon[i]._id %>"><button class="bg-danger ">Delete</button></a></td>
+                                        <td><a href="/deleteCoupon?id=<%-coupon[i]._id %>"><button class="btn btn-danger ">Delete</button></a></td>
                            
                     </tr>
    
@@ -72,18 +72,52 @@
         <!-- card-body end// -->
     </div>
     <!-- card end// -->
-    <!-- <div class="pagination-area mt-15 mb-50">
+    <div class="pagination-area mt-15 mb-50">
         <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-start">
-                <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                <li class="page-item"><a class="page-link" href="#">02</a></li>
-                <li class="page-item"><a class="page-link" href="#">03</a></li>
-                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                <li class="page-item"><a class="page-link" href="#">16</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
-                </li>
+            <ul id="pagination" class="pagination justify-content-start">
+                <!-- Pagination buttons will be generated here dynamically -->
             </ul>
         </nav>
-    </div> -->
+    </div>
 </section>
+
+
+<%-include("../adminLayout/adminFooter")    %>
+
+
+<script>
+    // Pagination variables
+    var itemsPerPage = 3; // Number of items per page
+    var currentPage = 1; // Current page
+    var totalItems = '<%= coupon.length %>'; // Total number of items
+    var totalPages = Math.ceil(totalItems / itemsPerPage); // Total number of pages
+
+    // Function to display items for the current page
+    function showPage(page) {
+        $('tbody tr').hide(); // Hide all table rows
+        var startIndex = (page - 1) * itemsPerPage; // Calculate starting index
+        var endIndex = Math.min(startIndex + itemsPerPage, totalItems); // Calculate ending index
+        $('tbody tr').slice(startIndex, endIndex).show(); // Show items for the current page
+    }
+
+    // Function to generate pagination buttons
+    function generatePaginationButtons() {
+        var paginationHtml = '';
+        for (var i = 1; i <= totalPages; i++) {
+            paginationHtml += '<li class="page-item' + (i === currentPage ? ' active' : '') + '"><a class="page-link" href="#" onclick="changePage(' + i + ')">' + i + '</a></li>';
+        }
+        $('#pagination').html(paginationHtml); // Update pagination buttons
+    }
+
+    // Function to handle page change
+    function changePage(page) {
+        currentPage = page; // Update current page
+        showPage(currentPage); // Show items for the new page
+        generatePaginationButtons(); // Regenerate pagination buttons
+    }
+
+    $(document).ready(function () {
+        showPage(currentPage); // Show items for the initial page
+        generatePaginationButtons(); // Generate pagination buttons
+    });
+</script>
