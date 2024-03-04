@@ -3,7 +3,7 @@ const products = require("../models/addproductModel");
 const session = require("express-session");
 const Cart = require("../models/cartModel");
 const mongoose = require("mongoose");
-const Coupon = require('../models/couponModel')
+const Coupon = require("../models/couponModel");
 
 const loadCouponPage = async (req, res) => {
   try {
@@ -14,7 +14,6 @@ const loadCouponPage = async (req, res) => {
 };
 
 const saveCoupon = async (req, res) => {
-  
   try {
     const { coupon_code, Discount, Max_Price, Exp_Date } = req.body;
 
@@ -25,20 +24,17 @@ const saveCoupon = async (req, res) => {
     }
 
     const newCoupon = new Coupon({
-      Code:coupon_code,
-      Discount:Discount,
-      MaxPrice:Max_Price, 
-      expiryDate:Exp_Date,
+      Code: coupon_code,
+      Discount: Discount,
+      MaxPrice: Max_Price,
+      expiryDate: Exp_Date,
     });
 
     await newCoupon.save();
-    
   } catch (error) {
     console.log(error.message);
   }
 };
-
-
 
 module.exports = {
   loadCouponPage,
