@@ -1,0 +1,482 @@
+<%-include("../layouts/header")    %>
+
+
+    <!-- Start Banner Area -->
+    <section class="banner-area organic-breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+                <div class="col-first">
+                    <h1>User Profile</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
+                        <a href="">User Profile</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Banner Area -->
+
+
+
+
+<!--Website: wwww.codingdung.com-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodingDung | Profile Template</title>
+    <link rel="stylesheet" href="/css/style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body><div class="container mb-4">
+    <div class="container light-style flex-grow-1 container-p-y">
+        <h4 class="font-weight-bold py-3 mb-4">
+            Account settings
+        </h4>
+        <div class="card overflow-hidden">
+            <div class="row no-gutters row-bordered row-border-light">
+                <div class="col-md-3 pt-0">
+                    <div class="list-group list-group-flush account-settings-links">
+                        <a class="list-group-item list-group-item-action active" data-toggle="list"
+                            href="#account-general">General</a>
+                        <a class="list-group-item list-group-item-action" data-toggle="list"
+                            href="#account-change-password">Change password</a>
+                        <a class="list-group-item list-group-item-action" data-toggle="list"
+                            href="#account-info">Add Address</a>
+                        <a class="list-group-item list-group-item-action" data-toggle="list"
+                            href="#account-social-links">Address</a>
+                         <a class="list-group-item list-group-item-action" 
+                            href="/orderDetailsPage">My Orders</a>
+                        <!--<a class="list-group-item list-group-item-action" data-toggle="list"
+                            href="#account-notifications">Notifications</a> -->
+                    </div>
+                </div>
+
+
+                <!--load user profile page-->
+                <div class="col-md-9">
+                    <div class="tab-content">
+                        <div class="tab-pane fade active show" id="account-general">
+                            <!-- <div class="card-body media align-items-center">
+                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt
+                                    class="d-block ui-w-80">
+                                <div class="media-body ml-4">
+                                    <label class="btn btn-outline-primary">
+                                        Upload new photo
+                                        <input type="file" class="account-settings-fileinput">
+                                    </label> &nbsp;
+                                    <button type="button" class="btn btn-default md-btn-flat">Reset</button>
+                                    <div class="text-light small mt-1">Allowed JPG, GIF or PNG. Max size of 800K</div>
+                                </div> 
+                            </div> -->
+            <!--basic details-->                       
+               <hr class="border-light m-0">
+                            <form id="updateUserData">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label">Name</label>
+                                        <input type="text" class="form-control" name="name" value="<%= user.name %>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">E-mail</label>
+                                        <input type="text" class="form-control mb-1" name="email" value="<%= user.email %>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Number</label>
+                                        <input type="text" class="form-control mb-1" name="mobile" value="<%= user.mobile %>">
+                                    </div>  
+                                    <div class="text-right mt-3">
+                                        <button type="button" id="saveChangesBtn" class="btn btn-primary">Save changes</button>&nbsp;
+                                        <!-- <button type="button" id="cancelBtn" class="btn btn-default">Cancel</button> -->
+                                    </div>                                 
+                                </div>
+                            </form>                           
+                        </div>
+                        <!--password change-->
+                        <div class="tab-pane fade" id="account-change-password">
+                            <div class="card-body pb-2">
+                                <div class="form-group">
+                                    <label class="form-label">Current password</label>
+                                    <input type="password" class="form-control" id="currentPassword">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">New password</label>
+                                    <input type="password" class="form-control" id="newPassword">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Repeat new password</label>
+                                    <input type="password" class="form-control" id="repeatNewPassword">
+                                    <small id="passwordMatchMessage" class="form-text text-danger" style="display:none;">Passwords do not match</small>
+                                </div>
+                                <div class="text-right mt-3">
+                                    <button type="button" class="btn btn-primary" onclick="changePassword()">Save changes</button>&nbsp;
+                                    <button type="button" class="btn btn-default">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!--add address-->
+                        <div class="tab-pane fade" id="account-info">
+                            <form id="addressForm" onsubmit="return validateForm()">
+                                <div class="card-body pb-2">
+                                    <div class="form-group">
+                                        <label class="form-label">Full Name</label>
+                                        <input type="text" class="form-control" value="" name="fullName" pattern="[A-Za-z ]+" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Phone</label>
+                                        <input type="text" class="form-control" value="" name="phone" pattern="[0-9]{10}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Location</label>
+                                        <input type="text" class="form-control" value="" name="location" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">City</label>
+                                        <input type="text" class="form-control" value="" name="city" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">State</label>
+                                        <input type="text" class="form-control" value="" name="state" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Pin Code</label>
+                                        <input type="text" class="form-control" value="" name="pinCode" pattern="[0-9]{6}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Address</label>
+                                        <textarea class="form-control" rows="5" name="address" required></textarea>
+                                    </div>
+                                    <div class="text-right mt-3">
+                                        <button type="submit" class="btn btn-primary">Add Address</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <hr class="border-light m-0">
+                        </div>
+
+                        <!--address show-->
+                        <div class="tab-pane fade" id="account-social-links">
+                            <div class="card-body pb-2" style="display: flex; flex-wrap: wrap;">
+                                <% user.address.forEach(address => { %>
+                                <div class="card" style="width: 18rem; margin-right: 10px; margin-bottom: 10px;">
+                                    <div class="card-body" style="background-color: rgb(254, 203, 122);">
+                                        <h5 class="card-title"><%=address.fullName %></h5>
+                                        <h6 class="card-subtitle mb-2 text-body-secondary"><%=address.phone %></h6>
+                                        <h6 class="card-subtitle mb-2 text-body-secondary"><%=address.location %></h6>
+                                        <h6 class="card-subtitle mb-2 text-body-secondary"><%=address.city %></h6>
+                                        <h6 class="card-subtitle mb-2 text-body-secondary"><%=address.state %></h6>
+                                        <h6 class="card-subtitle mb-2 text-body-secondary"><%=address.pinCode %></h6>
+                                        <p class="card-text"><%=address.address %></p>      
+                                    </div>
+                                    <div class="btn-group" style="margin-top: 10px;">
+                                        <button id="editButton" class="btn btn-sm btn-success rounded mr-2" data-toggle="modal" data-target="#editModal">Edit</button>
+                                        <button class="delete-address-btn btn btn-sm btn-danger rounded" data-user-id="<%= user._id %>" data-address-id="<%= address._id %>">Delete</button>
+                                    </div>
+                                             
+                                </div>
+                                <% }) %>
+                            </div>
+                        </div>
+                        
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+
+</div>
+    
+
+
+
+                                                 <!--edit adress-->
+
+
+      <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editModalLabel">Edit Address</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <form id="addressForm">
+                    <div class="card-body pb-2">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" value="" name="fullName">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control" value="" name="phone">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" value="" name="location">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">City</label>
+                            <input type="text" class="form-control" value="" name="city">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">State</label>
+                            <input type="text" class="form-control" value="" name="state">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Pin Code</label>
+                            <input type="text" class="form-control" value="" name="pinCode">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Address</label>
+                            <textarea class="form-control" rows="5" name="address"></textarea>
+                        </div>
+                        
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+    <!-- Include jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript"></script>
+
+
+    
+  <!-- userprofile change-->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const saveChangesBtn = document.querySelector("#saveChangesBtn");
+
+        saveChangesBtn.addEventListener("click", function() {
+            const formData = {
+                name: document.querySelector("#updateUserData input[name='name']").value,
+                email: document.querySelector("#updateUserData input[name='email']").value,
+                mobile: document.querySelector("#updateUserData input[name='mobile']").value
+            };
+
+            // Send AJAX request to backend
+            fetch('/updateProfile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('User data updated successfully');
+                    window.location.href = '/userprofile';
+
+                } else {
+                    console.error('Failed to update user data');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating user data:', error);
+            });
+        });
+    });
+</script>
+
+
+
+<!-- password change -->
+<script>
+    function changePassword() {
+        var currentPassword = document.getElementById("currentPassword").value;
+        var newPassword = document.getElementById("newPassword").value;
+        var repeatNewPassword = document.getElementById("repeatNewPassword").value;
+
+        // check newPassword matches repeatNewPassword
+        if (newPassword !== repeatNewPassword) {
+            document.getElementById("passwordMatchMessage").style.display = "block";
+            return;
+        }
+
+        // Make a request to server to check current password
+        fetch('/check-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ currentPassword ,newPassword })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // if Password is correct, proceed to change it
+                fetch('/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ newPassword })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("password changes ");
+                    window.location.href = '/userprofile';
+
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    
+                });
+            } else {
+                alert("Current password is incorrect");
+                window.location.href = '/userprofile';
+                
+                
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+
+
+<!-- Add adress -->
+
+
+<!--address validation-->
+
+
+<script>
+    function validateForm() {
+        var form = document.getElementById('addressForm');
+        var fullName = form.elements['fullName'].value;
+        var phone = form.elements['phone'].value;
+        var pinCode = form.elements['pinCode'].value;
+
+        if (!/^[A-Za-z ]+$/.test(fullName)) {
+            alert('Please enter a valid full name.');
+            return false;
+        }
+
+        if (!/^\d{10}$/.test(phone)) {
+            alert('Phone number must contain exactly 10 digits.');
+            return false;
+        }
+
+        if (!/^\d{6}$/.test(pinCode)) {
+            alert('Pin code must contain exactly 6 digits.');
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
+
+
+
+
+<script>
+    document.getElementById('addressForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(this);
+        const requestData = {};
+        
+        formData.forEach((value, key) => {
+            requestData[key] = value;
+        });
+
+        try {
+            const response = await fetch('/addAddress', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            const data = await response.json();
+            console.log(data);
+            window.location.href = '/userprofile';
+
+            // Handle response accordingly (e.g., show a success message, redirect to another page)
+        } catch (error) {
+            console.error('Error:', error);
+            // Handle error accordingly (e.g., show an error message to the user)
+        }
+    });
+</script>
+
+
+<!--delete one adress-->
+<script>
+    $(document).ready(function() {
+        $('.delete-address-btn').click(function() {
+            const userId = $(this).data('user-id');
+            const addressId = $(this).data('address-id');
+            // Store reference to $(this) in a variable to use inside success callback
+            var $this = $(this);
+            $.ajax({
+                url: `/deleteAddress/${userId}/${addressId}`,
+                type: 'DELETE',
+                success: function(response) {
+                    console.log(response.message);
+                    // Optionally, you can remove the deleted address card from the DOM
+                    $(this).closest('.card').remove();
+                    window.location.href = '/userprofile';
+
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+ 
+<!--edit one  address-->
+<script>
+    // JavaScript to handle button click event and show the modal
+    document.getElementById('editButton').addEventListener('click', function() {
+      $('#editModal').modal('show');
+    });
+  </script>
+
+
+
+
+
+</body>
+
+</html>
+
+<%-include("../layouts/footer")    %>

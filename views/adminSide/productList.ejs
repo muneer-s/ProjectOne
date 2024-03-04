@@ -1,0 +1,217 @@
+
+<%-include("../adminLayout/adminHeader")    %>
+
+
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Product Details</h2>
+            <p> Edit ,List and Unlist a Product</p>
+        </div>
+        <!-- <div class="col-lg-4 col-md-6 me-auto">
+            <input type="text" placeholder="Search..." class="form-control" id="filterInput" onkeyup="filterOrders()"/>
+        </div> -->
+        
+        <div>
+            <input type="text" id="searchInput" placeholder="Search by Name" class="form-control bg-white" onkeyup="searchProductName()" />
+
+        </div>
+        
+        <div>
+            <input type="text" id="categorySearchInput" placeholder="Search Categories" class="form-control bg-white" />
+        </div>
+        
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th scope="col">Products</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Action</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (let i = 0; i < proDetails.length; i++) { %>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            
+                                            <% if (proDetails[i].productImages.length > 0) { %>
+                                                <img src="/assets/products/resized/<%= proDetails[i].productImages[0] %>" alt="/uploads/<%= proDetails[i].id %>/<%= proDetails[i].productImages[0] %>" class="img-thumbnail" style="width: 50px; height: 50px;">                                            <% } %>
+                                        </div>
+                                    </div>
+                                </td>
+                    
+                                <td><%= proDetails[i].name %></td>
+                                <td><%= proDetails[i].category.Name %></td>
+                                <!-- Find the category name based on the category ID -->
+        
+                                <!-- Other columns as needed -->
+                                <td><%= proDetails[i].price %></td>
+                                <td><%= proDetails[i].status ? 'Active' : 'Inactive' %></td>
+                                 
+                                <td><%= proDetails[i].quantity %></td>
+                                
+                                <td>
+                                    <form method="post" action="/admin/changeProductStatus/<%= proDetails[i]._id %>" style="display: inline-block;">
+                                        <!-- Add a class 'btn-update-status' to the button for easier selection -->
+                                        <button type="button" class="btn btn-sm <%= proDetails[i].status ? 'btn-danger' : 'btn-success' %> btn-update-status" data-user-id="<%= proDetails[i]._id %>">
+                                            <%= proDetails[i].status ? 'Unlist' : 'List' %>
+                                        </button>
+        
+                                    </form>   
+                                </td>
+                                <td>
+                                        <a href="/loadEditProduct?id=<%= proDetails[i]._id %>" class="btn btn-primary btn-sm">Edit</a>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <!-- table-responsive //end -->
+        </div>
+        <!-- card-body end// -->
+    </div>
+    <div class="pagination-area mt-15 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul id="pagination" class="pagination justify-content-start">
+                <!-- Pagination buttons will be dynamically generated here -->
+            </ul>
+        </nav>
+    </div>
+
+
+
+</section>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    // Assuming you're using jQuery for the Ajax call
+$(document).on('click', '.btn-update-status', function () {
+    const productId = $(this).data('user-id');
+
+    // Send a PUT request to update the product status
+    $.ajax({
+        url: `/updateStatus/${productId}`,
+        method: 'PUT',
+        success: function (data) {
+            console.log(data.message);
+
+            // You can update the UI based on the new status if needed
+            // For example, toggle the button text or style
+            if (data.status) {
+                // Update UI for an active status
+                $(this).removeClass('btn-success').addClass('btn-danger').text('Unlist');
+                window.location.reload()
+            } else {
+                // Update UI for an inactive status
+                $(this).removeClass('btn-danger').addClass('btn-success').text('List');
+                window.location.reload()
+
+            }
+        },
+        error: function (error) {
+            console.error('Error updating product status:', error.responseJSON.message);
+        }
+    });
+});
+
+
+
+</script>
+
+<script>
+    function searchProductName() {
+    // Get the input value
+    var searchValue = $('#searchInput').val().toLowerCase();
+
+    // Loop through each row in the table body
+    $('tbody tr').each(function() {
+        // Get the text content of the product name column
+        var productName = $(this).find('td:eq(1)').text().toLowerCase();
+
+        // Check if the search value exists in the product name
+        if (productName.includes(searchValue)) {
+            // Show the row if the search value is found
+            $(this).show();
+        } else {
+            // Hide the row if the search value is not found
+            $(this).hide();
+        }
+    });
+}
+
+</script>
+
+<!-- search by category -->
+<script>
+    $(document).ready(function () {
+        // Event listener for category search input
+        $('input#categorySearchInput').on('keyup', function () {
+            const searchText = $(this).val().toLowerCase();
+            
+            // Filter table rows based on category
+            $('tbody tr').each(function () {
+                const category = $(this).find('td:eq(2)').text().toLowerCase(); // Assuming category is the third column
+                
+                // Show rows that match the category or show all rows if no search text provided
+                if (category.includes(searchText) || searchText === '') {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+</script>
+
+<!--pagination -->
+<script>
+    // Pagination variables
+    var itemsPerPage = 3; // Number of items per page
+    var currentPage = 1; // Current page
+    var totalItems = '<%= proDetails.length %>'; // Total number of items
+    var totalPages = Math.ceil(totalItems / itemsPerPage); // Total number of pages
+
+    // Function to display items for the current page
+    function showPage(page) {
+        $('tbody tr').hide(); // Hide all table rows
+        var startIndex = (page - 1) * itemsPerPage; // Calculate starting index
+        var endIndex = startIndex + itemsPerPage; // Calculate ending index
+        $('tbody tr').slice(startIndex, endIndex).show(); // Show items for the current page
+    }
+
+    // Function to generate pagination buttons
+    function generatePaginationButtons() {
+        var paginationHtml = '';
+        for (var i = 1; i <= totalPages; i++) {
+            paginationHtml += '<li class="page-item' + (i === currentPage ? ' active' : '') + '"><a class="page-link" href="#" onclick="changePage(' + i + ')">' + i + '</a></li>';
+        }
+        $('#pagination').html(paginationHtml); // Update pagination buttons
+    }
+
+    // Function to handle page change
+    function changePage(page) {
+        currentPage = page; // Update current page
+        showPage(currentPage); // Show items for the new page
+        generatePaginationButtons(); // Regenerate pagination buttons
+    }
+
+    $(document).ready(function () {
+        showPage(currentPage); // Show items for the initial page
+        generatePaginationButtons(); // Generate pagination buttons
+    });
+</script>
+
+<%-include("../adminLayout/adminFooter")    %>

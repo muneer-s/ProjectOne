@@ -1,0 +1,242 @@
+<%-include("../layouts/header")    %>
+
+
+    <!-- Start Banner Area -->
+    <section class="banner-area organic-breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+                <div class="col-first">
+                    <h1>Checkout</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
+                        <a href="">Checkout</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Banner Area -->
+
+
+
+
+
+
+    <!--================Checkout Area =================-->
+    <section class="checkout_area section_gap">
+        <div class="container">
+
+
+            <div class="row" id="account-social-links">
+                <div class="col-lg-8" style="display: flex; flex-wrap: wrap;">
+                    <input type="hidden" value="<%=user.address  %>" id="addresses">
+                    <% user.address.forEach((address, index) => { %>
+                    <div class="card" style="width: 18rem; margin-right: 10px; margin-bottom: 10px;">
+                        <div class="card-body" style="background-color: rgb(254, 203, 122);">
+                            <h5 class="card-title"><%= address.fullName %></h5>
+                            <h6 class="card-subtitle mb-2 text-body-secondary"><%= address.phone %></h6>
+                            <h6 class="card-subtitle mb-2 text-body-secondary"><%= address.location %></h6>
+                            <h6 class="card-subtitle mb-2 text-body-secondary"><%= address.city %></h6>
+                            <h6 class="card-subtitle mb-2 text-body-secondary"><%= address.state %></h6>
+                            <h6 class="card-subtitle mb-2 text-body-secondary"><%= address.pinCode %></h6>
+                            <p class="card-text"><%= address.address %></p>
+                            <!-- Add a data-index attribute to identify the address -->
+                            <input type="radio" id="f-option<%= index %>" class="address-radio" data-index="<%= index %>" name="selectedAddress" value="<%= address._id %>">                        </div>
+                    </div>
+                    <% }) %>
+                </div>
+            </div>
+
+
+
+
+
+
+            
+            <div class="billing_details mt-5 ">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h3>Add Address Details</h3>
+                        <form id="addressForm" onsubmit="return validateForm()">
+                            <div class="card-body pb-2">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" value="" name="fullName" pattern="[A-Za-z ]+" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone</label>
+                                    <input type="text" class="form-control" value="" name="phone" pattern="[0-9]{10}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-control" value="" name="location" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">City</label>
+                                    <input type="text" class="form-control" value="" name="city" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">State</label>
+                                    <input type="text" class="form-control" value="" name="state" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Pin Code</label>
+                                    <input type="text" class="form-control" value="" name="pinCode" pattern="[0-9]{6}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Address</label>
+                                    <textarea class="form-control" rows="5" name="address" required></textarea>
+                                </div>
+                                <div class="text-right mt-3">
+                                    <button type="submit" class="btn btn-primary">Add Address</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="order_box">
+                            
+
+                            <h2>Your Order</h2>
+                            <ul class="list">
+                                <li><a href="#">Product <span>Total</span></a></li>
+
+                            </ul>
+                            <% cartDetails.products.forEach((cartItem,index) => { %>
+
+                            <ul class="list">
+                                <li><a href="#"><%= cartItem.productId.name %><span class="middle"><%= cartItem.quantity %></span> <span class="last"><%= cartItem.total %></span></a></li>
+                            </ul>
+                            <% }) %>
+
+                            
+                            <br>
+                            <br>
+                            <div class="payment_item active">
+                                <label for="f-option6">Payment method</label>
+
+                                <div class="radion_btn">
+                                    <input type="radio" id="f-option6" name="selector">
+                                    <label for="f-option6">Cash on Delivery </label>
+                                    <div class="check"></div>
+                                </div>
+                                
+                            </div>
+                            
+                            <ul class="list list_2">
+                                <li><a href="#">Subtotal <span>₹ <%=subTotal %></span></a></li>
+                                
+                            </ul>
+                            <a class="primary-btn" onclick="order(event)" href="#">Proceed</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            
+        </div>
+    </section>
+    <!--================End Checkout Area =================-->
+
+
+    <script>
+        function validateForm() {
+            var form = document.getElementById('addressForm');
+            var fullName = form.elements['fullName'].value;
+            var phone = form.elements['phone'].value;
+            var pinCode = form.elements['pinCode'].value;
+    
+            if (!/^[A-Za-z ]+$/.test(fullName)) {
+                alert('Please enter a valid full name.');
+                return false;
+            }
+    
+            if (!/^\d{10}$/.test(phone)) {
+                alert('Phone number must contain exactly 10 digits.');
+                return false;
+            }
+    
+            if (!/^\d{6}$/.test(pinCode)) {
+                alert('Pin code must contain exactly 6 digits.');
+                return false;
+            }
+    
+            return true;
+        }
+    </script>
+
+
+<!-- add adress -->
+    <script>
+        document.getElementById('addressForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(this);
+            const requestData = {};
+            
+            formData.forEach((value, key) => {
+                requestData[key] = value;
+            });
+    
+            try {
+                const response = await fetch('/addAddress', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+    
+                const data = await response.json();
+                console.log(data);
+                window.location.href = '/CheckOutPage';
+    
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+
+
+
+
+<script>
+    function order(event) {
+    event.preventDefault(); 
+    const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked').value;
+    console.log(selectedAddressId);
+     var dataToSend = ''
+     dataToSend = {
+        selectedAddressId: selectedAddressId,
+    
+    };
+    fetch('/order', {
+        method: 'POST', 
+        headers: {
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(dataToSend) 
+    }).then(response=>response.json())
+    .then(data => {
+        if (data) {
+            console.log("order id::",data.data);
+            const orderId=data.data
+            console.log(data.message);
+            // Handle successful response (e.g., redirect to Paypal)
+             window.location.href = '/order';
+        } else {
+            
+            console.error('Error:', response.status);
+        }
+    })
+    .catch(error => {
+        console.error('Fetch Error:', error);
+    });
+}
+</script>
+
+
+<%-include("../layouts/footer")    %>

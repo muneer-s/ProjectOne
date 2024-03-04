@@ -1,0 +1,107 @@
+<%-include("../layouts/header")    %>
+
+
+
+
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1>Wishlist</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="">Home<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="">Wishlist</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End Banner Area -->
+
+<!--================Cart Area =================-->
+
+
+
+<section class="cart_area">
+    <div class="container">
+        <div class="cart_inner">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Price</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+
+
+                            
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (wishlistData){%>
+                            <% wishlistData.products.forEach((Item,index) => { %>
+                        
+                        <tr>
+                            <td>
+                                <div class="media">
+                                    <!-- <img src="" alt=""> -->
+                                    <img src="/assets/products/resized/<%= Item.productId.productImages[0] %>" alt="<%= Item.productId.name %>" width="100" height="100">
+
+                                </div>
+                            </td>
+                            <td>
+                                <!-- <p>name</p> -->
+                                <p><%= Item.productId.name %></p>   
+
+
+                            </td>
+                            <td>
+                                <!-- <h5>360.00</h5> -->
+                                <h5><%= Item.productId.price %></h5>
+
+                            </td>
+                            <td>
+                                <a href="/deleteWishlist?id=<%= Item.productId._id %>"><button type="button" class="btn btn-danger">Delete</button></a>
+                            </td>
+                            <td>
+                                <a href="/singleProductPage/<%= Item.productId._id %>"><button type="button" class="btn btn-primary">View</button></a>                            
+                            </td>
+                           
+                            
+                        </tr>
+                        <% }) %>
+                        <%}else{%>
+                            <h3 style="color: red;">wiahlist is empty</h3>
+                        <%}%>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<%-include("../layouts/footer")    %>
+
+<script>
+    function deleteItem(itemId) {
+        fetch(`/wishlist/${itemId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                // Reload the page or update wishlist UI as needed
+                location.reload();
+            } else {
+                console.error('Failed to delete item from wishlist');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting item:', error);
+        });
+    }
+</script>

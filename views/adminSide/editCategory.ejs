@@ -1,0 +1,51 @@
+
+
+
+
+<%-include("../adminLayout/adminHeader") %>
+<section class="content-main">
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">Categories</h2>
+                        <p>Add, edit or delete a category</p>
+                    </div>
+                    <div>
+                        <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <form action="/updateCategory/<%=category._id%>" method="post">
+                                    <div class="mb-4">
+                                        <label for="Name" class="form-label">Name</label>
+                                        <input type="text"  class="form-control" id="product_name" name="Name" value="<%= category.Name %>" required />
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="Description" class="form-label">Description</label>
+                                        <textarea placeholder="Type here" class="form-control" name="Description"required><%= category.Description %></textarea>
+                                    </div>
+                                    <div class="mb-4">
+                                    <label for="is_list">Is List:</label>
+                                    <input type="checkbox" name="is_list" <% if (category.is_list) { %>checked<% } %>>
+                                  </div>                                          
+                                    <div class="d-grid">
+                                        <button class="btn btn-primary" type="submit">Update Category</button>
+                                    </div>
+                                    <p style="color: rgb(239, 83, 83); text-align: center;">
+                                        <%= messages.error?messages.error:'' %>
+                                    </p>
+                                  </form>
+                            </div>                            
+                            <!-- .col// -->
+                        </div>
+                        <!-- .row // -->
+                    </div>
+                    <!-- card body .// -->
+                </div>
+                <!-- card .// -->
+            </section>
+
+
+<%-include("../adminLayout/adminFooter")    %>

@@ -1,0 +1,90 @@
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Autofocus Field</title>
+	<link rel="stylesheet" type="text/css" href="otp.css">
+    <link rel="stylesheet" href="css/otp.css">
+</head>
+<body>
+	
+		<div class="container">
+			<form action="/otp?id=<%= id %>" method="post">
+				<div style="display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 10vh;
+				color: red;">
+					<%= messages.otperror ? messages.otperror : '' %>
+				</div>
+			<h1>ENTER OTP</h1>
+			<div class="userInput">
+				<input type="text" id='ist' name="a" maxlength="1" onkeyup="clickEvent(this,'sec')">
+				<input type="text" id="sec" name="b" maxlength="1" onkeyup="clickEvent(this,'third')" onkeydown="backspaceEvent(this, 'ist', event)">
+				<input type="text" id="third" name="c" maxlength="1" onkeyup="clickEvent(this,'fourth')" onkeydown="backspaceEvent(this, 'sec', event)">
+				<input type="text" id="fourth" name="d" maxlength="1" onkeyup="clickEvent(this,'fifth')" onkeydown="backspaceEvent(this, 'third', event)">
+				<input type="text" id="fifth" name="e" maxlength="1" onkeydown="backspaceEvent(this, 'fourth', event)"> 
+			</div>
+			<button  style="margin-left: 690px;" type="submit">CONFIRM</button>
+		</form>
+
+		<p><div class="time" id="timer" style="text-align: center; margin-left: auto; margin-right: auto;"></div></p>
+		<form action="/resendOtp" method="post">
+			<button type="submit" id="resendbtn" style="display: none;">Resend OTP</button>
+		</form>
+		
+		</div>
+	
+	
+
+
+    <script>
+        function clickEvent(current, next) {
+            if (current.value.length) {
+                document.getElementById(next).focus();
+            }
+        }
+    
+        function backspaceEvent(current, prev) {
+            if (event.key === 'Backspace' && current.value.length === 0) {
+                document.getElementById(prev).focus();
+            }
+        }
+
+
+
+		let timerem=30;
+		startTimer();
+
+		function startTimer() {
+    if (timerem < 0) {
+        document.getElementById("resendbtn").style.display = "block";
+        // Add a fetch request to delete the current OTP
+        deleteCurrentOtp(); // Implement this function
+        doTimeout();
+        return;
+    }
+
+    document.getElementById('timer').innerHTML = convertToMinSec(timerem);
+    timerem--;
+
+    setTimeout(startTimer, 1000);
+}
+
+		function doTimeout() {
+    		document.querySelector(".process-for-loader").innerHTML = "Transaction Failed";
+  			document.querySelector(".loader-warning").innerHTML = "";
+  			document.getElementById("Process-loader-section").classList.add("failed");
+ 			return;
+		}
+
+		function convertToMinSec(time) {
+  			const min = Math.floor(time/60)
+  			const sec = time - min*60;
+  			return `0${min}:${sec === sec%10 ? '0' : ''}${sec}`
+		}
+
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,72 @@
+<%-include("../adminLayout/adminHeader")    %>
+
+            <section class="content-main">
+                <div class="row">
+                    <div class="col-9">
+                        <div class="content-header">
+                            <h2 class="content-title">Add New Product</h2>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4>Basic</h4>
+                            </div>
+                            <div class="card-body">
+                                <form method="post" enctype="multipart/form-data" >
+                                    <div class="mb-4">
+                                        <label for="product_name" class="form-label">Product title</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="product_name" name="product_name" pattern=".*\S+.*" title="Please enter a non-empty value." required />
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label">Full description</label>
+                                        <textarea placeholder="Type here" class="form-control" rows="4" name="description" required></textarea>
+                                    </div>
+                                
+
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="mb-4">
+                                                <label class="form-label">Price</label>
+                                                <div class="row gx-2">
+                                                    <input placeholder="$" type="text" class="form-control" name="price" pattern="[0-9]+" title="Please enter a valid number." required />
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="mb-4">
+                                                <label class="form-label">Quantity</label>
+                                                <input placeholder="$" type="text" class="form-control" name="quantity" pattern="[0-9]+" title="Please enter a valid quantity (numbers only)." required />
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Category</label>
+                                            <select class="form-select" name="category">
+                                                <% for (let i = 0; i < categories.length; i++) { %>
+                                                    <option value="<%= categories[i]._id %>" <%= categories[i]._id.toString() === categories[i]._id.toString() ? 'selected' : '' %>><%= categories[i].Name %></option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Product Image</label>
+                                        <input type="file" class="form-control" name="product_images" accept="image/*" multiple onchange="displaySelectedImages(this)" />
+                                    </div>
+                                    <!-- Add a container to display selected images -->
+                                    <div id="selectedImagesContainer" class="d-flex flex-wrap"></div>
+                                    <button type="submit" class="btn btn-success text-white" id="addProductButton">Add Product</button>
+                                </form>
+                            </div>
+                        </div>
+                      </div>
+                   
+                    </div>
+                </div>
+            </section>
+           
+
+
+            <%-include("../adminLayout/adminFooter")    %>

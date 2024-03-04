@@ -1,0 +1,219 @@
+<%-include("../layouts/header")    %>
+
+
+
+
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1>LOGIN</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="">Login</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End Banner Area -->
+
+<!--================Login Box Area =================-->
+<section class="login_box_area section_gap">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="login_box_img">
+                    <img class="img-fluid" src="img/login.jpg" alt="">
+                    <div class="hover">
+                        <h4>New to our website?</h4>
+                        <p>There are advances being made in science and technology everyday, and a good example of this is the</p>
+                        <a class="primary-btn" href="/register">Create an Account</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                
+                <div class="login_form_inner">
+                    
+                    <p style="color: red;">
+                        <%= messages.blkerror?messages.blkerror:'' %>
+                        <%= messages.unferror?messages.unferror:'' %>
+                        <%= messages.pwerror?messages.pwerror:'' %>
+                    </p>
+                    
+                    <h3>Log in to enter</h3>
+                    <form class="row login_form" action="/login" method="post" id="contactForm" novalidate="novalidate">
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" id="email" name="email" placeholder="Email" >
+                            <span id="email-error" class="error-message"></span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                            <span id="password-error" class="error-message"></span>
+                        </div>
+                        
+                        <div class="col-md-12 form-group">
+                            <button type="submit" value="submit" onclick="validateForm()" class="primary-btn">Log In</button>
+                            <!-- <a href="#">Forgot Password?</a> -->
+                        </div>
+                        
+                    </form>
+                    <div class="col-md-12 form-group">
+                        <div class="creat_account">
+                            <button class="primary-btn" onclick="showEmailInput()" style="height: 45px;font-size: 12px">Login with otp</button>
+                            <p style="color: rgb(239, 83, 83); text-align: center;">
+                                <%= messages.error?messages.error:'' %>
+                            </p>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Login Box Area =================-->
+
+
+
+<script>
+    function validateForm() {
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+        var emailError = document.getElementById("email-error");
+        var passwordError = document.getElementById("password-error");
+
+        // Reset previous error messages
+        emailError.innerText = "";
+        passwordError.innerText = "";
+
+        // Email validation
+        if (email.trim() === "") {
+            emailError.innerText = "Email is required.";
+        } else if (!isValidEmail(email)) {
+            emailError.innerText = "Invalid email format.";
+        }
+
+        // Password validation
+        if (password.trim() === "") {
+            passwordError.innerText = "Password is required.";
+        } else if (password.length < 8) {
+            passwordError.innerText = "Password must be at least 8 characters.";
+        }
+
+        // Additional validation functions can be added as needed
+    }
+
+    function isValidEmail(email) {
+        // Regular expression for a basic email format check
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+
+
+
+
+
+
+
+    function showEmailInput() {
+        // Create an input field for email
+        var emailInput = document.createElement("input");
+        emailInput.type = "email";
+        emailInput.placeholder = "Enter your email";
+        emailInput.classList.add("form-control");// Add any necessary classes
+        emailInput.style.width = "340px"; 
+        emailInput.style.marginBottom = "10px"; 
+        emailInput.style.marginTop = "10px";
+        emailInput.style.display = "block";
+        emailInput.style.marginLeft = "auto";
+        emailInput.style.marginRight = "auto";
+        
+
+        // Create a submit button
+        var submitButton = document.createElement("button");
+        submitButton.type = "button"; // Change type to "submit" if you want to submit a form
+        submitButton.innerHTML = "Submit";
+        submitButton.classList.add("primary-btn"); // Add any necessary classes
+        submitButton.style.width = "80px"; // Set the width as per your requirement
+        submitButton.style.height = "45px";
+        submitButton.style.fontSize = "12px";
+        submitButton.style.textAlign = "left";
+        submitButton.style.paddingLeft = "20px";
+        submitButton.addEventListener("click", handleEmailSubmit);
+
+        // Append the elements to the form or container
+        var formGroup = document.querySelector('.creat_account');
+        formGroup.appendChild(emailInput);
+        formGroup.appendChild(submitButton);
+
+        // Disable the "Login with OTP" button to prevent multiple clicks
+        var otpButton = document.querySelector('.primary-btn');
+        otpButton.disabled = true;
+    }
+
+
+//for handling the submission of an email form
+    function handleEmailSubmit() {
+    // Get the entered email
+    var enteredEmail = document.querySelector('input[type="email"]').value;
+
+    // Check if the email is registered
+    fetch('/check-email-registration', {           //uses the fetch function to send a POST request to the server endpoint /check-email-registration.
+    method: 'POST',
+    body: JSON.stringify({ email: enteredEmail }),  //The request includes the entered email in the request body as a JSON object.
+    headers: { 'Content-Type': 'application/json' }   //The server is expected to respond with JSON data
+})     //Handle Server Response:
+.then(response => {
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+    return response.json();
+})
+.then(data => {
+     // Check if the server response indicates success
+        if (data.message === 'success') {
+            // Redirect to '/otploginload'
+           
+            window.location.href = '/otploginload?email=' + encodeURIComponent(enteredEmail);
+        } else {
+            // Handle other cases if needed
+            console.error("Unexpected server response:", data);
+            alert("Unexpected server response: " + data.message);
+        }
+})
+.catch(error => {
+
+    console.error("Error during fetch operation , there is no such user with this email id:", error);
+    // Display the error message on the UI or log it
+    //alert("there is no such user with this email id " );
+    Swal.fire({
+  icon: 'error',
+  title: 'error...',
+  text: 'There is no such user with this email id',
+  customClass: {
+    popup: 'custom-popup-class',
+    header: 'custom-header-class',
+    title: 'custom-title-class',
+    content: 'custom-content-class',
+    confirmButton: 'custom-confirm-button-class',
+  },
+});
+});
+
+}
+
+
+
+
+</script>
+
+
+
+
+
+
+<%-include("../layouts/footer")    %>

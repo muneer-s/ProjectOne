@@ -1,0 +1,220 @@
+
+<%-include("../layouts/header")    %>
+
+
+
+	<!-- Start Banner Area -->
+	<section class="banner-area organic-breadcrumb">
+		<div class="container">
+			<div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+				<div class="col-first">
+					<h1>Product Details Page</h1>
+					<nav class="d-flex align-items-center">
+						<a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
+						<a href="">Shop<span class="lnr lnr-arrow-right"></span></a>
+						<a href="">product-details</a>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- End Banner Area -->
+
+	<!--================Single Product Area =================-->
+	<div class="product_image_area">
+		<div class="container">
+			<div class="row s_product_inner">
+				<div class="col-lg-6">
+					<div class="s_Product_carousel slick3">
+						<%  products.productImages.forEach(item=>{ %>
+						<div class="wrap-pic-w">
+							<img class="img-fluid zoomable" src="/assets/products/resized/<%= item %>" alt="">
+						</div>
+						<% }) %>
+					</div>
+				</div>
+				<div class="col-lg-5 offset-lg-1">
+					<div class="s_product_text">
+						<h3><%=  products.name %></h3>
+						<h2>₹ <%= products.price %></h2>
+						<ul class="list">
+							<li><a class="active" href="#"><span>Category</span> : <%=products.category.Name %></a></li>
+							<li><a href="#"><span>Availibility</span> : In Stock</a></li>
+						</ul>
+						<p><%= products.description %></p>
+						<div class="card_area d-flex justify-content-between align-items-center">
+							<!-- <div class="product_count">
+								<span class="inumber-decrement">
+									<i class="ti-minus" onclick="updateQuantity(-1,'<%= products.quantity %>')"></i>
+								</span>
+								<input class="input-number"  type="text" value="1" min="1" max="<%= products.quantity %>" id="quantityInput">
+								<span class="number-increment">
+									<i class="ti-plus" onclick="updateQuantity(1,'<%= products.quantity %>')"></i>
+								</span>
+							</div> -->
+				
+						</div>
+						
+						<div class="product_count">
+							<label for="qty">Quantity:</label>
+							<input type="text" name="qty" id="quantityInput" maxlength="12" value="1" title="Quantity:" class="input-text qty">
+							<button onclick="increaseQuantity()" class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
+							<button onclick="decreaseQuantity()" class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
+						</div>
+						
+						<div class="card_area d-flex align-items-center">
+							<!-- <a class="primary-btn" href="/userCart">Add to Cart</a> -->
+							<button class="primary-btn" onclick="addToCart('<%= products._id %>')">add to cart</button>
+							<a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
+							<a class="icon_btn" href="/addToWishlist?id=<%= products._id %>"><i class="lnr lnr lnr-heart"></i></a>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--================End Single Product Area =================-->
+
+	<!--================Product Description Area =================-->
+	<section class="product_description_area">
+		<div class="container">
+			<ul class="nav nav-tabs" id="myTab" role="tablist">
+				<li class="nav-item">
+					<a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Description</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+					 aria-selected="false">Specification</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact"
+					 aria-selected="false">Comments</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link active" id="review-tab" data-toggle="tab" href="#review" role="tab" aria-controls="review"
+					 aria-selected="false">Reviews</a>
+				</li>
+			</ul>
+			<div class="tab-content" id="myTabContent">
+				<div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
+					<p></p>
+				</div>
+				<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+					
+								
+				</div>
+			</div>
+		</div>
+	</section>
+	<!--================End Product Description Area =================-->
+
+	
+	<script>
+		async function addToCart(productId) {
+			const quantityInput = document.getElementById('quantityInput');
+			const quantity = parseInt(quantityInput.value, 10);
+	
+			// Validate quantity
+			if (isNaN(quantity) || quantity <= 0) {
+				// Show error SweetAlert for invalid quantity
+				Swal.fire({
+					icon: 'error',
+					title: 'Invalid quantity',
+					text: 'Please enter a valid quantity.',
+				});
+				return;
+			}
+	
+			try {
+				const response = await fetch('/addToCart', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ productId, quantity }),
+				});
+	
+				const data = await response.json();
+	
+				if (data.success) {
+					// Show success SweetAlert
+					Swal.fire({
+						icon: 'success',
+						title: 'Product added to cart',
+						showConfirmButton: false,
+						timer: 1500,
+					});
+	
+					// Redirect to the cart page after a delay
+					setTimeout(() => {
+						window.location.href = '/Cart';
+					}, 1500);
+				} else {
+					Swal.fire({
+						icon: 'error',
+						title: 'Failed to add product to cart',
+						html: `${data.message || 'Please login and continue'}<br><a href="/login" class="btn btn-primary">Login</a>`,
+					});
+				}
+			} catch (error) {
+				console.error('Error adding product to cart:', error);
+			}
+		}
+	
+		function increaseQuantity() {
+			const quantityInput = document.getElementById('quantityInput');
+			let quantity = parseInt(quantityInput.value, 10);
+			quantity++;
+			quantityInput.value = quantity;
+		}
+	
+		function decreaseQuantity() {
+			const quantityInput = document.getElementById('quantityInput');
+			let quantity = parseInt(quantityInput.value, 10);
+			if (quantity > 1) {
+				quantity--;
+				quantityInput.value = quantity;
+			}
+		}
+	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/zoom.js/1.7.21/zoom.min.js"></script><!--zoom-->
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const productImages = document.querySelectorAll('.zoomable');
+			let isZoomed = false;
+		
+			productImages.forEach((img) => {
+				img.addEventListener('mouseover', function () {
+					// Apply zoom effect on mouseover
+					if (!isZoomed) {
+						img.style.transform = 'scale(2.3)';
+						img.style.transition = 'transform 0.3s ease'; // Optional: Add a transition for a smooth effect
+						isZoomed = true;
+					}
+				});
+		
+				img.addEventListener('mousemove', function (e) {
+					if (isZoomed) {
+						const boundingBox = img.getBoundingClientRect();
+						const offsetX = (e.clientX - boundingBox.left) / boundingBox.width;
+						const offsetY = (e.clientY - boundingBox.top) / boundingBox.height;
+		
+						// Move the image according to mouse movement
+						img.style.transformOrigin = `${offsetX * 100}% ${offsetY * 100}%`;
+					}
+				});
+		
+				img.addEventListener('mouseleave', function () {
+					// Reset to normal size on mouseleave
+					img.style.transform = 'scale(1)';
+					isZoomed = false;
+				});
+			});
+		});
+		</script>
+		
+
+
+    <%-include("../layouts/footer")    %>

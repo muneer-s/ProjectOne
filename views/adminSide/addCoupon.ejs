@@ -1,0 +1,55 @@
+<%-include("../adminLayout/adminHeader")    %>
+
+            <section class="content-main">
+                <div class="row">
+                    <div class="col-9">
+                        <div class="content-header">
+                            <h2 class="content-title">Add New Coupon</h2>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4>Basic</h4>
+                            </div>
+                            <div class="card-body">
+                                <form method="post" action="/couponSave" >
+                                    <div class="mb-4">
+                                        <label for="coupon_code" class="form-label">Coupon Code</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="coupon_code" name="coupon_code"  title="Please enter a non-empty value." required />
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label">Discount</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="Discount" name="Discount" title="Please enter numbers" pattern="[0-9]+" required />
+                                    </div>
+                                    
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label">Max Price</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="Max_Price" name="Max_Price"  title="Please enter a non-empty value and  numbers only" pattern="[0-9]+" required />
+                                    
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Exp Date</label>
+                                        <input type="date" placeholder="Type here" class="form-control" id="Exp_Date" name="Exp_Date"  title="Please enter a non-empty value." required />
+                                    
+                                    </div>
+                                
+
+                                    
+                                 
+                                    <!-- Add a container to display selected images -->
+                                    <button type="submit" class="btn btn-success text-white" id="addCouponButton">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                      </div>
+                   
+                    </div>
+                </div>
+            </section>
+           
+
+
+            <%-include("../adminLayout/adminFooter")    %>

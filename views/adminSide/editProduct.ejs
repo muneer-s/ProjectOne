@@ -1,0 +1,86 @@
+<%-include("../adminLayout/adminHeader")    %>
+
+
+
+
+
+
+
+<section class="content-main">
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">edit Product</h2>
+                <!-- <div>
+                    <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                    <button class="btn btn-md rounded font-sm hover-up">Publich</button>
+                </div> -->
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Basic</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="/postEditProduct"  enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label">Product title</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="product_name" name="product_name" value="<%=product.name%>" />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Full description</label>
+                            <textarea placeholder="Type here" class="form-control" rows="4" name="description" ><%=product.description%></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label class="form-label">Price</label>
+                                    <div class="row gx-2">
+                                        <input placeholder="$" type="text" class="form-control" name="price" value="<%=product.price%>" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label class="form-label">Quantity</label>
+                                    <input placeholder="$" type="text" class="form-control" name="quantity" value="<%=product.quantity%>" />
+                                    <input type="hidden" name="productId" value="<%=product._id%>">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <label class="form-label">Category</label>
+                                <select class="form-select" name="category">
+                                    <% for (let i = 0; i < categories.length; i++) { %>
+                                        <option value="<%= categories[i]._id %>" <%= product.category.equals(categories[i]._id) ? 'selected' : '' %>><%= categories[i].Name %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Product Image</label>
+                            <input type="file" class="form-control" name="product_images" accept="image/*" multiple onchange="displaySelectedImages(this)" />
+                            <% for (let i = 0; i < product.productImages.length; i++) { %>
+                                <img src="/assets/products/resized/<%= product.productImages[i] %>" alt="Product Image" height="50" width="50" class="existing-image" />
+                            <% } %>
+                        </div>
+                        <!-- Add a container to display selected images -->
+                        <div id="selectedImagesContainer" class="d-flex flex-wrap"></div>
+                        <button  type="submit" class="btn btn-success text-white" id="addProductButton">submit</button>
+                    </form>
+                </div>
+            </div>
+          </div>
+       ->
+                <!-- </div>
+            </div> -->
+            <!-- card end// -->
+        </div>
+    </div>
+</section>
+           
+
+
+            <%-include("../adminLayout/adminFooter")    %>

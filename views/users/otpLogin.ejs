@@ -1,0 +1,46 @@
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Autofocus Field</title>
+	<link rel="stylesheet" type="text/css" href="otp.css">
+    <link rel="stylesheet" href="css/otp.css">
+</head>
+<body>
+	
+	<form action="" method="post">
+		<div class="container">
+			
+			<h1>ENTER OTP</h1>
+			<div class="userInput">
+				<input type="text" id='ist' name="a" maxlength="1" onkeyup="clickEvent(this,'sec')">
+				<input type="text" id="sec" name="b" maxlength="1" onkeyup="clickEvent(this,'third')" onkeydown="backspaceEvent(this, 'ist', event)">
+				<input type="text" id="third" name="c" maxlength="1" onkeyup="clickEvent(this,'fourth')" onkeydown="backspaceEvent(this, 'sec', event)">
+				<input type="text" id="fourth" name="d" maxlength="1" onkeyup="clickEvent(this,'fifth')" onkeydown="backspaceEvent(this, 'third', event)">
+				<input type="text" id="fifth" name="e" maxlength="1" onkeydown="backspaceEvent(this, 'fourth', event)"> 
+			</div>
+			<button>CONFIRM</button>
+			<p style="color: red; text-align: center; display: flex; align-items: center; justify-content: center; height: 100px;">
+				<%= messages.otperror ? messages.otperror : '' %>
+			</p>
+		</div>
+	</form>
+	
+
+
+    <script>
+        function clickEvent(current, next) {
+            if (current.value.length) {
+                document.getElementById(next).focus();
+            }
+        }
+    
+        function backspaceEvent(current, prev) {
+            if (event.key === 'Backspace' && current.value.length === 0) {
+                document.getElementById(prev).focus();
+            }
+        }
+    </script>
+    
+</body>
+</html>
