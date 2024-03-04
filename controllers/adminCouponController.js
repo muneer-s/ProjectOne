@@ -17,12 +17,15 @@ const saveCoupon = async (req, res) => {
   try {
     const { coupon_code, Discount, Max_Price, Exp_Date } = req.body;
 
-    const existingCoupon = await Coupon.findOne({ coupon_code });
+    const existingCoupon = await Coupon.findOne({Code: coupon_code });
+    console.log("exist",existingCoupon);
 
     if (existingCoupon) {
-      return (req.session.existCoupon = "Coupon code already exists");
+      req.flash("error", "Category with the same name already exists.");
+      return res.redirect("/Coupon");    
     }
 
+    
     const newCoupon = new Coupon({
       Code: coupon_code,
       Discount: Discount,
