@@ -86,7 +86,6 @@
 
 
 <script>
-    // Pagination variables
     var itemsPerPage = 3; // Number of items per page
     var currentPage = 1; // Current page
     var totalItems = '<%= coupon.length %>'; // Total number of items
@@ -117,7 +116,7 @@
     }
 
     $(document).ready(function () {
-        showPage(currentPage); // Show items for the initial page
-        generatePaginationButtons(); // Generate pagination buttons
+        showPage(currentPage); 
+        generatePaginationButtons(); 
     });
 </script>

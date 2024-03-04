@@ -19,6 +19,8 @@ const loadOrderList = async (req, res) => {
         .populate("address")
         .populate("userId");
 
+        console.log("order::",orders);
+
       res.render("./adminSide/orderList", { orders });
     }
   } catch (error) {
@@ -30,12 +32,15 @@ const loadOrderDetails = async (req, res) => {
   try {
     if (req.session.email) {
       const orderId = req.params.orderId;
-      const orders = await Order.find({ orderId: orderId })
+      const orders = await Order.find({ _id: orderId })
         .populate("products.productId")
         .populate("address")
         .populate("userId");
+
+        console.log("avf;;",orders);
       res.render("./adminSide/orderDetails", { orders });
     }
+    
   } catch (error) {
     console.log(error.message);
   }
@@ -51,7 +56,7 @@ const updateOrderStatus = async (req, res) => {
   try {
     // Find the order by orderId and update its status
     const updatedOrder = await Order.findOneAndUpdate(
-      { orderId: orderId },
+      { _id: orderId },
       { $set: { orderStatus: status } },
       { new: true }
     );

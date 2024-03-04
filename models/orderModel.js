@@ -19,7 +19,7 @@ const orderSchema= new mongoose.Schema({
 
 }],
 orderId:{
-    type:String
+    type:String,
 },
 totalPrice:{
     type:Number
@@ -34,16 +34,7 @@ requestReson:{
 orderStatus:{
     type:String,
     default:"Pending",
-    enum:[
-        "Cancelled",
-        "Return",
-        "Pending",
-        "Shipped",
-        "out of delivery",
-        "Delivered",
-        
-        
-    ],
+  
 },
 address:{
     type:Object
