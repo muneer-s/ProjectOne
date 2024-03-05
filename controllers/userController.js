@@ -302,6 +302,10 @@ const userlogin = async (req, res) => {
 const loadProductPage = async (req, res) => {
   try {
     const user_id = req.session.user_id;
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+    const limit = 2; // Number of items per page
+    const skip = (page - 1) * limit; // Calculate how many items to skip
+
 
     // Fetch user data based on the user_id
     const userData = await User.findOne({ _id: user_id });
@@ -309,15 +313,23 @@ const loadProductPage = async (req, res) => {
     // Fetch product details and populate the "category" field
     const proDetails = await product
       .find({ status: true })
-      .populate("category");
+      .populate("category")
+      .skip(skip)
+      .limit(limit);
 
     // Fetch all category details
     const catDetails = await Category.find();
+
+    // Calculate total pages
+    const totalItems = await product.countDocuments({ status: true });
+    const totalPages = Math.ceil(totalItems / limit);
 
     res.render("./users/productPage", {
       proDetails,
       catDetails,
       user: userData,
+      currentPage: page,
+      totalPages,
     });
   } catch (error) {
     console.log(error.message);

@@ -5791,4 +5791,34 @@ label {
   .footer-text i {
     color: #ffba00; }
 
+
+    .pagination-area {
+      margin-top: 20px;
+      text-align: center;
+     }
+     
+     .pagination-wrapper {
+      display: inline-block;
+     }
+     
+     .page-numbers {
+      display: inline-block;
+      padding: 5px 10px;
+      margin: 0 2px;
+      border: 1px solid #ddd;
+      text-decoration: none;
+      color: #333;
+     }
+     
+     .page-numbers.current {
+      background-color: #007bff;
+      color: #fff;
+     }
+     
+     .page-numbers:hover {
+      background-color: #007bff;
+      color: #fff;
+     }
+     
+
 /*# sourceMappingURL=main.css.map */
