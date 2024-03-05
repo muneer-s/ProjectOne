@@ -82,6 +82,8 @@ user_route.post('/addAddress',userProfileController.addAddress)
 user_route.delete('/deleteAddress/:userId/:addressId',userProfileController.deleteAddress)
 //load view item page in my orders
 user_route.get('/viewItems/:id',userProfileController.loadViewItems)
+//edit address
+user_route.get('/user/:userId/address/:id',userProfileController.editAddress)
 
 
 

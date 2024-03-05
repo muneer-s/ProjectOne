@@ -173,7 +173,7 @@
                                         <p class="card-text"><%=address.address %></p>      
                                     </div>
                                     <div class="btn-group" style="margin-top: 10px;">
-                                        <button id="editButton" class="btn btn-sm btn-success rounded mr-2" data-toggle="modal" data-target="#editModal">Edit</button>
+                                        <button id="editButton" class="btn btn-sm btn-success rounded mr-2" data-toggle="modal" data-target="#editModal" user_id="<%= user._id %>" data_id="<%= address._id %>">Edit</button>
                                         <button class="delete-address-btn btn btn-sm btn-danger rounded" data-user-id="<%= user._id %>" data-address-id="<%= address._id %>">Delete</button>
                                     </div>
                                              
@@ -209,7 +209,7 @@
               </button>
             </div>
             <div class="modal-body">
-                <form id="addressForm">
+                <form id="editAddressForm">
                     <div class="card-body pb-2">
                         <div class="form-group">
                             <label class="form-label">Full Name</label>
@@ -245,7 +245,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
+              <button id="saveChangesButton" type="button" class="btn btn-primary">Save changes</button>
             </div>
           </div>
         </div>
@@ -270,6 +270,7 @@
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript"></script>
+    
 
 
     
@@ -463,13 +464,6 @@
 </script>
 
  
-<!--edit one  address-->
-<script>
-    // JavaScript to handle button click event and show the modal
-    document.getElementById('editButton').addEventListener('click', function() {
-      $('#editModal').modal('show');
-    });
-  </script>
 
 
 
@@ -480,3 +474,40 @@
 </html>
 
 <%-include("../layouts/footer")    %>
+
+
+<!--edit address-->
+<script>
+    $(document).ready(function() {
+        $('.btn-success').click(function() {
+            var addressId = $(this).attr('data_id');
+            console.log(addressId);
+            var userId = $(this).attr('user_id');
+            console.log(userId);
+    
+            // Make an AJAX request to fetch the address data
+            $.ajax({
+    url: '/user/' + userId + '/address/' + addressId, // Adjust the URL to match your server's endpoint
+    type: 'GET',
+    success: function(addressData) {
+        // Populate the modal form fields with the address data
+        $('#editAddressForm input[name="fullName"]').val(addressData.fullName);
+        $('#editAddressForm input[name="phone"]').val(addressData.phone);
+        $('#editAddressForm input[name="location"]').val(addressData.location);
+        $('#editAddressForm input[name="city"]').val(addressData.city);
+        $('#editAddressForm input[name="state"]').val(addressData.state);
+        $('#editAddressForm input[name="pinCode"]').val(addressData.pinCode);
+        $('#editAddressForm textarea[name="address"]').val(addressData.address);
+
+        // Set the address ID in a hidden field in the form
+        $('#editAddressForm').append('<input type="hidden" name="addressId" value="' + addressId + '">');
+    },
+    error: function(error) {
+        console.error('Error fetching address data:', error);
+    }
+});
+
+        });
+    });
+    </script>
+    

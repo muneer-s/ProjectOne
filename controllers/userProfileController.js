@@ -234,6 +234,40 @@ const loadViewItems = async (req, res) => {
   }
 };
 
+
+
+//edit address
+const editAddress = async(req,res)=>{
+  try {
+    const userId =req.params.userId;
+    const addressId = req.params.id; 
+    const user = await User.findById(userId);
+    const address = user.address.id(addressId);
+
+
+
+    //const address = await User.address.findById(id);
+    
+    if (!address) {
+        return res.status(404).json({ message: 'Address not found' });
+    }
+    res.json(address);
+} catch (error) {
+    res.status(500).json({ message: 'Server error' });
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = {
   userProfileLoad,
   updateProfile,
@@ -243,4 +277,5 @@ module.exports = {
   deleteAddress,
   loadCheckOutPage,
   loadViewItems,
+  editAddress
 };
