@@ -31,8 +31,9 @@ const loadCategory = async (req, res) => {
 const addCategory = async (req, res) => {
   try {
     const { Name, Description } = req.body;
-    // if category with the same name already exists
-    const existingCategory = await Category.findOne({ Name });
+    const regex = new RegExp(`^${Name}$`, 'i');
+
+    const existingCategory = await Category.findOne({ Name: { $regex: regex } });
     if (existingCategory) {
       req.flash("error", "Category with the same name already exists.");
       return res.redirect("/addCategory");
