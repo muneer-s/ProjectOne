@@ -510,4 +510,42 @@
         });
     });
     </script>
+
+    <!--edit address save-->
+    <script>
+        $(document).ready(function() {
+            $('#saveChangesButton').click(function() {
+                // Collect the form data
+                var formData = $('#editAddressForm').serializeArray().reduce(function(obj, item) {
+                    obj[item.name] = item.value;
+                    return obj;
+                }, {});
+        
+                // Get the user ID and address ID from the form
+                var userId = $('#editAddressForm input[name="userId"]').val(); // Assuming you have a hidden input for the user ID
+                var addressId = $('#editAddressForm input[name="addressId"]').val(); // Assuming you have a hidden input for the address ID
+        
+                // Send the updated data to the server
+                $.ajax({
+                    url:'/address/' + addressId,
+                    type: 'PUT',
+                    data: formData,
+                    success: function(response) {
+                        console.log('Address updated successfully:', response);
+                        // Optionally, close the modal and refresh the page or update the UI
+                        $('#editModal').modal('hide');
+
+
+                        window.location.reload()
+                    },
+                    error: function(error) {
+                        console.error('Error updating address:', error);
+                    }
+                });
+            });
+        });
+    
+        </script>
+        
+
     

@@ -84,6 +84,7 @@ user_route.delete('/deleteAddress/:userId/:addressId',userProfileController.dele
 user_route.get('/viewItems/:id',userProfileController.loadViewItems)
 //edit address
 user_route.get('/user/:userId/address/:id',userProfileController.editAddress)
+user_route.put('/address/:id',userProfileController.saveEditAddress)
 
 
 

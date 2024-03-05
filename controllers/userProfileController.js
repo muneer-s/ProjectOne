@@ -234,39 +234,63 @@ const loadViewItems = async (req, res) => {
   }
 };
 
-
-
 //edit address
-const editAddress = async(req,res)=>{
+const editAddress = async (req, res) => {
   try {
-    const userId =req.params.userId;
-    const addressId = req.params.id; 
+    const userId = req.params.userId;
+    const addressId = req.params.id;
     const user = await User.findById(userId);
     const address = user.address.id(addressId);
 
-
-
     //const address = await User.address.findById(id);
-    
+
     if (!address) {
-        return res.status(404).json({ message: 'Address not found' });
+      return res.status(404).json({ message: "Address not found" });
     }
     res.json(address);
-} catch (error) {
-    res.status(500).json({ message: 'Server error' });
-}
-}
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+//edit address save
+const saveEditAddress = async (req, res) => {
+  try {
+    const userId = req.session.user_id
+    const addressId = req.params.id;
+    const updatedAddress = req.body;
+    console.log("userId : ",userId);
+    console.log("addressId : ",addressId);
+    console.log("updatedAddress : ",updatedAddress);
 
 
 
+    // Find the user by ID
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
+    // Find the address within the user's address array by ID and update it
+    const addressIndex = user.address.findIndex(
+      (addr) => addr._id.toString() === addressId
+    );
+    if (addressIndex === -1) {
+      return res.status(404).json({ message: "Address not found" });
+    }
 
+    // Update the address
+    user.address[addressIndex] = updatedAddress;
 
+    // Save the updated user document
+    await user.save();
 
-
-
-
-
+    res.json({ message: "Address updated successfully" });
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 module.exports = {
   userProfileLoad,
@@ -277,5 +301,6 @@ module.exports = {
   deleteAddress,
   loadCheckOutPage,
   loadViewItems,
-  editAddress
+  editAddress,
+  saveEditAddress
 };
