@@ -26,14 +26,12 @@
 					<div class="head">Categories</div>
 					<ul class="main-categories">
 						<% for(let i=0;i<catDetails.length;i++){ %>
-
-
-						<li class="main-nav-list"><a href=""><%= catDetails[i].Name %><span class="number"></span></a></li>
+							<li class="main-nav-list"><a href="?category=<%= catDetails[i]._id %>"><%= catDetails[i].Name %><span class="number"></span></a></li>
 						<% } %>
-						
 					</ul>
-				</div> 
-				<!-- <div class="common-filter mt-5">
+				</div>
+<!-- 				
+				<div class="common-filter mt-5">
 					<div class="head">Price</div>
 					<div class="price-range-area">
 						<div id="price-range"></div>
@@ -52,11 +50,15 @@
 			<div class="col-xl-9 col-lg-8 col-md-7">
 				<!-- Start Filter Bar -->
 				<div class="filter-bar d-flex flex-wrap align-items-center">
-					<div class="sorting">
-						<select>
-							<option value="1">Low to High</option>
-							<option value="1">High to Low</option>
-						</select>
+					<div class="filter-bar d-flex flex-wrap align-items-center">
+						<div class="sorting">
+							<select onchange="location = this.value;">
+								<option value="?sort=low" <% if (sort == "low") { %> selected <% } %>>Low to High</option>
+								<option value="?sort=high" <% if (sort == "high") { %> selected <% } %>>High to Low</option>
+							</select>
+							
+						</div>
+						<!-- Other filter options -->
 					</div>
 					<div class="sorting mr-auto">
 						
@@ -65,15 +67,15 @@
 <div class="pagination-area" >
 	<div class="pagination-wrapper">
 	   <% if (currentPage > 1) { %>
-		 <a href="?page=<%= currentPage - 1 %>" class="prev page-numbers">
+		 <a href="?page=<%= currentPage - 1 %>&sort=<%=sort %>" class="prev page-numbers">
 		   <i class="fa fa-angle-double-left" aria-hidden="true"></i>
 		 </a>
 	   <% } %>
 	   <% for(let i = 1; i <= totalPages; i++) { %>
-		 <a href="?page=<%= i %>" class="page-numbers <% if (i === currentPage) { %>current<% } %>"><%= i %></a>
+		 <a href="?page=<%= i %>&sort=<%=sort %>" class="page-numbers <% if (i === currentPage) { %>current<% } %>"><%= i %></a>
 	   <% } %>
 	   <% if (currentPage < totalPages) { %>
-		 <a href="?page=<%= currentPage + 1 %>" class="next page-numbers">
+		 <a href="?page=<%= currentPage + 1 %>&sort=<%=sort %>" class="next page-numbers">
 		   <i class="fa fa-angle-double-right" aria-hidden="true"></i>
 		 </a>
 	   <% } %>

@@ -14,7 +14,6 @@ const mongoose = require("mongoose");
         type:Number,
         required:true
     },
-    
     quantity:{
         type:Number,
         required:true

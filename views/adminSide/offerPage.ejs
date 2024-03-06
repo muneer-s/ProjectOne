@@ -1,0 +1,56 @@
+<%-include("../adminLayout/adminHeader")%>
+
+<section class="content-main">
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">Add New Offer</h2>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Offer Details</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="/saveOffer">
+                        <div class="mb-4">
+                            <label for="offerName" class="form-label">Offer</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="addOffer" name="addOffer" title="Please enter a non-empty value." required />
+                            <p style="color: rgb(239, 83, 83); text-align: center;">
+                                <%= messages.error?messages.error:'' %>
+                            </p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="startingDate" class="form-label">Starting Date</label>
+                            <input type="date" placeholder="Type here" class="form-control" id="startingDate" name="startingDate" title="Please enter a non-empty value." required min="<%= new Date().toISOString().split('T')[0] %>" />
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="expiryDate" class="form-label">Expiry Date</label>
+                            <input type="date" placeholder="Type here" class="form-control" id="expiryDate" name="expiryDate" title="Please enter a non-empty value." required min="<%= new Date().toISOString().split('T')[0] %>" />
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="percentage" class="form-label">Percentage</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="percentage" name="percentage" title="Please enter a number between 1 and 100." pattern="^[1-9][0-9]?$|^100$" required />
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="is_listed" class="form-label">Is Listed</label>
+                            <input type="checkbox" id="is_listed" name="is_listed" checked>
+                        </div>
+                        <div class="mb-4">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea placeholder="Type here" class="form-control" id="description" name="description"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success text-white" id="addOfferButton">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%-include("../adminLayout/adminFooter")%>

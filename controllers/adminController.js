@@ -7,6 +7,8 @@ const categories = require("../models/categories");
 const session = require("express-session");
 const flash = require("connect-flash");
 
+
+
 //load productList
 const loadProductList = async (req, res) => {
   try {

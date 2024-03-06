@@ -302,23 +302,39 @@ const userlogin = async (req, res) => {
 const loadProductPage = async (req, res) => {
   try {
     const user_id = req.session.user_id;
-    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
-    const limit = 2; // Number of items per page
+    const page = parseInt(req.query.page) || 1; 
+    const limit = 6; 
     const skip = (page - 1) * limit; // Calculate how many items to skip
+    const categoryFilter = req.query.category;
+    const sortOption = req.query.sort; 
 
-
-    // Fetch user data based on the user_id
     const userData = await User.findOne({ _id: user_id });
+    let query = { status: true };
+    if (categoryFilter) {
+      query.category = categoryFilter;
+    }
 
-    // Fetch product details and populate the "category" field
+    let sortQuery = {};
+    if (sortOption === 'low') {
+      sortQuery = { price: 1 }; // Ascending order
+    } else if (sortOption === 'high') {
+      sortQuery = { price: -1 }; // Descending order
+    }
+
     const proDetails = await product
-      .find({ status: true })
+    .find(query)
+    .sort(sortQuery) 
       .populate("category")
       .skip(skip)
       .limit(limit);
 
-    // Fetch all category details
-    const catDetails = await Category.find();
+    let catDetails = await Category.find();
+
+    // Transform category names to uppercase
+    catDetails = catDetails.map(category => ({
+      ...category._doc, // Spread the existing category properties
+      Name: category.Name.toUpperCase() // Override the Name property with its uppercase version
+    }));
 
     // Calculate total pages
     const totalItems = await product.countDocuments({ status: true });
@@ -330,6 +346,7 @@ const loadProductPage = async (req, res) => {
       user: userData,
       currentPage: page,
       totalPages,
+      sort:sortOption
     });
   } catch (error) {
     console.log(error.message);
@@ -339,13 +356,10 @@ const loadProductPage = async (req, res) => {
 //user load single product page
 const loadSingleProductPage = async (req, res) => {
   try {
-    //product ID fromrequest parameters
     const id = req.params.id;
 
-    // Find the product with the specified ID and populate its "category" field
     const products = await product.findOne({ _id: id }).populate("category");
 
-    // console.log(products);
 
     const user_id = req.session.user_id;
 
@@ -378,7 +392,6 @@ const filter = async (req, res) => {
 module.exports = {
   loadRegister,
   insertUser,
-  //verifyMail,
   otpload,
   loginload,
   homeload,

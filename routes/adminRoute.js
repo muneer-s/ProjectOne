@@ -11,6 +11,7 @@ const path = require("path")
 const adminController = require("../controllers/adminController");
 const adminOrderController = require("../controllers/adminOrderController")
 const adminCouponController = require("../controllers/adminCouponController")
+const adminOfferController = require("../controllers/offerController")
 
 
 
@@ -65,5 +66,27 @@ admin_route.get('/Coupon',isAdminLogin,adminCouponController.loadCouponPage)
 admin_route.post('/couponSave',adminCouponController.saveCoupon)
 admin_route.get('/couponList',isAdminLogin,adminCouponController.viewCoupon)
 admin_route.get('/deleteCoupon',adminCouponController.deleteCoupon)
+
+
+
+//offer
+admin_route.get('/addoffer',isAdminLogin,adminOfferController.loadOfferPage)
+admin_route.post('/saveOffer',adminOfferController.saveOffer)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = admin_route;
