@@ -91,7 +91,7 @@ user_route.put('/address/:id',userProfileController.saveEditAddress)
 //checkout page load
 user_route.get('/CheckOutPage',userProfileController.loadCheckOutPage)
 
-//order load
+//order
 user_route.get('/order',orderController.loadOrder)
 user_route.post('/order',orderController.order)
 

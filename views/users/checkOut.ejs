@@ -114,14 +114,19 @@
                             <br>
                             <div class="payment_item active">
                                 <label for="f-option6">Payment method</label>
-
+                            
                                 <div class="radion_btn">
-                                    <input type="radio" id="f-option6" name="selector">
-                                    <label for="f-option6">Cash on Delivery </label>
+                                    <input type="radio" id="f-option6-cash" name="selector" value="Cash on delivery">
+                                    <label for="f-option6-cash">Cash on Delivery</label>
                                     <div class="check"></div>
                                 </div>
-                                
+                                <div class="radion_btn">
+                                    <input type="radio" id="f-option6-razorpay" name="selector" value="RazorPay">
+                                    <label for="f-option6-razorpay">RazorPay</label>
+                                    <div class="check"></div>
+                                </div>
                             </div>
+                            
                             
                             <ul class="list list_2">
                                 <li><a href="#">Subtotal <span>₹ <%=subTotal %></span></a></li>
@@ -207,10 +212,12 @@
     function order(event) {
     event.preventDefault(); 
     const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked').value;
+    const paymentMethod = document.querySelector('input[name="selector"]:checked').value; 
     console.log(selectedAddressId);
      var dataToSend = ''
      dataToSend = {
         selectedAddressId: selectedAddressId,
+        paymentMethod: paymentMethod,
     
     };
     fetch('/order', {

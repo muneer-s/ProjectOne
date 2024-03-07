@@ -48,7 +48,6 @@ const viewCoupon = async(req,res)=>{
         await Coupon.updateMany({ expiryDate: { $gte: currentDate } }, { $set: { status: true } })
         await Coupon.updateMany({ expiryDate: { $lte: currentDate } }, { $set: { status: false } })
     const coupon = await Coupon.find({})
-    console.log(coupon);
     res.render('./adminSide/couponList',{coupon})
     
   } catch (error) {

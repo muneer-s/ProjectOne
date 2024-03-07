@@ -7,7 +7,7 @@ const Offer = require("../models/offerModel");
 
 const loadOfferPage = async (req, res) => {
   try {
-    res.render("./adminSide/offerPage");
+    res.render("./adminSide/addOffer");
   } catch (error) {
     console.log(error.message);
   }
@@ -53,7 +53,24 @@ const saveOffer = async (req, res) => {
   }
 };
 
+
+const viewOffer = async(req,res)=>{
+  try {
+    const currentDate = Date.now();
+        await Offer.updateMany({ expiryDate: { $gte: currentDate } }, { $set: { is_listed: true } })
+        await Offer.updateMany({ expiryDate: { $lte: currentDate } }, { $set: { is_listed: false } })
+    const offer = await Offer.find({})
+    res.render('./adminSide/viewOffer',{offer})
+    
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
+
 module.exports = {
   loadOfferPage,
   saveOffer,
+  viewOffer
 };

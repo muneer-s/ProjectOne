@@ -7,7 +7,7 @@
 <section class="content-main">
     <div class="content-header">
         <div>
-            <h2 class="content-title card-title">Coupon</h2>
+            <h2 class="content-title card-title">Offers</h2>
         </div> 
     </div>
     <div class="card mb-4">
@@ -25,12 +25,12 @@
                     <thead>
                         <tr>
                             <th>Sl no</th>
-                            <th scope="col">Code</th>
-                            <th scope="col">Discount</th>
-                            <th scope="col">Max Price</th>
-                            <th scope="col">Create Date</th>
-                            <th scope="col">Exp Date</th>
-                            <th scope="col">Status</th>
+                            <th scope="col">Offer</th>
+                            <th scope="col">startingDate</th>
+                            <th scope="col">expiryDate</th>
+                            <th scope="col">percentage</th>
+                            <th scope="col">is_listed</th>
+                            <th scope="col">description</th>
                             <th scope="col" >Action</th>
                         </tr>
                     </thead>
@@ -38,27 +38,33 @@
                         
   
 
-                    <% for(var i=0;i<coupon.length;i++){ %>
+                    <% for(var i=0;i<offer.length;i++){ %>
                         <tr>
                             <td><%-i+1 %></td>
-                            <td><b><%-coupon[i].Code %></b></td>
-                            <td><%-coupon[i].Discount  %> %</td>
-                            <td><%-coupon[i].MaxPrice %></td>
-                            <td><%-coupon[i].createdDate.toLocaleDateString() %></td>    
-                            <td><%-coupon[i].expiryDate.toLocaleDateString() %></td> 
-                           
-                                <% if(coupon[i].status === true){ %>
-                                    <td class="text-success">
-                                        <h5>Active</h5>
+                            <td><b><%-offer[i].offerName %></b></td>
+                            <td><%-offer[i].startingDate.toLocaleDateString()  %> </td>
+                            <td><%-offer[i].expiryDate.toLocaleDateString() %></td>
+                            <td><%-offer[i].percentage %></td>    
+                            <!-- <td><%-offer[i].is_listed %></td> -->
+                            <% if(offer[i].is_listed === true){ %>
+                                <td class="text-success">
+                                    <h5>Active</h5>
+                                </td>
+                                <% }else{ %>
+                                    <td>
+                                        <h5 class="text-danger">Expired</h5>
                                     </td>
-                                    <% }else{ %>
-                                        <td>
-                                            <h5 class="text-danger">Expired</h5>
-                                        </td>
 
-                                        <% } %>
+                                    <% } %>
 
-                                        <td><a href="/deleteCoupon?id=<%-coupon[i]._id %>"><button class="btn btn-danger ">Delete</button></a></td>
+
+
+
+                            <td><%-offer[i].description %></td>
+
+                           
+
+                                        <td><a><button class="btn btn-danger ">Delete</button></a></td>
                            
                     </tr>
    
@@ -88,7 +94,7 @@
 <script>
     var itemsPerPage = 3; // Number of items per page
     var currentPage = 1; // Current page
-    var totalItems = '<%= coupon.length %>'; // Total number of items
+    var totalItems = '<%= offer.length %>'; // Total number of items
     var totalPages = Math.ceil(totalItems / itemsPerPage); // Total number of pages
 
     // Function to display items for the current page

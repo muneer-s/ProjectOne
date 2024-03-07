@@ -29,9 +29,14 @@ const loadOrder = async (req, res) => {
   }
 };
 
+
+
+
+
 const order = async (req, res) => {
   try {
     const addressId = req.body.selectedAddressId;
+    const paymentIntent = req.body.paymentMethod
     const userId = req.session.user_id;
     let cartData = await Cart.findOne({ userId: userId });
     const user = await User.findOne(
@@ -48,11 +53,12 @@ const order = async (req, res) => {
       });
     }
 
+    
     const order = new Order({
       products: cartData.products,
       orderId: orderId,
       totalPrice: originalAmount,
-      paymentIntent: "Cash on Delivery",
+      paymentIntent: paymentIntent,
       address: address,
       userId: userId,
     });
