@@ -27,6 +27,10 @@ totalPrice:{
 paymentIntent:{
     type:String
 },
+paymentStatus:{
+    type:String,
+    default:"Pending"
+},
 requestReson:{
     type:String,
     default:"Not Request"

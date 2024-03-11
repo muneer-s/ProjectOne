@@ -7,6 +7,11 @@ const flash = require("connect-flash");
 const Cart = require("../models/cartModel");
 const orderid = require("order-id")("key");
 const Order = require("../models/orderModel");
+const Razorpay = require('razorpay');
+
+
+
+
 
 const loadOrder = async (req, res) => {
   try {
@@ -33,7 +38,7 @@ const loadOrder = async (req, res) => {
 
 
 
-const order = async (req, res) => {
+const placeOrder = async (req, res) => {
   try {
     const addressId = req.body.selectedAddressId;
     const paymentIntent = req.body.paymentMethod
@@ -69,6 +74,9 @@ const order = async (req, res) => {
 
     cartData.products = [];
     await cartData.save();
+
+
+    
     res.status(200).json({ data: "data" });
   } catch (error) {
     console.log(error.message);
@@ -115,9 +123,31 @@ const userupdatestatus = async (req, res) => {
   }
 };
 
+
+
+var instance = new Razorpay({
+  key_id: process.env.key_id,
+  key_secret: process.env.key_secret,
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = {
   loadOrder,
-  order,
+  placeOrder,
   orderDetailsPage,
   userupdatestatus,
 };

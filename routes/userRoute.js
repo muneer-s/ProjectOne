@@ -93,7 +93,7 @@ user_route.get('/CheckOutPage',userProfileController.loadCheckOutPage)
 
 //order
 user_route.get('/order',orderController.loadOrder)
-user_route.post('/order',orderController.order)
+user_route.post('/placeOrder',orderController.placeOrder)
 
 //userprofule order details page
 user_route.get('/orderDetailsPage',orderController.orderDetailsPage)

@@ -38,6 +38,8 @@ admin_route.post('/addproduct',upload.array('product_images',4),adminController.
 admin_route.get('/loadProductList',isAdminLogin,adminController.loadProductList);
 admin_route.get('/loadEditProduct',isAdminLogin,adminController.loadEditProduct);
 admin_route.post('/postEditProduct',upload.array('product_images',4),adminController.postEditProduct);
+admin_route.post('/deleteProductImage',adminController.deleteProductImage)
+
 
 
 //updating the product status

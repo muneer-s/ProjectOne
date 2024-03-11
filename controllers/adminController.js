@@ -6,6 +6,7 @@ const path = require("path");
 const categories = require("../models/categories");
 const session = require("express-session");
 const flash = require("connect-flash");
+// const { default: products } = require("razorpay/dist/types/products");
 
 
 
@@ -339,18 +340,14 @@ const loadEditProduct = async (req, res) => {
 // edit product
 const postEditProduct = async (req, res) => {
   try {
-    // edstructure data from request body
     const { product_name, description, price, quantity, category, productId } =
       req.body;
 
     let productImages = [];
 
-    // iterate each uploaded file in the request
     for (let i = 0; i < req.files.length; i++) {
-      // Obtain the path of the uploaded image
       const uploadedImagePath = req.files[i].path;
 
-      // create a path for the resized image in the 'public/assets/products/resized' directory
       const resizedImagePath = path.join(
         __dirname,
         "..",
@@ -366,9 +363,24 @@ const postEditProduct = async (req, res) => {
         .resize(840, 840, { fit: "fill" })
         .toFile(resizedImagePath);
 
-      // Save the filename of the resized image to 'productImages' array
       productImages[i] = req.files[i].filename;
     }
+    if (req.body.imagesToDelete) {
+      const imagesToDelete = JSON.parse(req.body.imagesToDelete);
+      // Remove the images from the server
+      imagesToDelete.forEach(async (imagePath) => {
+          await fs.promises.unlink(path.join(__dirname, '..', 'public', 'assets', 'products', 'resized', imagePath));
+      });
+
+      // Update the product in the database to remove the deleted images
+      await product.updateOne(
+          { _id: productId },
+          { $pull: { productImages: { $in: imagesToDelete } } }
+      );
+  }
+
+
+
 
     // Update the product in the database using the 'updateOne' method
     const proData = await product.updateOne(
@@ -394,7 +406,24 @@ const postEditProduct = async (req, res) => {
   }
 };
 
-//  products end-------!!!!
+const deleteProductImage = async (req, res) => {
+  try {
+    const {imageUrl,productId} = req.body
+    const removeImage = await product.findOneAndUpdate({_id:productId},{$pull:{productImages:imageUrl}})
+    console.log("imagum kitti - ",removeImage);
+    if(removeImage){
+      res.json({success:true})
+    }else{
+      res.json({success:false})
+    }
+  }catch(error){
+    console.log(error.message);
+  }
+}
+
+
+
+
 
 module.exports = {
   adminLoadHome,
@@ -413,6 +442,7 @@ module.exports = {
   loadProductList,
   loadEditProduct,
   postEditProduct,
+  deleteProductImage,
   updateProductStatus,
   Adminlogout,
 };

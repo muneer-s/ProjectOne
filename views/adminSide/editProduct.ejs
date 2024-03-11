@@ -63,9 +63,18 @@
                             <label class="form-label">Product Image</label>
                             <input type="file" class="form-control" name="product_images" accept="image/*" multiple onchange="displaySelectedImages(this)" />
                             <% for (let i = 0; i < product.productImages.length; i++) { %>
-                                <img src="/assets/products/resized/<%= product.productImages[i] %>" alt="Product Image" height="50" width="50" class="existing-image" />
+                                <div class="image-container">
+                                    <img src="/assets/products/resized/<%= product.productImages[i] %>" alt="Product Image" height="50" width="50" class="existing-image" />
+                                    <button class="delete-image" data-image-index="<%= i %>" onclick="dltImage(event, '<%= product.productImages[i] %>', '<%= product._id %>')">Delete</button>                                </div>
                             <% } %>
                         </div>
+
+
+
+
+
+
+
                         <!-- Add a container to display selected images -->
                         <div id="selectedImagesContainer" class="d-flex flex-wrap"></div>
                         <button  type="submit" class="btn btn-success text-white" id="addProductButton">submit</button>
@@ -84,3 +93,24 @@
 
 
             <%-include("../adminLayout/adminFooter")    %>
+
+            <script>
+                function dltImage(event, imageUrl, productId) {
+                    event.preventDefault();
+                    $.ajax({
+                        url: 'deleteProductImage', // Corrected URL
+                        method: 'POST',
+                        data: {
+                            imageUrl: imageUrl,
+                            productId: productId
+                        },
+                    }).then((response) => {
+                        if (response.success) {
+                            // Corrected URL and template literal syntax
+                            $('#existPreview').load(`editProduct?id=${productId} #existPreview`);
+                        } else {
+                            console.log('res:', response.status);
+                        }
+                    });
+                }
+            </script>
