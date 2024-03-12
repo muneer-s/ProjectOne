@@ -132,8 +132,10 @@
                                 <li><a href="#">Subtotal <span>₹ <%=subTotal %></span></a></li>
                                 
                             </ul>
-                            <a class="primary-btn" onclick="order(event)" href="#">Proceed</a>
-                            
+                            <!-- <a class="primary-btn" onclick="order(event)" href="#">Proceed</a> -->
+                            <a class="primary-btn" id="proceed-btn" onclick="order(event)" href="#">Proceed</a>
+                            <!-- <a class="primary-btn" id="razorpay-btn" onclick="online(event)" style="display: none;" href="#">Pay with RazorPay</a> -->
+
                         </div>
                     </div>
                 </div>
@@ -145,6 +147,32 @@
         </div>
     </section>
     <!--================End Checkout Area =================-->
+<!-- 
+    <script>
+        // Function to handle radio button changes
+        function handlePaymentMethodChange() {
+            const cashOnDeliveryRadio = document.getElementById('f-option6-cash');
+            const razorpayRadio = document.getElementById('f-option6-razorpay');
+            const proceedBtn = document.getElementById('proceed-btn');
+            const razorpayBtn = document.getElementById('razorpay-btn');
+    
+            if (cashOnDeliveryRadio.checked) {
+                proceedBtn.style.display = 'block';
+                razorpayBtn.style.display = 'none';
+            } else if (razorpayRadio.checked) {
+                proceedBtn.style.display = 'none';
+                razorpayBtn.style.display = 'block';
+            }
+        }
+    
+        // Attach event listeners to the radio buttons
+        document.getElementById('f-option6-cash').addEventListener('change', handlePaymentMethodChange);
+        document.getElementById('f-option6-razorpay').addEventListener('change', handlePaymentMethodChange);
+    </script> -->
+
+
+
+
 
 
     <script>
@@ -207,43 +235,155 @@
 
 
 
-
+<!--cod-->
 <script>
-    function order(event) {
+async  function order(event) {
     event.preventDefault(); 
     const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked').value;
     const paymentMethod = document.querySelector('input[name="selector"]:checked').value; 
+
     console.log(selectedAddressId);
-     var dataToSend = ''
-     dataToSend = {
+    
+    var dataToSend = {
         selectedAddressId: selectedAddressId,
         paymentMethod: paymentMethod,
-    
     };
-    fetch('/placeOrder', {
-        method: 'POST', 
-        headers: {
-            'Content-Type': 'application/json' 
+
+    $.ajax({
+        url: '/placeOrder',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(dataToSend),
+        success: function(response) {
+            if (response.codSuccess == true) {
+                Swal.fire({
+                    title: "",
+                    text: "Order placed successfully",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 2000, // Set the delay in milliseconds
+                });
+                setTimeout(() => {
+                    window.location.href = '/order';
+                }, 2000);
+            } else if(response.success==false) {
+                razorpayPayment(response.razorpayOrder);
+            }
         },
-        body: JSON.stringify(dataToSend) 
-    }).then(response=>response.json())
-    .then(data => {
-        if (data) {
-            console.log("order id::",data.data);
-            const orderId=data.data
-            console.log(data.message);
-            // Handle successful response (e.g., redirect to Paypal)
-             window.location.href = '/order';
-        } else {
-            
-            console.error('Error:', response.status);
+        error: function(error) {
+            console.error('Fetch Error:', error);
         }
-    })
-    .catch(error => {
-        console.error('Fetch Error:', error);
     });
 }
+
+
+
+
+
+
+
+// <!--razorpay -->
+
+
+//     event.preventDefault()
+//     var address = document.querySelector('input[name="selectedAddress"]:checked').value
+//     var paymentMethod = document.querySelector('input[name="selector"]:checked').value
+//     const totalAmount = document.getElementById('total').value
+//     $.ajax({
+//       type: 'POST',
+//       data: {
+//         selectedAddress: address,
+//         totalAmount: totalAmount,
+//         paymentMethod: paymentMethod,
+//         totalAmount: totalAmount
+//       },
+//       url: "/place-order",
+//       success: function(response) {
+//         if (response.codSuccess === true ) {
+//           Swal.fire({
+//             title: "",
+//             text: "Order placed successfully",
+//             icon: "success",
+//             showConfirmButton: false,
+//             timer: 2000, // Set the delay in milliseconds
+//           });
+//           setTimeout(() => {
+//             window.location.href = '/order-placed';
+//           }, 2000);
+//         } else {
+//           razorpayPayment(response.razorpayOrder);
+//         }
+//       }
+//     })
+
+
+
+
+    
+
+
+    function razorpayPayment(order) {
+        var options = {
+        "key": 'rzp_test_hJV1rnkg9P9IlZ', // Enter the Key ID generated from the Dashboard
+        "amount": "30000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "currency": "INR",
+        "name": "Acme Corp",
+        "description": "Test Transaction",
+        "image": "https://example.com/your_logo",
+        "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        "handler": function (response){
+            // alert(response.razorpay_payment_id);
+            // alert(response.razorpay_order_id);
+            // alert(response.razorpay_signature)
+            verifyPayment(response, order)
+        },
+        "prefill": {
+          "name": "Gaurav Kumar",
+          "email": "gaurav.kumar@example.com",
+          "contact": "9000090000"
+        },
+        "notes": {
+          "address": "Razorpay Corporate Office"
+        },
+        "theme": {
+          "color": "#F9D9BE"
+        }
+
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+
+}
+
+    function verifyPayment(response, order) {
+      console.log('verifyPayment called');
+      $.ajax({
+        url: '/verifyPayment',
+        method: 'post',
+        data: {
+          response,
+          order,
+        },
+        success: (response) => {
+          if (response.status) {
+
+            console.log('statud vomr as tyr')
+            window.location.href = '/order';
+          }else{
+            console.log('its else case')
+          }
+        }
+      })
+    }
+
 </script>
+
+
+
+
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 
 <%-include("../layouts/footer")    %>

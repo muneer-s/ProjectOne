@@ -39,7 +39,7 @@
 						<h2>₹ <%= products.price %></h2>
 						<ul class="list">
 							<li><a class="active" href="#"><span>Category</span> : <%=products.category.Name %></a></li>
-							<li><a href="#"><span>Availibility</span> : In Stock</a></li>
+							<li><a href="#"><span>Availibility</span> : <%= products.quantity %></a></li>
 						</ul>
 						<p><%= products.description %></p>
 						<div class="card_area d-flex justify-content-between align-items-center">
@@ -154,7 +154,7 @@
 					Swal.fire({
 						icon: 'error',
 						title: 'Failed to add product to cart',
-						html: `${data.message || 'Please login and continue'}<br><a href="/login" class="btn btn-primary">Login</a>`,
+						html: `${data.message || 'Please login and continue'}<br>`,
 					});
 				}
 			} catch (error) {
@@ -190,7 +190,7 @@
 					// Apply zoom effect on mouseover
 					if (!isZoomed) {
 						img.style.transform = 'scale(2.3)';
-						img.style.transition = 'transform 0.3s ease'; // Optional: Add a transition for a smooth effect
+						img.style.transition = 'transform 0.3s ease'; 
 						isZoomed = true;
 					}
 				});
