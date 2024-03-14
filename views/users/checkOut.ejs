@@ -320,7 +320,20 @@
                     title: 'Invalid Coupon',
                     text: `${data.message}`
                 });
-      }else{
+      }else if(data.couponsUsed){
+        Swal.fire({
+                    icon: 'error',
+                    title: 'Coupon used',
+                    text: 'coupon alread used'
+                });
+      }else if(data.mimimumValueError){
+        Swal.fire({
+                    icon: 'error',
+                    title: 'coupon requirements',
+                    text: 'minimum checkout price not met for this coupon'
+                });
+      }
+      else{
         Swal.fire({
                     icon: 'success',
                     title: 'Valid Coupon',
@@ -444,7 +457,8 @@
           setTimeout(() => {
             window.location.href = "/order";
           }, 2000);
-        } else if (response.success == false) {
+        }
+        else if (response.success == false) {
           razorpayPayment(response.razorpayOrder);
         }
       },

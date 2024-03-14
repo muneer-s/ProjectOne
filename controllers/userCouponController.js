@@ -23,10 +23,20 @@ const applyCoupon = async (req, res) => {
       });
     }
     //console.log(originalAmount);
-
-
-
     const couponfind = await Coupon.findOne({ Code: userInputData });
+
+    const couponUsed = await Coupon.findOne({
+        Code:userInputData,
+        "userUsed.user_id": user_id,    
+      });
+
+      if( originalAmount < couponfind.MaxPrice ){
+        return res.json({mimimumValueError:true})
+      }
+
+      if(couponUsed){
+        return res.json({couponsUsed:true});
+      }
     
     let DiscountAmount = couponfind.Discount
     req.session.couponDiscount = DiscountAmount || 0;
@@ -42,7 +52,7 @@ const applyCoupon = async (req, res) => {
         return res.json({ success: false, message: "Coupon is not active." });
       } else {
         //console.log(couponfind.Discount);
-        // req.session.Applied = 'Coupon Applied Successfully'
+        req.session.couponCode = couponfind.Code
         console.log("Coupon applied successfully.");
         return res
           .status(200)

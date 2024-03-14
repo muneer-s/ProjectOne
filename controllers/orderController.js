@@ -10,11 +10,14 @@ const Order = require("../models/orderModel");
 const Razorpay = require("razorpay");
 const { Promise } = require("mongoose");
 const { success } = require("toastr");
+const Coupon = require("../models/couponModel")
 
 const loadOrder = async (req, res) => {
   try {
     if (req.session.user_id) {
       console.log("orderkk vannuuuuuuuuuuuuuuuuuuuuuuuu");
+      delete req.session.couponCode
+      delete req.session.couponDiscount
 
       const userId = req.session.user_id;
       console.log(userId);
@@ -33,11 +36,13 @@ const loadOrder = async (req, res) => {
     console.log(error.message);
   }
 };
-
+//placeorder
 const placeOrder = async (req, res) => {
   try {
     console.log("hello bro sugalle ", req.body);
     let {couponDiscount} = req.session
+    let couponCode = req.session.couponCode
+    
 
     const addressId = req.body.selectedAddressId;
     const paymentIntent = req.body.paymentMethod;
@@ -48,11 +53,11 @@ const placeOrder = async (req, res) => {
       { address: { $elemMatch: { _id: addressId } } }
     );
 
-    console.log("iamuser", user);
+    //console.log("iamuser", user);
     const address = user.address[0];
     const orderId = orderid.generate();
 
-    console.log("iamorderid", orderId);
+    //console.log("iamorderid", orderId);
 
     let originalAmount = 0;
     //console.log("cartdata ",cartData);
@@ -62,20 +67,32 @@ const placeOrder = async (req, res) => {
       });
     }
 
-    console.log(req.session.newAmountUsingCoupon);
+    //console.log(req.session.newAmountUsingCoupon);
 
     const order = new Order({
       products: cartData.products,
       orderId: orderId,
-      totalPrice: originalAmount-couponDiscount,
+      totalPrice: originalAmount-(couponDiscount||0),
       paymentIntent: req.body.paymentMethod,
       paymentStatus: "Pending",
       address: address,
       userId: userId,
+    
     });
 
+    if(couponCode){
+
+      await Coupon.findOneAndUpdate(
+          { Code: couponCode },
+          { $push: { userUsed: {user_id:userId }} }
+        );
+      }
+    
+  
+    
+
     await order.save();
-    console.log("lllllllllllll");
+    
     const paymentMethod = req.body.paymentMethod;
 
     if (paymentMethod == "Cash on delivery") {
@@ -132,6 +149,7 @@ const placeOrder = async (req, res) => {
 
 const orderDetailsPage = async (req, res) => {
   try {
+    
     const userid = req.session.user_id;
     const userData = await User.findOne({ _id: userid });
     const user = await User.findOne({ _id: userData._id });

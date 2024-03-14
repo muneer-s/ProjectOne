@@ -178,6 +178,7 @@ const loadCheckOutPage = async (req, res) => {
     const user_id = req.session.user_id;
     const Coupons = await Coupon.find({status:true})
     const totalUsingCoupon = req.session.newAmountUsingCoupon
+    const couponCode = req.session.couponCode
     // console.log("coupooooooooooooooooon",Coupons);
 
     //console.log(" session user id" ,user_id);
@@ -206,7 +207,8 @@ const loadCheckOutPage = async (req, res) => {
         cartDetails,
         subTotal: originalAmount,
         Coupons,
-        totalUsingCoupon:totalUsingCoupon
+        totalUsingCoupon:totalUsingCoupon,
+        couponCode
       },(err,html)=>{
         if(err){
           console.log(ee);
