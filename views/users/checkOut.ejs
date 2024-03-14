@@ -1,152 +1,255 @@
-<%-include("../layouts/header")    %>
+<%-include("../layouts/header") %>
 
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+  <div class="container">
+    <div
+      class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end"
+    >
+      <div class="col-first">
+        <h1>Checkout</h1>
+        <nav class="d-flex align-items-center">
+          <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
+          <a href="">Checkout</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Banner Area -->
 
-    <!-- Start Banner Area -->
-    <section class="banner-area organic-breadcrumb">
-        <div class="container">
-            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
-                <div class="col-first">
-                    <h1>Checkout</h1>
-                    <nav class="d-flex align-items-center">
-                        <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
-                        <a href="">Checkout</a>
-                    </nav>
-                </div>
-            </div>
+<!--================Checkout Area =================-->
+<section class="checkout_area section_gap">
+  <div class="container">
+    <div class="row" id="account-social-links">
+      <div class="col-lg-8" style="display: flex; flex-wrap: wrap">
+        <input type="hidden" value="<%=user.address  %>" id="addresses" />
+        <% user.address.forEach((address, index) => { %>
+        <div
+          class="card"
+          style="width: 18rem; margin-right: 10px; margin-bottom: 10px"
+        >
+          <div class="card-body" style="background-color: rgb(254, 203, 122)">
+            <h5 class="card-title"><%= address.fullName %></h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">
+              <%= address.phone %>
+            </h6>
+            <h6 class="card-subtitle mb-2 text-body-secondary">
+              <%= address.location %>
+            </h6>
+            <h6 class="card-subtitle mb-2 text-body-secondary">
+              <%= address.city %>
+            </h6>
+            <h6 class="card-subtitle mb-2 text-body-secondary">
+              <%= address.state %>
+            </h6>
+            <h6 class="card-subtitle mb-2 text-body-secondary">
+              <%= address.pinCode %>
+            </h6>
+            <p class="card-text"><%= address.address %></p>
+            <!-- Add a data-index attribute to identify the address -->
+            <input
+              type="radio"
+              id="f-option<%= index %>"
+              class="address-radio"
+              data-index="<%= index %>"
+              name="selectedAddress"
+              value="<%= address._id %>"
+            />
+          </div>
         </div>
-    </section>
-    <!-- End Banner Area -->
+        <% }) %>
+      </div>
+    </div>
 
-
-
-
-
-
-    <!--================Checkout Area =================-->
-    <section class="checkout_area section_gap">
-        <div class="container">
-
-
-            <div class="row" id="account-social-links">
-                <div class="col-lg-8" style="display: flex; flex-wrap: wrap;">
-                    <input type="hidden" value="<%=user.address  %>" id="addresses">
-                    <% user.address.forEach((address, index) => { %>
-                    <div class="card" style="width: 18rem; margin-right: 10px; margin-bottom: 10px;">
-                        <div class="card-body" style="background-color: rgb(254, 203, 122);">
-                            <h5 class="card-title"><%= address.fullName %></h5>
-                            <h6 class="card-subtitle mb-2 text-body-secondary"><%= address.phone %></h6>
-                            <h6 class="card-subtitle mb-2 text-body-secondary"><%= address.location %></h6>
-                            <h6 class="card-subtitle mb-2 text-body-secondary"><%= address.city %></h6>
-                            <h6 class="card-subtitle mb-2 text-body-secondary"><%= address.state %></h6>
-                            <h6 class="card-subtitle mb-2 text-body-secondary"><%= address.pinCode %></h6>
-                            <p class="card-text"><%= address.address %></p>
-                            <!-- Add a data-index attribute to identify the address -->
-                            <input type="radio" id="f-option<%= index %>" class="address-radio" data-index="<%= index %>" name="selectedAddress" value="<%= address._id %>">                        </div>
-                    </div>
-                    <% }) %>
-                </div>
+    <div class="billing_details mt-5">
+      <div class="row">
+        <div class="col-lg-8">
+          <h3>Add Address Details</h3>
+          <form id="addressForm" onsubmit="return validateForm()">
+            <div class="card-body pb-2">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  value=""
+                  name="fullName"
+                  pattern="[A-Za-z ]+"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  value=""
+                  name="phone"
+                  pattern="[0-9]{10}"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Location</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  value=""
+                  name="location"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">City</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  value=""
+                  name="city"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">State</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  value=""
+                  name="state"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Pin Code</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  value=""
+                  name="pinCode"
+                  pattern="[0-9]{6}"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Address</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  name="address"
+                  required
+                ></textarea>
+              </div>
+              <div class="text-right mt-3">
+                <button type="submit" class="btn btn-primary">
+                  Add Address
+                </button>
+              </div>
             </div>
-
-
-
-
-
-
-            
-            <div class="billing_details mt-5 ">
-                <div class="row">
-                    <div class="col-lg-8">
-                        <h3>Add Address Details</h3>
-                        <form id="addressForm" onsubmit="return validateForm()">
-                            <div class="card-body pb-2">
-                                <div class="form-group">
-                                    <label class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" value="" name="fullName" pattern="[A-Za-z ]+" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Phone</label>
-                                    <input type="text" class="form-control" value="" name="phone" pattern="[0-9]{10}" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Location</label>
-                                    <input type="text" class="form-control" value="" name="location" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">City</label>
-                                    <input type="text" class="form-control" value="" name="city" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">State</label>
-                                    <input type="text" class="form-control" value="" name="state" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Pin Code</label>
-                                    <input type="text" class="form-control" value="" name="pinCode" pattern="[0-9]{6}" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Address</label>
-                                    <textarea class="form-control" rows="5" name="address" required></textarea>
-                                </div>
-                                <div class="text-right mt-3">
-                                    <button type="submit" class="btn btn-primary">Add Address</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="order_box">
-                            
-
-                            <h2>Your Order</h2>
-                            <ul class="list">
-                                <li><a href="#">Product <span>Total</span></a></li>
-
-                            </ul>
-                            <% cartDetails.products.forEach((cartItem,index) => { %>
-
-                            <ul class="list">
-                                <li><a href="#"><%= cartItem.productId.name %><span class="middle"><%= cartItem.quantity %></span> <span class="last"><%= cartItem.total %></span></a></li>
-                            </ul>
-                            <% }) %>
-
-                            
-                            <br>
-                            <br>
-                            <div class="payment_item active">
-                                <label for="f-option6">Payment method</label>
-                            
-                                <div class="radion_btn">
-                                    <input type="radio" id="f-option6-cash" name="selector" value="Cash on delivery">
-                                    <label for="f-option6-cash">Cash on Delivery</label>
-                                    <div class="check"></div>
-                                </div>
-                                <div class="radion_btn">
-                                    <input type="radio" id="f-option6-razorpay" name="selector" value="RazorPay">
-                                    <label for="f-option6-razorpay">RazorPay</label>
-                                    <div class="check"></div>
-                                </div>
-                            </div>
-                            
-                            
-                            <ul class="list list_2">
-                                <li><a href="#">Subtotal <span>₹ <%=subTotal %></span></a></li>
-                                
-                            </ul>
-                            <!-- <a class="primary-btn" onclick="order(event)" href="#">Proceed</a> -->
-                            <a class="primary-btn" id="proceed-btn" onclick="order(event)" href="#">Proceed</a>
-                            <!-- <a class="primary-btn" id="razorpay-btn" onclick="online(event)" style="display: none;" href="#">Pay with RazorPay</a> -->
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
-            
+          </form>
         </div>
-    </section>
-    <!--================End Checkout Area =================-->
+        <div class="col-lg-4">
+          <div class="order_box">
+            <h2>Your Order</h2>
+            <ul class="list">
+              <li>
+                <a >Product <span>Total</span></a>
+              </li>
+            </ul>
+            <% cartDetails.products.forEach((cartItem,index) => { %>
+
+            <ul class="list">
+              <li>
+                <a 
+                  ><%= cartItem.productId.name %><span class="middle"
+                    ><%= cartItem.quantity %></span
+                  >
+                  <span class="last"><%= cartItem.total %></span></a
+                >
+              </li>
+            </ul>
+            <% }) %>
+
+            <br />
+            <br />
+            <div class="payment_item active">
+              <label for="f-option6">Payment method</label>
+
+              <div class="radion_btn">
+                <input
+                  type="radio"
+                  id="f-option6-cash"
+                  name="selector"
+                  value="Cash on delivery"
+                />
+                <label for="f-option6-cash">Cash on Delivery</label>
+                <div class="check"></div>
+              </div>
+              <div class="radion_btn">
+                <input
+                  type="radio"
+                  id="f-option6-razorpay"
+                  name="selector"
+                  value="RazorPay"
+                />
+                <label for="f-option6-razorpay">RazorPay</label>
+                <div class="check"></div>
+              </div>
+            </div>
+
+
+            <ul class="list list_2">
+              <% if(typeof totalUsingCoupon !== "undefined"){ %>
+                <li>
+                  <a>Subtotal <span>₹ <%=totalUsingCoupon %></span></a>
+                </li>
+              
+              <% }else{ %>
+                <li>
+                  <a>Subtotal <span>₹ <%=subTotal %></span></a>
+                </li>
+                <% } %>
+            </ul>
+
+            <div style="margin-bottom: 20px">
+              <a class="primary-btn" id="addCouponBtn" href="">Add Coupon</a>
+              <div id="couponDiv" style="display: none">
+                <button class="mt-2" id="allCouponsBtn">All coupons</button>
+                  <br />
+                  <input class="mt-2" name="couponName" type="text" id="couponName" />
+                  <button type="submit" id="couponButton" >Apply Coupon</button>
+                 
+              </div>
+            </div>
+            <div id="couponModal" class="modal">
+              <% for(let i =0;i<Coupons.length;i++){ %>
+                <div class="modal-content">
+                  <span class="close">&times;</span>
+                  <p>Coupon Code: <span id="couponCode"><%= Coupons[i].Code %></span></p>
+                  <p>Coupon Amount: <span id="couponAmount"><%= Coupons[i].Discount %> </span></p>
+                  <p>Expire Date: <span id="expireDate"><%= Coupons[i].expiryDate.toLocaleDateString() %></span></p>
+                </div>
+                <% } %>
+              </div>
+            <div class="">
+              <a
+                class="primary-btn mt-2"
+                id="proceed-btn"
+                onclick="order(event)"
+                href="#"
+                >Proceed</a
+              >
+            </div>
+
+            <!-- <a class="primary-btn" id="razorpay-btn" onclick="online(event)" style="display: none;" href="#">Pay with RazorPay</a> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--================End Checkout Area =================-->
+<%-include("../layouts/footer") %>
 <!-- 
     <script>
         // Function to handle radio button changes
@@ -170,220 +273,259 @@
         document.getElementById('f-option6-razorpay').addEventListener('change', handlePaymentMethodChange);
     </script> -->
 
+<!-- modal for Display -->
 
-
-
-
-
-    <script>
-        function validateForm() {
-            var form = document.getElementById('addressForm');
-            var fullName = form.elements['fullName'].value;
-            var phone = form.elements['phone'].value;
-            var pinCode = form.elements['pinCode'].value;
-    
-            if (!/^[A-Za-z ]+$/.test(fullName)) {
-                alert('Please enter a valid full name.');
-                return false;
-            }
-    
-            if (!/^\d{10}$/.test(phone)) {
-                alert('Phone number must contain exactly 10 digits.');
-                return false;
-            }
-    
-            if (!/^\d{6}$/.test(pinCode)) {
-                alert('Pin code must contain exactly 6 digits.');
-                return false;
-            }
-    
-            return true;
-        }
-    </script>
-
-
-<!-- add adress -->
-    <script>
-        document.getElementById('addressForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
-            
-            const formData = new FormData(this);
-            const requestData = {};
-            
-            formData.forEach((value, key) => {
-                requestData[key] = value;
-            });
-    
-            try {
-                const response = await fetch('/addAddress', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestData)
-                });
-    
-                const data = await response.json();
-                console.log(data);
-                window.location.href = '/CheckOutPage';
-    
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        });
-    </script>
-
-
-
-<!--cod-->
 <script>
-async  function order(event) {
-    event.preventDefault(); 
-    const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked').value;
-    const paymentMethod = document.querySelector('input[name="selector"]:checked').value; 
+  document.addEventListener("DOMContentLoaded", function () {
+    var allCouponsBtn = document.getElementById("allCouponsBtn");
+    var couponModal = document.getElementById("couponModal");
+    var closeBtn = document.getElementsByClassName("close")[0];
 
-    console.log(selectedAddressId);
-    
-    var dataToSend = {
-        selectedAddressId: selectedAddressId,
-        paymentMethod: paymentMethod,
-    };
-
-    $.ajax({
-        url: '/placeOrder',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(dataToSend),
-        success: function(response) {
-            if (response.codSuccess == true) {
-                Swal.fire({
-                    title: "",
-                    text: "Order placed successfully",
-                    icon: "success",
-                    showConfirmButton: false,
-                    timer: 2000, // Set the delay in milliseconds
-                });
-                setTimeout(() => {
-                    window.location.href = '/order';
-                }, 2000);
-            } else if(response.success==false) {
-                razorpayPayment(response.razorpayOrder);
-            }
-        },
-        error: function(error) {
-            console.error('Fetch Error:', error);
-        }
+    allCouponsBtn.addEventListener("click", function () {
+      couponModal.style.display = "block";
     });
-}
 
+    closeBtn.addEventListener("click", function () {
+      couponModal.style.display = "none";
+    });
 
-
-
-
-
-
-// <!--razorpay -->
-
-
-//     event.preventDefault()
-//     var address = document.querySelector('input[name="selectedAddress"]:checked').value
-//     var paymentMethod = document.querySelector('input[name="selector"]:checked').value
-//     const totalAmount = document.getElementById('total').value
-//     $.ajax({
-//       type: 'POST',
-//       data: {
-//         selectedAddress: address,
-//         totalAmount: totalAmount,
-//         paymentMethod: paymentMethod,
-//         totalAmount: totalAmount
-//       },
-//       url: "/place-order",
-//       success: function(response) {
-//         if (response.codSuccess === true ) {
-//           Swal.fire({
-//             title: "",
-//             text: "Order placed successfully",
-//             icon: "success",
-//             showConfirmButton: false,
-//             timer: 2000, // Set the delay in milliseconds
-//           });
-//           setTimeout(() => {
-//             window.location.href = '/order-placed';
-//           }, 2000);
-//         } else {
-//           razorpayPayment(response.razorpayOrder);
-//         }
-//       }
-//     })
-
-
-
-
-    
-
-
-    function razorpayPayment(order) {
-        var options = {
-        "key": 'rzp_test_hJV1rnkg9P9IlZ', // Enter the Key ID generated from the Dashboard
-        "amount": "30000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-        "currency": "INR",
-        "name": "Acme Corp",
-        "description": "Test Transaction",
-        "image": "https://example.com/your_logo",
-        "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-        "handler": function (response){
-            // alert(response.razorpay_payment_id);
-            // alert(response.razorpay_order_id);
-            // alert(response.razorpay_signature)
-            verifyPayment(response, order)
-        },
-        "prefill": {
-          "name": "Gaurav Kumar",
-          "email": "gaurav.kumar@example.com",
-          "contact": "9000090000"
-        },
-        "notes": {
-          "address": "Razorpay Corporate Office"
-        },
-        "theme": {
-          "color": "#F9D9BE"
-        }
-
-    };
-    var rzp1 = new Razorpay(options);
-    rzp1.open();
-
-}
-
-    function verifyPayment(response, order) {
-      console.log('verifyPayment called');
-      $.ajax({
-        url: '/verifyPayment',
-        method: 'post',
-        data: {
-          response,
-          order,
-        },
-        success: (response) => {
-          if (response.status) {
-
-            console.log('statud vomr as tyr')
-            window.location.href = '/order';
-          }else{
-            console.log('its else case')
-          }
-        }
-      })
-    }
-
+    // Close the modal when clicking outside of it
+    window.addEventListener("click", function (event) {
+      if (event.target == couponModal) {
+        couponModal.style.display = "none";
+      }
+    });
+  });
 </script>
 
 
+<script>
+  const couponButton = document.getElementById("couponButton")
+
+  couponButton.addEventListener('click',function (){
+    const couponName = document.getElementById("couponName").value
+
+    fetch("/applyCoupon",{
+      method:"POST",
+      headers: {
+                'Content-Type': 'application/json' 
+            },
+      body:JSON.stringify({couponName:couponName})
+    })
+    .then(response=>response.json())
+    .then(data=>{
+      if(data.success==false){
+        Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Coupon',
+                    text: `${data.message}`
+                });
+      }else{
+        Swal.fire({
+                    icon: 'success',
+                    title: 'Valid Coupon',
+                    text: `${data.message}`
+                }); 
+                setTimeout(() => {
+                  window.location.reload()  
+					}, 1500);
+               }
+    })
+  })
+</script>
+  
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function validateForm() {
+    var form = document.getElementById("addressForm");
+    var fullName = form.elements["fullName"].value;
+    var phone = form.elements["phone"].value;
+    var pinCode = form.elements["pinCode"].value;
+
+    if (!/^[A-Za-z ]+$/.test(fullName)) {
+      alert("Please enter a valid full name.");
+      return false;
+    }
+
+    if (!/^\d{10}$/.test(phone)) {
+      alert("Phone number must contain exactly 10 digits.");
+      return false;
+    }
+
+    if (!/^\d{6}$/.test(pinCode)) {
+      alert("Pin code must contain exactly 6 digits.");
+      return false;
+    }
+
+    return true;
+  }
+</script>
+
+<!-- add adress -->
+<script>
+  document
+    .getElementById("addressForm")
+    .addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const formData = new FormData(this);
+      const requestData = {};
+
+      formData.forEach((value, key) => {
+        requestData[key] = value;
+      });
+
+      try {
+        const response = await fetch("/addAddress", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        });
+
+        const data = await response.json();
+        console.log(data);
+        window.location.href = "/CheckOutPage";
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    });
+</script>
+
+<!--payment method-->
+<script>
+  async function order(event) {
+    event.preventDefault();
+    const selectedAddressId = document.querySelector(
+      'input[name="selectedAddress"]:checked'
+    ).value;
+    const paymentMethod = document.querySelector(
+      'input[name="selector"]:checked'
+    ).value;
+
+    console.log(selectedAddressId);
+
+    var dataToSend = {
+      selectedAddressId: selectedAddressId,
+      paymentMethod: paymentMethod,
+    };
+
+    $.ajax({
+      url: "/placeOrder",
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(dataToSend),
+      success: function (response) {
+        if (response.codSuccess == true) {
+          Swal.fire({
+            title: "",
+            text: "Order placed successfully",
+            icon: "success",
+            showConfirmButton: false,
+            timer: 2000, // Set the delay in milliseconds
+          });
+          setTimeout(() => {
+            window.location.href = "/order";
+          }, 2000);
+        } else if (response.success == false) {
+          razorpayPayment(response.razorpayOrder);
+        }
+      },
+      error: function (error) {
+        console.error("Fetch Error:", error);
+      },
+    });
+  }
+
+  
+
+  function razorpayPayment(order) {
+    var options = {
+      key: "rzp_test_hJV1rnkg9P9IlZ", 
+      amount: "30000", 
+      currency: "INR",
+      name: "Acme Corp",
+      description: "Test Transaction",
+      image: "https://example.com/your_logo",
+      order_id: order.id, 
+      handler: function (response) {
+        // alert(response.razorpay_payment_id);
+        // alert(response.razorpay_order_id);
+        // alert(response.razorpay_signature)
+        verifyPayment(response, order);
+      },
+      prefill: {
+        name: "Gaurav Kumar",
+        email: "gaurav.kumar@example.com",
+        contact: "9000090000",
+      },
+      notes: {
+        address: "Razorpay Corporate Office",
+      },
+      theme: {
+        color: "#F9D9BE",
+      },
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+  }
+
+  function verifyPayment(response, order) {
+    console.log("verifyPayment called");
+    $.ajax({
+      url: "/verifyPayment",
+      method: "post",
+      data: {
+        response,
+        order,
+      },
+      success: (response) => {
+        if (response.status) {
+          console.log("statud vomr as tyr");
+          window.location.href = "/order";
+        } else {
+          console.log("its else case");
+        }
+      },
+    });
+  }
+</script>
+
+<!-- coupon management -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var addCouponBtn = document.getElementById("addCouponBtn");
+    var couponDiv = document.getElementById("couponDiv");
+
+    addCouponBtn.addEventListener("click", function (event) {
+      event.preventDefault(); // Prevent the default action of the link
+      couponDiv.style.display =
+        couponDiv.style.display === "none" ? "block" : "none";
+    });
+  });
+</script>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
-<%-include("../layouts/footer")    %>
+
+

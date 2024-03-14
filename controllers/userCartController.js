@@ -20,7 +20,7 @@ const loadCart = async (req, res) => {
       const cartDetails = await Cart.findOne({ userId: userData._id }).populate(
         { path: "products.productId", model: "product" }
       );
-      console.log("this is cart item : ", cartDetails);
+      //console.log("this is cart item : ", cartDetails);
 
       const user = await User.findOne({ _id: userData._id });
       let originalAmount = 0;
@@ -177,9 +177,9 @@ const submitQuantity = async (req, res) => {
 
     let proData = cartData.products.find((item) => item._id.toString() === id);
     const existproduct = await products.findOne({ _id: proData.productId });
-    console.log("ith cart data : ", cartData);
-    console.log("ith prodata : ", proData);
-    console.log("existproduct : ", existproduct);
+    // console.log("ith cart data : ", cartData);
+    // console.log("ith prodata : ", proData);
+    // console.log("existproduct : ", existproduct);
     if (!proData) {
       console.log("Product not found in cart");
       return res.status(404).send("Product not found in cart");
@@ -190,7 +190,7 @@ const submitQuantity = async (req, res) => {
 
     await cartData.save();
 
-    console.log("Cart updated successfully");
+    // console.log("Cart updated successfully");
 
     if (proData) {
       res.json({ success: true });

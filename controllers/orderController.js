@@ -37,6 +37,7 @@ const loadOrder = async (req, res) => {
 const placeOrder = async (req, res) => {
   try {
     console.log("hello bro sugalle ", req.body);
+    let {couponDiscount} = req.session
 
     const addressId = req.body.selectedAddressId;
     const paymentIntent = req.body.paymentMethod;
@@ -61,10 +62,12 @@ const placeOrder = async (req, res) => {
       });
     }
 
+    console.log(req.session.newAmountUsingCoupon);
+
     const order = new Order({
       products: cartData.products,
       orderId: orderId,
-      totalPrice: originalAmount,
+      totalPrice: originalAmount-couponDiscount,
       paymentIntent: req.body.paymentMethod,
       paymentStatus: "Pending",
       address: address,

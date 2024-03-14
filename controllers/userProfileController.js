@@ -9,6 +9,7 @@ const toast = require("toastr");
 const flash = require("connect-flash");
 const Cart = require("../models/cartModel");
 const Order = require("../models/orderModel");
+const Coupon = require("../models/couponModel") 
 
 const userProfileLoad = async (req, res) => {
   try {
@@ -19,7 +20,7 @@ const userProfileLoad = async (req, res) => {
       //console.log("userprofile user : ",user);
       res.render("./users/userProfile", { user }); // Pass the user data to your template
     } else {
-      console.log("please login....user not loged in ");
+      // console.log("please login....user not loged in ");
       res.render("./users/login");
     }
   } catch (err) {
@@ -175,6 +176,9 @@ const deleteAddress = async (req, res) => {
 const loadCheckOutPage = async (req, res) => {
   try {
     const user_id = req.session.user_id;
+    const Coupons = await Coupon.find({status:true})
+    const totalUsingCoupon = req.session.newAmountUsingCoupon
+    // console.log("coupooooooooooooooooon",Coupons);
 
     //console.log(" session user id" ,user_id);
 
@@ -201,7 +205,16 @@ const loadCheckOutPage = async (req, res) => {
         user,
         cartDetails,
         subTotal: originalAmount,
+        Coupons,
+        totalUsingCoupon:totalUsingCoupon
+      },(err,html)=>{
+        if(err){
+          console.log(ee);
+        }
+        delete req.session.newAmountUsingCoupon
+        res.status(500).send(html)
       });
+
     } else {
       console.log("please login....user not loged in ");
       res.render("./users/login");
@@ -259,9 +272,9 @@ const saveEditAddress = async (req, res) => {
     const userId = req.session.user_id
     const addressId = req.params.id;
     const updatedAddress = req.body;
-    console.log("userId : ",userId);
-    console.log("addressId : ",addressId);
-    console.log("updatedAddress : ",updatedAddress);
+    // console.log("userId : ",userId);
+    // console.log("addressId : ",addressId);
+    // console.log("updatedAddress : ",updatedAddress);
 
 
 

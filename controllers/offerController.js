@@ -16,14 +16,7 @@ const loadOfferPage = async (req, res) => {
 const saveOffer = async (req, res) => {
   try {
     console.log(req.body);
-    const {
-      addOffer,
-      startingDate,
-      expiryDate,
-      percentage,
-      is_listed,
-      description,
-    } = req.body;
+    const {addOffer,startingDate,expiryDate,percentage,is_listed,description} = req.body;
 
 
     
@@ -69,8 +62,22 @@ const viewOffer = async(req,res)=>{
 
 
 
+
+// Delete offer 
+const deleteOffer = async(req,res)=>{
+  try {
+    const id = req.query.id
+    const deleteItem = await Offer.deleteOne({_id: new mongoose.Types.ObjectId(id)})
+    res.redirect('/viewOffer')
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
 module.exports = {
   loadOfferPage,
   saveOffer,
-  viewOffer
+  viewOffer,
+  deleteOffer
 };

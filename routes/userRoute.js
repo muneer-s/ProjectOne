@@ -21,6 +21,7 @@ const userCartController = require("../controllers/userCartController")
 const userProfileController = require("../controllers/userProfileController")
 const orderController = require("../controllers/orderController")
 const wishlistController = require("../controllers/wishlistController")
+const userCouponController = require("../controllers/userCouponController")
 
 
 //user registration
@@ -119,7 +120,8 @@ user_route.get('/deleteWishlist',wishlistController.deleteProductFromWishlist)
 
 
 
-
+//coupon
+user_route.post('/applyCoupon',userCouponController.applyCoupon)
 
 
 

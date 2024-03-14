@@ -27,7 +27,7 @@
                             <th>Sl no</th>
                             <th scope="col">Code</th>
                             <th scope="col">Discount</th>
-                            <th scope="col">Max Price</th>
+                            <th scope="col">Min Price</th>
                             <th scope="col">Create Date</th>
                             <th scope="col">Exp Date</th>
                             <th scope="col">Status</th>
@@ -42,7 +42,7 @@
                         <tr>
                             <td><%-i+1 %></td>
                             <td><b><%-coupon[i].Code %></b></td>
-                            <td><%-coupon[i].Discount  %> %</td>
+                            <td><%-coupon[i].Discount  %></td>
                             <td><%-coupon[i].MaxPrice %></td>
                             <td><%-coupon[i].createdDate.toLocaleDateString() %></td>    
                             <td><%-coupon[i].expiryDate.toLocaleDateString() %></td> 

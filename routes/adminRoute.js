@@ -75,6 +75,8 @@ admin_route.get('/deleteCoupon',adminCouponController.deleteCoupon)
 admin_route.get('/addoffer',isAdminLogin,adminOfferController.loadOfferPage)
 admin_route.post('/saveOffer',adminOfferController.saveOffer)
 admin_route.get('/viewOffer',isAdminLogin,adminOfferController.viewOffer)
+admin_route.get('/deleteOffer',adminOfferController.deleteOffer)
+
 
 
 

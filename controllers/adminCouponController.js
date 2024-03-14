@@ -23,7 +23,7 @@ const saveCoupon = async (req, res) => {
     console.log("exist : ",existingCoupon);
 
     if (existingCoupon) {
-      req.flash("error", "Category with the same name already exists.");
+      req.flash("error", "Coupon with the same name already exists.");
       return res.redirect("/Coupon");    
     }
 
