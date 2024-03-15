@@ -10,17 +10,26 @@ const flash = require("connect-flash");
 const Cart = require("../models/cartModel");
 const Order = require("../models/orderModel");
 const Coupon = require("../models/couponModel") 
+const Wallet = require("../models/walletModel");
 
 const userProfileLoad = async (req, res) => {
   try {
     const user_id = req.session.user_id;
+    console.log(user_id);
+    
 
     if (user_id) {
       const user = await User.findOne({ _id: user_id });
+      const wallet = await Wallet.findOne({user:user_id})
+      if (!wallet) {
+        wallet = await Wallet.create({ user: user_id });
+    }
+
+
+    // console.log("this is wallte: ",Wallet);
       //console.log("userprofile user : ",user);
-      res.render("./users/userProfile", { user }); // Pass the user data to your template
+      res.render("./users/userProfile", { user,wallet }); 
     } else {
-      // console.log("please login....user not loged in ");
       res.render("./users/login");
     }
   } catch (err) {
@@ -198,6 +207,10 @@ const loadCheckOutPage = async (req, res) => {
         originalAmount += cartItem.total;
       });
     }
+    let wallet = await Wallet.findOne({ user: user_id });
+    if (!wallet) {
+        wallet = await Wallet.create({ user: user_id });
+    }
 
     if (cartDetails) {
       //console.log(originalAmount);
@@ -208,10 +221,11 @@ const loadCheckOutPage = async (req, res) => {
         subTotal: originalAmount,
         Coupons,
         totalUsingCoupon:totalUsingCoupon,
-        couponCode
+        couponCode,
+        wallet
       },(err,html)=>{
         if(err){
-          console.log(ee);
+          console.log(err);
         }
         delete req.session.newAmountUsingCoupon
         res.status(500).send(html)

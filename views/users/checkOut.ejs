@@ -176,37 +176,61 @@
               <label for="f-option6">Payment method</label>
 
               <div class="radion_btn">
-                <input
-                  type="radio"
-                  id="f-option6-cash"
-                  name="selector"
-                  value="Cash on delivery"
-                />
-                <label for="f-option6-cash">Cash on Delivery</label>
-                <div class="check"></div>
-              </div>
-              <div class="radion_btn">
-                <input
-                  type="radio"
-                  id="f-option6-razorpay"
-                  name="selector"
-                  value="RazorPay"
-                />
+                <input type="radio" id="f-option6-razorpay" name="selector" value="RazorPay" />
                 <label for="f-option6-razorpay">RazorPay</label>
                 <div class="check"></div>
               </div>
+
+              <% if (wallet.balance>=subTotal) { %>
+
+              <div class="radion_btn">
+                <input type="radio" id="f-option6-wallet"  name="selector"  value="Wallet"  />
+                <label for="f-option6-wallet">Wallet<span style="font-weight: lighter;">(Balance: ₹<%= wallet.balance %>)</span></label>
+                <div class="check"></div>
+              </div>
+              <% } else { %>
+
+                <div class="radion_btn">
+                  <input disabled type="radio" id="f-option6-wallet"  name="selector"  value="Wallet"  />
+                  <label for="f-option6-wallet">Wallet<span style="font-weight: lighter;">(Balance: ₹<%= wallet.balance %>)</span></label>
+                  <p style="font-size: small;">Not enough balance</p>
+                  <div class="check"></div>
+                </div>
+
+                <% } %>
+
+
+
+
+
+
+
+
+
+
+              <div class="radion_btn">
+                <input  type="radio"  id="f-option6-cash"  name="selector"  value="Cash on delivery"  />
+                <label for="f-option6-cash">Cash on Delivery</label>
+                <div class="check"></div>
+              </div>
+
+
+
+              
             </div>
 
 
             <ul class="list list_2">
               <% if(typeof totalUsingCoupon !== "undefined"){ %>
                 <li>
-                  <a>Subtotal <span>₹ <%=totalUsingCoupon %></span></a>
+                  <a >Subtotal <span>₹ <%=totalUsingCoupon %></span></a>
+                  <input id="subTotal" type="hidden" value=" <%= totalUsingCoupon %>" >
                 </li>
               
               <% }else{ %>
                 <li>
-                  <a>Subtotal <span>₹ <%=subTotal %></span></a>
+                  <a name="subTotal">Subtotal <span>₹ <%=subTotal %></span></a>
+                  <input id="subTotal" type="hidden" value=" <%=subTotal %>">
                 </li>
                 <% } %>
             </ul>
@@ -232,13 +256,7 @@
                 <% } %>
               </div>
             <div class="">
-              <a
-                class="primary-btn mt-2"
-                id="proceed-btn"
-                onclick="order(event)"
-                href="#"
-                >Proceed</a
-              >
+              <a class="primary-btn mt-2" id="proceed-btn" onclick="order(event)" href="#">Proceed</a>
             </div>
 
             <!-- <a class="primary-btn" id="razorpay-btn" onclick="online(event)" style="display: none;" href="#">Pay with RazorPay</a> -->
@@ -346,23 +364,12 @@
     })
   })
 </script>
-  
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+<!--address form validate-->
 
 <script>
   function validateForm() {
@@ -390,7 +397,10 @@
   }
 </script>
 
-<!-- add adress -->
+
+
+
+<!-- add address -->
 <script>
   document
     .getElementById("addressForm")
@@ -422,22 +432,25 @@
     });
 </script>
 
+
+
+
 <!--payment method-->
 <script>
   async function order(event) {
     event.preventDefault();
-    const selectedAddressId = document.querySelector(
-      'input[name="selectedAddress"]:checked'
-    ).value;
-    const paymentMethod = document.querySelector(
-      'input[name="selector"]:checked'
-    ).value;
-
+    const selectedAddressId = document.querySelector(  'input[name="selectedAddress"]:checked').value;
+    const paymentMethod = document.querySelector('input[name="selector"]:checked').value;
+    // const totalAmount = document.querySelector('input[name="subTotal"]:checked').value
+    const totalAmount = document.getElementById('subTotal').value
     console.log(selectedAddressId);
+    console.log(paymentMethod);
+    console.log(totalAmount);
 
     var dataToSend = {
       selectedAddressId: selectedAddressId,
       paymentMethod: paymentMethod,
+      totalAmount: totalAmount
     };
 
     $.ajax({
@@ -446,7 +459,7 @@
       contentType: "application/json",
       data: JSON.stringify(dataToSend),
       success: function (response) {
-        if (response.codSuccess == true) {
+        if (response.codSuccess == true || response.walletSuccess === true) {
           Swal.fire({
             title: "",
             text: "Order placed successfully",

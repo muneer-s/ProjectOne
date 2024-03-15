@@ -55,7 +55,7 @@ user_route.get('/productPage',userController.loadProductPage);
 user_route.get('/singleProductPage/:id',userController.loadSingleProductPage);
 // filter
 user_route.get('/filter',userController.filter)
-
+user_route.get('/search',userController.search)
 
 
 

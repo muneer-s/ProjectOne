@@ -60,6 +60,10 @@
 						</div>
 						<!-- Other filter options -->
 					</div>
+					<div>
+						<input type="text" id="search_Input" placeholder="Search by Name" class="form-control bg-white" onkeyup="searchProductName()" />
+			
+					</div>
 					<div class="sorting mr-auto">
 						
 					</div>
@@ -146,3 +150,14 @@
 
     
 <%-include("../layouts/footer")    %>
+
+<script>
+	function searchProductName() {
+	 const searchInput = document.getElementById('search_Input').value;
+	 if (searchInput.length > 2) {
+		window.location.href = `/search?query=${encodeURIComponent(searchInput)}`;
+	 }
+	}
+	</script>
+	
+

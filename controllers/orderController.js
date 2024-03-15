@@ -10,14 +10,15 @@ const Order = require("../models/orderModel");
 const Razorpay = require("razorpay");
 const { Promise } = require("mongoose");
 const { success } = require("toastr");
-const Coupon = require("../models/couponModel")
+const Coupon = require("../models/couponModel");
+const Wallet = require("../models/walletModel");
 
 const loadOrder = async (req, res) => {
   try {
     if (req.session.user_id) {
       console.log("orderkk vannuuuuuuuuuuuuuuuuuuuuuuuu");
-      delete req.session.couponCode
-      delete req.session.couponDiscount
+      delete req.session.couponCode;
+      delete req.session.couponDiscount;
 
       const userId = req.session.user_id;
       console.log(userId);
@@ -39,10 +40,9 @@ const loadOrder = async (req, res) => {
 //placeorder
 const placeOrder = async (req, res) => {
   try {
-    console.log("hello bro sugalle ", req.body);
-    let {couponDiscount} = req.session
-    let couponCode = req.session.couponCode
-    
+    console.log("place order req.body ", req.body);
+    let { couponDiscount } = req.session;
+    let couponCode = req.session.couponCode;
 
     const addressId = req.body.selectedAddressId;
     const paymentIntent = req.body.paymentMethod;
@@ -72,27 +72,22 @@ const placeOrder = async (req, res) => {
     const order = new Order({
       products: cartData.products,
       orderId: orderId,
-      totalPrice: originalAmount-(couponDiscount||0),
+      totalPrice: originalAmount - (couponDiscount || 0),
       paymentIntent: req.body.paymentMethod,
       paymentStatus: "Pending",
       address: address,
       userId: userId,
-    
     });
 
-    if(couponCode){
-
+    if (couponCode) {
       await Coupon.findOneAndUpdate(
-          { Code: couponCode },
-          { $push: { userUsed: {user_id:userId }} }
-        );
-      }
-    
-  
-    
+        { Code: couponCode },
+        { $push: { userUsed: { user_id: userId } } }
+      );
+    }
 
     await order.save();
-    
+
     const paymentMethod = req.body.paymentMethod;
 
     if (paymentMethod == "Cash on delivery") {
@@ -120,6 +115,26 @@ const placeOrder = async (req, res) => {
       await cartData.save();
       res.json({ codSuccess: true });
       //res.status(200).json({ data: "data" });
+    } else if (paymentMethod == "Wallet") {
+
+      console.log("wallet aanu ttooooooooo");
+      const totalAmount = req.body.totalAmount;
+      
+      const wallet = await Wallet.findOne({ user: req.session.user_id });
+      wallet.balance -= totalAmount;
+      wallet.transactions.push({
+        orderId: order._id,
+        type: "Debit",
+        amount: totalAmount,
+        date: new Date(),
+      });
+      await wallet.save();
+      await Order.updateOne(
+        { _id: order._id },
+        { $set: { paymentStatus: "order placed" } }
+      );
+      res.json({ walletSuccess: true });
+
     } else {
       console.log("iam raz");
 
@@ -148,7 +163,6 @@ const placeOrder = async (req, res) => {
 
 const orderDetailsPage = async (req, res) => {
   try {
-    
     const userid = req.session.user_id;
     const userData = await User.findOne({ _id: userid });
     const user = await User.findOne({ _id: userData._id });
@@ -166,27 +180,36 @@ const orderDetailsPage = async (req, res) => {
   }
 };
 
-
-
-
-
 const userupdatestatus = async (req, res) => {
-  
-
   try {
     const orderId = req.params.orderId;
-  const { status } = req.body;
-  console.log("user updated order id", orderId);
-  console.log(("user updated status", status));
+    const { status } = req.body;
+    console.log("user updated order id", orderId);
+    console.log(("user updated status", status));
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
+    let wallet = await Wallet.findOne({ user: order.userId });
+
+    if (!wallet) {
+      wallet = await Wallet.create({ user: order.userId });
+    }
+    // Add a refund transaction to the wallet
+    wallet.transactions.push({
+      orderId: orderId,
+      type: "Credit",
+      amount: order.totalPrice,
+    });
+    // Update the wallet balance
+    wallet.balance += order.totalPrice;
+    await wallet.save();
+
     order.orderStatus = status;
     await order.save();
-    console.log("user updated order",order);
-    
+    console.log("user updated order", order);
+
     // Update product quantities
     for (const item of order.products) {
       const product = await products.findById(item.productId);
@@ -208,8 +231,6 @@ var instance = new Razorpay({
   key_id: process.env.key_id,
   key_secret: process.env.key_secret,
 });
-
-
 
 const verifyPayment = async (req, res) => {
   try {

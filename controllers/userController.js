@@ -307,11 +307,15 @@ const loadProductPage = async (req, res) => {
     const skip = (page - 1) * limit; // Calculate how many items to skip
     const categoryFilter = req.query.category;
     const sortOption = req.query.sort; 
+    const searchQuery = req.query.query;
 
     const userData = await User.findOne({ _id: user_id });
     let query = { status: true };
     if (categoryFilter) {
       query.category = categoryFilter;
+    }
+    if (searchQuery) {
+      query.name = { $regex: searchQuery, $options: 'i' }; // Case-insensitive search
     }
 
     let sortQuery = {};
@@ -389,6 +393,18 @@ const filter = async (req, res) => {
   console.log(category);
 };
 
+const search = async(req,res)=>{
+  try {
+    await loadProductPage(req, res);
+ } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+ }
+}
+
+
+
+
 module.exports = {
   loadRegister,
   insertUser,
@@ -402,4 +418,5 @@ module.exports = {
   loadSingleProductPage,
   resendOtp,
   filter,
+  search
 };
