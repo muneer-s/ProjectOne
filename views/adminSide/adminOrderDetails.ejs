@@ -27,7 +27,7 @@
 
                         
                     </select>
-                    <a id="save-button" class="btn btn-primary" href="#">Save</a>
+                    <a id="save-button" class="btn btn-primary" href="">Save</a>
                 </div>
             </div>
         </header>
@@ -157,7 +157,7 @@
     var orderId = orderIdElement.value;
 
 
-    fetch(`/updateOrderStatus/${orderId}`, {
+    fetch(`/adminUpdateOrderStatus/${orderId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

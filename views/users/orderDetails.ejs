@@ -77,7 +77,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.cancel-btn').forEach(button => {
             button.addEventListener('click', function () {
-                updateOrderStatus(this.closest('tr').querySelector('.orderIdInput').value, 'Cancelled');
+                updateOrderStatus(this.closest('tr').querySelector('.orderIdInput').value, 'Cancel');
             });
         });
 

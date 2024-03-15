@@ -12,6 +12,7 @@ const adminController = require("../controllers/adminController");
 const adminOrderController = require("../controllers/adminOrderController")
 const adminCouponController = require("../controllers/adminCouponController")
 const adminOfferController = require("../controllers/offerController")
+const adminSalesReportController = require("../controllers/adminSalesReport")
 
 
 
@@ -54,9 +55,9 @@ admin_route.post('/unblockUserStatus',adminController.unBlockuser);
 
  //order management
  admin_route.get('/orderList',isAdminLogin,adminOrderController.loadOrderList)
- admin_route.get('/orderDetails/:orderId',isAdminLogin,adminOrderController.loadOrderDetails)
+ admin_route.get('/adminOrderDetails/:orderId',isAdminLogin,adminOrderController.loadOrderDetails)
  //status change
- admin_route.post('/updateOrderStatus/:orderId',adminOrderController.updateOrderStatus)
+ admin_route.post('/adminUpdateOrderStatus/:orderId',adminOrderController.updateOrderStatus)
 
 
 
@@ -81,7 +82,8 @@ admin_route.get('/deleteOffer',adminOfferController.deleteOffer)
 
 
 
-
+//sales report
+admin_route.get('/SalesReport',adminSalesReportController.loadSalesReportPage)
 
 
 

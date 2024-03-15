@@ -100,14 +100,13 @@ const placeOrder = async (req, res) => {
         { _id: order._id },
         { $set: { paymentStatus: "order placed" } }
       );
-      console.log("ssssssssssssssssss");
+      // console.log("ssssssssssssssssss");
       if (cartData && cartData.products) {
         const cartItems = cartData.products;
-        console.log("cart item : ", cartItems);
 
         cartItems.map(async (cartItem) => {
           const product = await products.findById(cartItem.productId).exec();
-          console.log("ithanu ippathe product : ", product);
+          //console.log("ithanu ippathe product : ", product);
           if (product) {
             product.quantity -= cartItem.quantity;
             await product.save();
@@ -167,13 +166,18 @@ const orderDetailsPage = async (req, res) => {
   }
 };
 
+
+
+
+
 const userupdatestatus = async (req, res) => {
-  const orderId = req.params.orderId;
-  const { status } = req.body;
-  console.log("user updated 1;;;", orderId);
-  console.log(("status;;;", status));
+  
 
   try {
+    const orderId = req.params.orderId;
+  const { status } = req.body;
+  console.log("user updated order id", orderId);
+  console.log(("user updated status", status));
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
@@ -181,6 +185,17 @@ const userupdatestatus = async (req, res) => {
 
     order.orderStatus = status;
     await order.save();
+    console.log("user updated order",order);
+    
+    // Update product quantities
+    for (const item of order.products) {
+      const product = await products.findById(item.productId);
+      if (product) {
+        // Update product quantity
+        product.quantity += item.quantity;
+        await product.save();
+      }
+    }
 
     res.status(200).json({ message: "Order status updated successfully" });
   } catch (error) {

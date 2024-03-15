@@ -5,7 +5,7 @@
 <section class="content-main">
     <div class="content-header">
         <div>
-            <h2 class="content-title card-title">Order List</h2>
+            <h2 class="content-title card-title">Sales Report</h2>
             <p></p>
         </div>
         <div>
@@ -16,17 +16,28 @@
         <header class="card-header">
             <div class="row gx-3">
                 <div class="col-lg-4 col-md-6 me-auto">
-                    <input type="text" placeholder="Search..." class="form-control" id="filterInput" onkeyup="filterOrders()"/>
+                    <input type="text" placeholder="Search by Name..." class="form-control" id="filterInput" onkeyup="filterOrders()"/>
                 </div>
-                <!-- <div class="col-lg-2 col-6 col-md-3">
-                    <p>Status</p>
+
+               
+                <div class="col-lg-4 col-md-6 me-auto" >
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" class="form-control">
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" class="form-control">
+                </div>
+
+
+
+                <div class="col-lg-2 col-6 col-md-3">
+                    <p>Filter By</p>
                     <select class="form-select">
-                        <option>Pending</option>
-                        <option>Active</option>
-                        <option>Disabled</option>
-                        <option>Show all</option>
+                        <option>all</option>
+                        <option>Daily</option>
+                        <option>Weekly</option>
+                        <option>Monthly</option>
                     </select>
-                </div> -->
+                </div>
                 
             </div>
         </header>
@@ -38,33 +49,36 @@
                         <tr>
                             <th>#ID</th>
                             <th scope="col">Name</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">Product Name</th>
+                            <th scope="col">Quantity</th>
                             <th scope="col">Total</th>
                             <th scope="col">Status</th>
                             <th scope="col">Date</th>
-                            <th scope="col" class="text-end">Action</th>
+                            <!-- <th scope="col" class="text-end">Action</th> -->
                         </tr>
                     </thead>
                     <tbody>
                         
                         <% orders.reverse().forEach((item)=>{ %>
+                            <% item.products.forEach(product => { %>
+                             
+                            
                         <tr>
                             <td><%= item.orderId %></td>
                             <td><b><%= item.userId.name %></b></td>
-                            <td><%= item.totalPrice %></td>
+                            <td><b><%= item.address.address %></b></td>
+                            <td><b><%= product.productId.name %></b></td>
+                            <td><b><%= product.quantity %></b></td>
+                            <td><%= product.total %></td>
                             <td><span class="badge rounded-pill alert-success"><%= item.orderStatus %></span></td>
                             <td><%= item.createdAt.toLocaleDateString() %></td>
-                            <td class="text-end">
-                                <a href="/adminOrderDetails/<%= item._id %>" class="btn btn-md rounded font-sm">Detail</a>
-                                <!-- <div class="dropdown">
-                                    <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="#">View detail</a>
-                                        <a class="dropdown-item" href="#">Edit info</a>
-                                        <a class="dropdown-item text-danger" href="#">Delete</a>
-                                    </div>
-                                </div> -->
-                            </td>
+                            <!-- <td class="text-end">
+                                <a href="/orderDetails/<%= item._id %>" class="btn btn-md rounded font-sm">Detail</a>
+                                
+                            </td> -->
                         </tr>
+                        <% }) %>
                         <% }) %>
                         
                         
@@ -98,7 +112,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
     const tableRows = document.querySelectorAll(".table tbody tr");
-    const itemsPerPage = 5; // Number of items per page
+    const itemsPerPage = 10; // Number of items per page
     const totalPages = Math.ceil(tableRows.length / itemsPerPage);
 
     function showPage(page) {
@@ -190,7 +204,41 @@
 </script>
 
 
+<!--filter daily ,weekly,monthly-->
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const filterSelect = document.querySelector(".form-select");
+        filterSelect.addEventListener("change", function () {
+            const filter = this.value.toLowerCase();
+            const url = new URL(window.location.href);
+            url.searchParams.set("filter", filter);
+            window.location.href = url.toString();
+        });
+    });
+    </script>
+
+    <!--strt date edn date -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const startDateInput = document.getElementById("startDate");
+    const endDateInput = document.getElementById("endDate");
+
+    function updateURLWithDateRange() {
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+        const url = new URL(window.location.href);
+        url.searchParams.set("startDate", startDate);
+        url.searchParams.set("endDate", endDate);
+        window.location.href = url.toString();
+    }
+
+    startDateInput.addEventListener("change", updateURLWithDateRange);
+    endDateInput.addEventListener("change", updateURLWithDateRange);
+});
+
+    </script>
+    
 
 
 
