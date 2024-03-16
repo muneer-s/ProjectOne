@@ -224,13 +224,13 @@
               <% if(typeof totalUsingCoupon !== "undefined"){ %>
                 <li>
                   <a >Subtotal <span>₹ <%=totalUsingCoupon %></span></a>
-                  <input id="subTotal" type="hidden" value=" <%= totalUsingCoupon %>" >
+                  <input class="subTotal" type="hidden" value=" <%= totalUsingCoupon %>" >
                 </li>
               
               <% }else{ %>
                 <li>
                   <a name="subTotal">Subtotal <span>₹ <%=subTotal %></span></a>
-                  <input id="subTotal" type="hidden" value=" <%=subTotal %>">
+                  <input class="subTotal" type="hidden" value=" <%=subTotal %>">
                 </li>
                 <% } %>
             </ul>
@@ -442,7 +442,7 @@
     const selectedAddressId = document.querySelector(  'input[name="selectedAddress"]:checked').value;
     const paymentMethod = document.querySelector('input[name="selector"]:checked').value;
     // const totalAmount = document.querySelector('input[name="subTotal"]:checked').value
-    const totalAmount = document.getElementById('subTotal').value
+    const totalAmount = document.getElementsByClassName('subTotal')[0].value;
     console.log(selectedAddressId);
     console.log(paymentMethod);
     console.log(totalAmount);

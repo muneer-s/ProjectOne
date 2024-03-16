@@ -22,10 +22,18 @@ const loadOrder = async (req, res) => {
 
       const userId = req.session.user_id;
       console.log(userId);
+
       const user = await User.findOne({ _id: userId });
-      req.session.orderData = null;
+      console.log("user ne kitti ---",user);
+
+      console.log("orderData kitti ===",req.session.oderData);
       const orderId = req.session.oderData._id;
       console.log("order id is -  -", orderid);
+
+
+      req.session.oderData = null;
+
+
       const orders = await Order.findOne({ _id: orderId }).populate(
         "products.productId"
       );
@@ -37,6 +45,9 @@ const loadOrder = async (req, res) => {
     console.log(error.message);
   }
 };
+
+
+
 //placeorder
 const placeOrder = async (req, res) => {
   try {
@@ -133,10 +144,11 @@ const placeOrder = async (req, res) => {
         { _id: order._id },
         { $set: { paymentStatus: "order placed" } }
       );
+      req.session.oderData = order;
       res.json({ walletSuccess: true });
 
     } else {
-      console.log("iam raz");
+      console.log("iam razor");
 
       var options = {
         amount: originalAmount * 100, // amount in the smallest currency unit
