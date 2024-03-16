@@ -38,6 +38,8 @@
                             <th scope="col">Action</th>
                             <th scope="col"></th>
                             <th scope="col"></th>
+                            <th scope="col">Offer</th>
+
 
                         </tr>
                     </thead>
@@ -76,9 +78,26 @@
                                 <td>
                                         <a href="/loadEditProduct?id=<%= proDetails[i]._id %>" class="btn btn-primary btn-sm">Edit</a>
                                 </td>
+
+
+                                <% if(proDetails[i].offer){%>
+                                    <td>
+                                        <a href="" class="btn btn-success btn-m">Offer Added</a>
+                                    </td>
+                                    <% }else{ %>
                                 <td>
                                     <a href="/loadOfferForProducts?id=<%= proDetails[i]._id %>" class="btn btn-info btn-m">Add Offers</a>
                                 </td>
+                                <% } %>
+
+
+
+
+                                <% if(proDetails[i].offer){%>
+                                <td><%= proDetails[i].offer.offerName %></td>
+                                <% }else{ %>
+                                    <td>No Offers</td>
+                                    <% } %>
                             </tr>
                         <% } %>
                     </tbody>

@@ -14,7 +14,8 @@ const Offer = require("../models/offerModel")
 //load productList
 const loadProductList = async (req, res) => {
   try {
-    const proDetails = await product.find().populate("category");
+    const proDetails = await product.find().populate("category").populate("offer")
+    console.log(proDetails);
     res.render("./adminSide/productList", { proDetails });
   } catch (error) {
     console.log(error.message);
