@@ -40,7 +40,8 @@ admin_route.get('/loadProductList',isAdminLogin,adminController.loadProductList)
 admin_route.get('/loadEditProduct',isAdminLogin,adminController.loadEditProduct);
 admin_route.post('/postEditProduct',upload.array('product_images',4),adminController.postEditProduct);
 admin_route.post('/deleteProductImage',adminController.deleteProductImage)
-
+admin_route.get('/loadOfferForProducts',adminController.loadOfferForProducts)
+admin_route.get('/applyOffer',adminController.applyOffer)
 
 
 //updating the product status

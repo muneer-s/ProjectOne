@@ -43,6 +43,7 @@ const applyCoupon = async (req, res) => {
     let newAmountUsingCoupon = originalAmount - DiscountAmount
     //console.log(newAmountUsingCoupon);
     req.session.newAmountUsingCoupon = newAmountUsingCoupon
+    
 
 
 

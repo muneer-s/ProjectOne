@@ -4,7 +4,7 @@ const session = require("express-session");
 const Cart = require("../models/cartModel");
 const mongoose = require("mongoose");
 const Offer = require("../models/offerModel");
-
+//admin load offer list
 const loadOfferPage = async (req, res) => {
   try {
     res.render("./adminSide/addOffer");
@@ -13,13 +13,19 @@ const loadOfferPage = async (req, res) => {
   }
 };
 
+//save offer
 const saveOffer = async (req, res) => {
   try {
     console.log(req.body);
-    const {addOffer,startingDate,expiryDate,percentage,is_listed,description} = req.body;
+    const {
+      addOffer,
+      startingDate,
+      expiryDate,
+      percentage,
+      is_listed,
+      description,
+    } = req.body;
 
-
-    
     const isListed = req.body.is_listed === "on" ? true : false;
 
     const existingOffer = await Offer.findOne({ offerName: addOffer });
@@ -46,38 +52,62 @@ const saveOffer = async (req, res) => {
   }
 };
 
-
-const viewOffer = async(req,res)=>{
+const viewOffer = async (req, res) => {
   try {
     const currentDate = Date.now();
-        await Offer.updateMany({ expiryDate: { $gte: currentDate } }, { $set: { is_listed: true } })
-        await Offer.updateMany({ expiryDate: { $lte: currentDate } }, { $set: { is_listed: false } })
-    const offer = await Offer.find({})
-    res.render('./adminSide/viewOffer',{offer})
-    
+    await Offer.updateMany(
+      { expiryDate: { $gte: currentDate } },
+      { $set: { is_listed: true } }
+    );
+    await Offer.updateMany(
+      { expiryDate: { $lte: currentDate } },
+      { $set: { is_listed: false } }
+    );
+    const offer = await Offer.find({});
+    res.render("./adminSide/viewOffer", { offer });
   } catch (error) {
     console.log(error.message);
   }
-}
+};
 
-
-
-
-// Delete offer 
-const deleteOffer = async(req,res)=>{
+// Delete offer
+const deleteOffer = async (req, res) => {
   try {
-    const id = req.query.id
-    const deleteItem = await Offer.deleteOne({_id: new mongoose.Types.ObjectId(id)})
-    res.redirect('/viewOffer')
+    const id = req.query.id;
+    const deleteItem = await Offer.deleteOne({
+      _id: new mongoose.Types.ObjectId(id),
+    });
+    res.redirect("/viewOffer");
   } catch (error) {
     console.log(error);
   }
-}
+};
+
+//load offer page for adding to product
+const loadOfferpageForAdding = async (req, res) => {
+  try {
+
+    const productId = req.query.id
+    const offer = await Offer.find({});
+
+    res.render("./adminSide/addOfferforProduct", { offer,productId });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+ 
+
+
+
+
 
 
 module.exports = {
   loadOfferPage,
   saveOffer,
   viewOffer,
-  deleteOffer
+  deleteOffer,
+  loadOfferpageForAdding,
+  
 };

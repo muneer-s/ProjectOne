@@ -37,6 +37,8 @@
                             <th scope="col">Quantity</th>
                             <th scope="col">Action</th>
                             <th scope="col"></th>
+                            <th scope="col"></th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -73,6 +75,9 @@
                                 </td>
                                 <td>
                                         <a href="/loadEditProduct?id=<%= proDetails[i]._id %>" class="btn btn-primary btn-sm">Edit</a>
+                                </td>
+                                <td>
+                                    <a href="/loadOfferForProducts?id=<%= proDetails[i]._id %>" class="btn btn-info btn-m">Add Offers</a>
                                 </td>
                             </tr>
                         <% } %>

@@ -7,6 +7,7 @@ const categories = require("../models/categories");
 const session = require("express-session");
 const flash = require("connect-flash");
 // const { default: products } = require("razorpay/dist/types/products");
+const Offer = require("../models/offerModel")
 
 
 
@@ -424,6 +425,52 @@ const deleteProductImage = async (req, res) => {
 
 
 
+const loadOfferForProducts  = async (req,res)=>{
+  try {
+    const productId = req.query.id
+    const offer = await Offer.find({})
+
+    res.render("./adminSide/addOfferforProduct", { productId,offer });
+
+    
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
+//apply offer
+
+const applyOffer = async(req,res)=>{
+  try {
+    console.log("8768587568756876587568765786786768767");
+    const offerId = req.query.offerId;
+    const productId = req.query.productId;
+
+
+    const Product = await product.findById(productId);
+
+    if (!Product) {
+      return res.status(404).send('Product not found');
+    }
+
+    Product.offer = offerId;
+
+    await Product.save();
+
+    res.redirect('/loadOfferForProducts');
+ } catch (error) {
+    console.error('Error applying offer:', error.message);
+    res.status(500).send('An error occurred while applying the offer');
+ }
+
+
+}
+
+
+
+
+
 
 module.exports = {
   adminLoadHome,
@@ -445,4 +492,6 @@ module.exports = {
   deleteProductImage,
   updateProductStatus,
   Adminlogout,
+  applyOffer,
+  loadOfferForProducts
 };

@@ -55,6 +55,8 @@ const placeOrder = async (req, res) => {
     let { couponDiscount } = req.session;
     let couponCode = req.session.couponCode;
 
+    const totalWithCoupon = req.session.newAmountUsingCoupon
+
     const addressId = req.body.selectedAddressId;
     const paymentIntent = req.body.paymentMethod;
     const userId = req.session.user_id;
@@ -77,6 +79,7 @@ const placeOrder = async (req, res) => {
         originalAmount = originalAmount + cartItem.total;
       });
     }
+
 
     //console.log(req.session.newAmountUsingCoupon);
 
@@ -129,7 +132,7 @@ const placeOrder = async (req, res) => {
     } else if (paymentMethod == "Wallet") {
 
       console.log("wallet aanu ttooooooooo");
-      const totalAmount = req.body.totalAmount;
+      const totalAmount = req.body.totalAmount
       
       const wallet = await Wallet.findOne({ user: req.session.user_id });
       wallet.balance -= totalAmount;
@@ -145,13 +148,17 @@ const placeOrder = async (req, res) => {
         { $set: { paymentStatus: "order placed" } }
       );
       req.session.oderData = order;
+
+
+      cartData.products = [];
+      await cartData.save();
       res.json({ walletSuccess: true });
 
     } else {
       console.log("iam razor");
 
       var options = {
-        amount: originalAmount * 100, // amount in the smallest currency unit
+        amount: (originalAmount - (couponDiscount || 0)) * 100, // amount in the smallest currency unit
         currency: "INR",
         receipt: order._id,
       };

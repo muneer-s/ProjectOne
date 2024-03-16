@@ -35,7 +35,11 @@ const mongoose = require("mongoose");
     status:{
         type:Boolean,
         default:true
-    }
+    },
+    offer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Offer',
+      },
 
 });
 
