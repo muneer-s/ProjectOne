@@ -35,10 +35,12 @@
                             <th scope="col">Price</th>
                             <th scope="col">Status</th>
                             <th scope="col">Quantity</th>
+                            <th scope="col">Offer</th>
                             <th scope="col">Action</th>
                             <th scope="col"></th>
-                            <th scope="col"></th>
-                            <th scope="col">Offer</th>
+                            <th scope="col">Offer Action</th>
+                            <th scope="col">Remove Offer</th>
+                            
 
 
                         </tr>
@@ -65,6 +67,11 @@
                                 <td><%= proDetails[i].status ? 'Active' : 'Inactive' %></td>
                                  
                                 <td><%= proDetails[i].quantity %></td>
+                                <% if(proDetails[i].offer){%>
+                                    <td><%= proDetails[i].offer.offerName %></td>
+                                    <% }else{ %>
+                                        <td style="color: red;">No Offers</td>
+                                        <% } %>
                                 
                                 <td>
                                     <form method="post" action="/admin/changeProductStatus/<%= proDetails[i]._id %>" style="display: inline-block;">
@@ -82,22 +89,25 @@
 
                                 <% if(proDetails[i].offer){%>
                                     <td>
-                                        <a href="" class="btn btn-success btn-m">Offer Added</a>
+                                        <a href="" class="btn btn-success btn-sm">Offer Added</a>
                                     </td>
                                     <% }else{ %>
                                 <td>
-                                    <a href="/loadOfferForProducts?id=<%= proDetails[i]._id %>" class="btn btn-info btn-m">Add Offers</a>
+                                    <a href="/loadOfferForProducts?id=<%= proDetails[i]._id %>" class="btn btn-info btn-sm">Add Offers</a>
                                 </td>
                                 <% } %>
 
-
-
-
-                                <% if(proDetails[i].offer){%>
-                                <td><%= proDetails[i].offer.offerName %></td>
+                                <% if(proDetails[i].offer){ %>
+                                <td><button class="btn btn-danger btn-sm delete-offer-btn" data-product-id="<%= proDetails[i]._id %>">Delete</button></td>
                                 <% }else{ %>
-                                    <td>No Offers</td>
+                                    <td><button class="btn btn-light btn-sm">No Offer</button></td>
                                     <% } %>
+
+
+
+
+
+                                
                             </tr>
                         <% } %>
                     </tbody>
@@ -237,5 +247,37 @@ $(document).on('click', '.btn-update-status', function () {
         generatePaginationButtons(); // Generate pagination buttons
     });
 </script>
+
+
+<!--delete offer from product list-->
+<script>
+    $(document).ready(function() {
+        $('.delete-offer-btn').click(function() {
+            var productId = $(this).data('product-id');
+            // Confirmation alert
+            if (confirm('Are you sure you want to delete this offer?')) {
+                $.ajax({
+                    url: '/deleteOfferFromProduct',
+                    type: 'DELETE',
+                    data: { productId: productId },
+                    success: function(response) {
+                        // Handle success, e.g., update the UI
+                        alert('Offer deleted successfully');
+                        window.location.reload()
+                        // Optionally, you can reload the page or update the UI here
+                    },
+                    error: function(error) {
+                        // Handle error
+                        alert('Error deleting offer');
+                    }
+                });
+            } else {
+                // User cancelled the operation
+                alert('Operation cancelled');
+            }
+        });
+    });
+    </script>
+
 
 <%-include("../adminLayout/adminFooter")    %>

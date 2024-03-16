@@ -84,7 +84,8 @@ admin_route.get('/applyOffer',adminController.applyOffer)
 // offer for category
 admin_route.get('/loadOfferForCategory',adminController.loadOfferForCategory)
 admin_route.get('/applyOfferForCategory',adminController.applyOfferForCategory)
-
+//delete offer from product
+admin_route.delete('/deleteOfferFromProduct',adminController.deleteOfferFromProduct)
 
 
 

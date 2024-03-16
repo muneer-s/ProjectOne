@@ -25,7 +25,7 @@ const loadProductList = async (req, res) => {
 //load category
 const loadCategory = async (req, res) => {
   try {
-    const catDetails = await Category.find();
+    const catDetails = await Category.find().populate("offer")
     res.render("./adminSide/addCategory", { catDetails });
   } catch (error) {
     console.log(error.message);
@@ -499,7 +499,23 @@ const applyOfferForCategory = async(req,res)=>{
 }
 
 
+//delete ofer from product
+const  deleteOfferFromProduct = async (req, res) => {
+  try {
+      const productId = req.body.productId;
+      const Product = await product.findById(productId);
+      if (!Product) {
+          return res.status(404).send({ message: 'Product not found' });
+      }
+      Product.offer = null; // Remove the offer
+      await Product.save();
+      res.send({ message: 'Offer deleted successfully' });
+      
 
+  } catch (error) {
+      res.status(500).send({ message: 'Error deleting offer', error: error });
+  }
+}
 
 
 
@@ -528,5 +544,6 @@ module.exports = {
   applyOffer,
   loadOfferForProducts,
   loadOfferForCategory,
-  applyOfferForCategory
+  applyOfferForCategory,
+  deleteOfferFromProduct
 };

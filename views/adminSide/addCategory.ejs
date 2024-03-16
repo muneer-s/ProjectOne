@@ -59,7 +59,15 @@
                                                 <td><%=category.Name%></td>
                                                 <td><%=category.Description%></td>
                                                 <td><%=category.is_list%></td>
-                                                <td>offer</td>
+                                                <% if(category.offer){%>
+                                                    <td><%= category.offer.offerName %></td>
+                                                    <% }else{ %>
+                                                        <td style="color: red;">No Offers</td>
+                                                        <% } %>
+
+
+
+
                                                 <td class="text-end">
                                                     <div class="dropdown">
                                                         <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
@@ -72,7 +80,11 @@
                                                     </div>
                                                     <!-- dropdown //end -->
                                                 </td>
+                                                <% if(category.offer){ %>
+                                                    <td><a href="" class="btn btn-success btn-sm">Offer Added</a></td>
+                                                    <% }else{ %>
                                                 <td><a href="/loadOfferForCategory?id=<%= category._id %>" class="btn btn-info btn-sm">Add Offer</a></td>
+                                                <% } %>
                                             </tr>
                                             <%})%>
                                            
