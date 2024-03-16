@@ -1,0 +1,127 @@
+
+<%-include("../adminLayout/adminHeader")    %>
+
+
+
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Category Offers</h2>
+        </div> 
+    </div>
+    <div class="card mb-4">
+        <header class="card-header">
+            <div class="row gx-3">
+                <!-- <div class="col-lg-4 col-md-6 me-auto">
+                    <input type="text" id="userNameSearchInput" placeholder="Search by Name..." class="form-control" />
+                </div> -->
+            </div>
+        </header>
+        <!-- card-header end// -->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Sl no</th>
+                            <th scope="col">Offer</th>
+                            <th scope="col">startingDate</th>
+                            <th scope="col">expiryDate</th>
+                            <th scope="col">percentage</th>
+                            <th scope="col">is_listed</th>
+                            <th scope="col">description</th>
+                            <th scope="col" >Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+  
+
+                    <% for(var i=0;i<offer.length;i++){ %>
+                        <tr>
+                            <td><%-i+1 %></td>
+                            <td><b><%-offer[i].offerName %></b></td>
+                            <td><%-offer[i].startingDate.toLocaleDateString()  %> </td>
+                            <td><%-offer[i].expiryDate.toLocaleDateString() %></td>
+                            <td><%-offer[i].percentage %></td>    
+                            <!-- <td><%-offer[i].is_listed %></td> -->
+                            <% if(offer[i].is_listed === true){ %>
+                                <td class="text-success">
+                                    <h5>Active</h5>
+                                </td>
+                                <% }else{ %>
+                                    <td>
+                                        <h5 class="text-danger">Expired</h5>
+                                    </td>
+
+                                    <% } %>
+
+
+
+
+                            <td><%-offer[i].description %></td>
+
+                           
+
+                            <td><a href="/applyOfferForCategory?offerId=<%-offer[i]._id %>&categoryId=<%= categoryId %>"><button class="btn btn-info ">Apply</button></a></td>
+
+                           
+                    </tr>
+   
+                        <% } %>
+      
+                    </tbody>
+                </table>
+                <!-- table-responsive.// -->
+            </div>
+        </div>
+        <!-- card-body end// -->
+    </div>
+    <!-- card end// -->
+    <div class="pagination-area mt-15 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul id="pagination" class="pagination justify-content-start">
+            </ul>
+        </nav>
+    </div>
+</section>
+
+
+<%-include("../adminLayout/adminFooter")    %>
+
+
+<script>
+    var itemsPerPage = 3; 
+    var currentPage = 1; 
+    var totalItems = '<%= offer.length %>'; 
+    var totalPages = Math.ceil(totalItems / itemsPerPage); 
+
+    function showPage(page) {
+        $('tbody tr').hide(); 
+        var startIndex = (page - 1) * itemsPerPage; 
+        var endIndex = Math.min(startIndex + itemsPerPage, totalItems); 
+        $('tbody tr').slice(startIndex, endIndex).show(); 
+    }
+
+    // Function to generate pagination buttons
+    function generatePaginationButtons() {
+        var paginationHtml = '';
+        for (var i = 1; i <= totalPages; i++) {
+            paginationHtml += '<li class="page-item' + (i === currentPage ? ' active' : '') + '"><a class="page-link" href="#" onclick="changePage(' + i + ')">' + i + '</a></li>';
+        }
+        $('#pagination').html(paginationHtml); 
+    }
+
+    // Function to handle page change
+    function changePage(page) {
+        currentPage = page; 
+        showPage(currentPage); // Show items 
+        generatePaginationButtons(); // Regenerate pagination buttons
+    }
+
+    $(document).ready(function () {
+        showPage(currentPage); 
+        generatePaginationButtons(); 
+    });
+</script>

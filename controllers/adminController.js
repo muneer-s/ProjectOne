@@ -424,41 +424,31 @@ const deleteProductImage = async (req, res) => {
 }
 
 
-
+//apply offer for product
 
 const loadOfferForProducts  = async (req,res)=>{
   try {
     const productId = req.query.id
     const offer = await Offer.find({})
-
-    res.render("./adminSide/addOfferforProduct", { productId,offer });
-
-    
+    res.render("./adminSide/addOfferforProduct", { productId,offer });    
   } catch (error) {
     console.log(error.message);
   }
 }
 
 
-//apply offer
-
+//apply offer for product
 const applyOffer = async(req,res)=>{
   try {
     console.log("8768587568756876587568765786786768767");
     const offerId = req.query.offerId;
     const productId = req.query.productId;
-
-
     const Product = await product.findById(productId);
-
     if (!Product) {
       return res.status(404).send('Product not found');
     }
-
     Product.offer = offerId;
-
     await Product.save();
-
     res.redirect('/loadOfferForProducts');
  } catch (error) {
     console.error('Error applying offer:', error.message);
@@ -467,6 +457,48 @@ const applyOffer = async(req,res)=>{
 
 
 }
+
+
+//for category
+const loadOfferForCategory  = async (req,res)=>{
+  try {
+    const categoryId = req.query.id
+    const offer = await Offer.find({})
+    res.render("./adminSide/addOfferforCategory", { categoryId,offer });
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
+
+const applyOfferForCategory = async(req,res)=>{
+  try {
+    console.log("apply offer for category controll ethi");
+    const offerId = req.query.offerId;
+    const categoryId = req.query.categoryId;
+    console.log("i am offer id - ",offerId);
+    console.log("i am category id :",categoryId);
+
+
+    const Category = await categories.findById(categoryId);
+    console.log("apo njn catum : ",Category);
+
+    if (!Category) {
+      return res.status(404).send('Category not found');
+    }
+    Category.offer = offerId;
+    await Category.save();
+    res.redirect('/loadOfferForCategory');
+ } catch (error) {
+    console.error('Error applying offer:', error.message);
+    res.status(500).send('An error occurred while applying the offer');
+ }
+
+
+}
+
+
 
 
 
@@ -494,5 +526,7 @@ module.exports = {
   updateProductStatus,
   Adminlogout,
   applyOffer,
-  loadOfferForProducts
+  loadOfferForProducts,
+  loadOfferForCategory,
+  applyOfferForCategory
 };

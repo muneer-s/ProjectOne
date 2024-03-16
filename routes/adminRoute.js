@@ -40,8 +40,7 @@ admin_route.get('/loadProductList',isAdminLogin,adminController.loadProductList)
 admin_route.get('/loadEditProduct',isAdminLogin,adminController.loadEditProduct);
 admin_route.post('/postEditProduct',upload.array('product_images',4),adminController.postEditProduct);
 admin_route.post('/deleteProductImage',adminController.deleteProductImage)
-admin_route.get('/loadOfferForProducts',adminController.loadOfferForProducts)
-admin_route.get('/applyOffer',adminController.applyOffer)
+
 
 
 //updating the product status
@@ -74,10 +73,17 @@ admin_route.get('/deleteCoupon',adminCouponController.deleteCoupon)
 
 
 //offer
+
 admin_route.get('/addoffer',isAdminLogin,adminOfferController.loadOfferPage)
 admin_route.post('/saveOffer',adminOfferController.saveOffer)
 admin_route.get('/viewOffer',isAdminLogin,adminOfferController.viewOffer)
 admin_route.get('/deleteOffer',adminOfferController.deleteOffer)
+//offer for products
+admin_route.get('/loadOfferForProducts',adminController.loadOfferForProducts)
+admin_route.get('/applyOffer',adminController.applyOffer)
+// offer for category
+admin_route.get('/loadOfferForCategory',adminController.loadOfferForCategory)
+admin_route.get('/applyOfferForCategory',adminController.applyOfferForCategory)
 
 
 
@@ -85,16 +91,6 @@ admin_route.get('/deleteOffer',adminOfferController.deleteOffer)
 
 //sales report
 admin_route.get('/SalesReport',adminSalesReportController.loadSalesReportPage)
-
-
-
-
-
-
-
-
-
-
 
 
 
