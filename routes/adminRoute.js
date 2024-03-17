@@ -83,7 +83,7 @@ admin_route.get('/loadOfferForProducts',isAdminLogin,adminController.loadOfferFo
 admin_route.get('/applyOffer',isAdminLogin,adminController.applyOffer)
 // offer for category
 admin_route.get('/loadOfferForCategory',isAdminLogin,adminController.loadOfferForCategory)
-admin_route.get('/applyOfferForCategory',isAdminLogin,adminController.applyOfferForCategory)
+admin_route.post('/applyOfferForCategory',isAdminLogin,adminController.applyOfferForCategory)
 //delete offer from product
 admin_route.delete('/deleteOfferFromProduct',adminController.deleteOfferFromProduct)
 //delete offer from category

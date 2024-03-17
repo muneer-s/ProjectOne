@@ -482,20 +482,22 @@ const loadOfferForCategory  = async (req,res)=>{
 
 const applyOfferForCategory = async(req,res)=>{
   try {
-    const offerId = req.query.offerId;
-    const categoryId = req.query.categoryId;
+    const offerId = req.body.offerId;
+    const categoryId = req.body.categoryId;
     
 
 
     const Category = await categories.findById(categoryId);
 
-    if (!Category) {
-      return res.status(404).send('Category not found');
-    }
+        if (!Category) {
+            return res.status(404).send('Category not found');
+        }
+
+
     Category.offer = offerId;
-    Category.offerApplied = true
-    await Category.save();
-    res.redirect('/loadOfferForCategory');
+        Category.offerApplied = true;
+        await Category.save();
+        res.send('Offer applied successfully');
  } catch (error) {
     console.error('Error applying offer:', error.message);
     res.status(500).send('An error occurred while applying the offer');

@@ -64,8 +64,8 @@
 
                            
                             <% if(offer[i].is_listed === true){ %>
-                            <td><a href="/applyOfferForCategory?offerId=<%-offer[i]._id %>&categoryId=<%= categoryId %>"><button class="btn btn-info ">Apply</button></a></td>
-                            <% }else{ %>
+                                <td><button class="btn btn-info" onclick="applyOffer('<%-offer[i]._id %>', '<%= categoryId %>')">Apply</button></td>
+                                <% }else{ %>
                                 <td><h5 class="text-danger">Expired</h5></td>
                                 <% } %>
 
@@ -127,4 +127,27 @@
         showPage(currentPage); 
         generatePaginationButtons(); 
     });
+</script>
+
+<script>
+    function applyOffer(offerId, categoryId) {
+    $.ajax({
+        url: '/applyOfferForCategory',
+        type: 'POST',
+        data: {
+            offerId: offerId,
+            categoryId: categoryId
+        },
+        success: function(response) {
+            // Handle success, e.g., show a success message or reload the page
+            alert('Offer applied successfully');
+            location.reload(); // Reload the page to reflect the changes
+        },
+        error: function(error) {
+            // Handle error, e.g., show an error message
+            alert('An error occurred while applying the offer');
+        }
+    });
+}
+
 </script>

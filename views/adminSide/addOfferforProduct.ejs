@@ -65,7 +65,11 @@
                             <% if(offer[i].is_listed === false){ %>
                                 <td><h5 class="text-danger">Expired</h5></td>
                                 <% }else{ %>
-                            <td><a href="/applyOffer?offerId=<%-offer[i]._id %>&productId=<%= productId %>"><button class="btn btn-info ">Apply</button></a></td>
+                            <td>
+                                <!-- <a href="/applyOffer?offerId=<%-offer[i]._id %>&productId=<%= productId %>"><button class="btn btn-info ">Apply</button></a> -->
+                                <button class="btn btn-info apply-offer-btn" data-offer-id="<%-offer[i]._id %>" data-product-id="<%= productId %>">Apply</button>
+
+                            </td>
                             <% } %>
 
                            
@@ -123,7 +127,34 @@
     }
 
     $(document).ready(function () {
-        showPage(currentPage); 
-        generatePaginationButtons(); 
+    // Show initial page
+    showPage(currentPage); 
+    generatePaginationButtons(); 
+
+    // Handle "Apply" button click
+    $('.apply-offer-btn').click(function () {
+        var offerId = $(this).data('offer-id');
+        var productId = $(this).data('product-id');
+
+        $.ajax({
+            url: '/applyOffer',
+            type: 'GET',
+            data: {
+                offerId: offerId,
+                productId: productId
+            },
+            success: function (response) {
+                // Handle success (e.g., show a success message or redirect)
+                alert('Offer applied successfully!');
+                // Optionally, redirect or refresh the page
+                // window.location.href = '/loadOfferForProducts';
+            },
+            error: function (error) {
+                // Handle error (e.g., show an error message)
+                alert('An error occurred while applying the offer.');
+            }
+        });
     });
+});
+
 </script>

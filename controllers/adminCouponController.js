@@ -5,6 +5,8 @@ const Cart = require("../models/cartModel");
 const mongoose = require("mongoose");
 const Coupon = require("../models/couponModel");
 
+
+
 const loadCouponPage = async (req, res) => {
   try {
     res.render("./adminSide/addCoupon");
