@@ -19,7 +19,6 @@ const loadOrderList = async (req, res) => {
         .populate("address")
         .populate("userId");
 
-        //console.log("order::",orders);
 
       res.render("./adminSide/orderList", { orders });
     }
@@ -37,7 +36,6 @@ const loadOrderDetails = async (req, res) => {
         .populate("address")
         .populate("userId");
 
-        //console.log("avf;;",orders);
       res.render("./adminSide/adminOrderDetails", { orders });
     }
     
@@ -53,14 +51,12 @@ const updateOrderStatus = async (req, res) => {
     const orderId = req.params.orderId;
 
     const order = await Order.findOne({_id:orderId});
-    // Check if the current status is "cancelled" or "return"
     if (order.orderStatus === "Cancel" || order.orderStatus === "Return") {
 
       return res.status(400).json({ error: "Cannot change status further" });
     }
 
 
-    // Find the order by orderId and update its status
     const updatedOrder = await Order.findOneAndUpdate(
       { _id: orderId },
       { $set: { orderStatus: status } },

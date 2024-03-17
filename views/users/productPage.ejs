@@ -10,7 +10,7 @@
 					<h1>Shop Category page</h1>
 					<nav class="d-flex align-items-center">
 						<a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
-						<a href="#">Shop<span class="lnr lnr-arrow-right"></span></a>
+						<a href="">Shop<span class="lnr lnr-arrow-right"></span></a>
 						<a href="">Fashion Category</a>
 					</nav>
 				</div>
@@ -26,7 +26,13 @@
 					<div class="head">Categories</div>
 					<ul class="main-categories">
 						<% for(let i=0;i<catDetails.length;i++){ %>
-							<li class="main-nav-list"><a href="?category=<%= catDetails[i]._id %>"><%= catDetails[i].Name %><span class="number"></span></a></li>
+							<% if(catDetails[i].offerApplied == true){ %>
+							<li class="main-nav-list "><a class="text-success" href="?category=<%= catDetails[i]._id %>"><%= catDetails[i].Name %> ( offer )<span class="number"></span></a></li>
+							
+							<% }else{ %>
+							<li class="main-nav-list"><a href="?category=<%= catDetails[i]._id %>"><%= catDetails[i].Name %><span class="number"></span></a>
+								<% } %>
+								
 						<% } %>
 					</ul>
 				</div>

@@ -16,19 +16,14 @@ const Wallet = require("../models/walletModel");
 const loadOrder = async (req, res) => {
   try {
     if (req.session.user_id) {
-      console.log("orderkk vannuuuuuuuuuuuuuuuuuuuuuuuu");
       delete req.session.couponCode;
       delete req.session.couponDiscount;
 
       const userId = req.session.user_id;
-      console.log(userId);
 
       const user = await User.findOne({ _id: userId });
-      console.log("user ne kitti ---",user);
 
-      console.log("orderData kitti ===",req.session.oderData);
       const orderId = req.session.oderData._id;
-      console.log("order id is -  -", orderid);
 
 
       req.session.oderData = null;
@@ -66,14 +61,11 @@ const placeOrder = async (req, res) => {
       { address: { $elemMatch: { _id: addressId } } }
     );
 
-    //console.log("iamuser", user);
     const address = user.address[0];
     const orderId = orderid.generate();
 
-    //console.log("iamorderid", orderId);
 
     let originalAmount = 0;
-    //console.log("cartdata ",cartData);
     if (cartData) {
       cartData.products.forEach((cartItem) => {
         originalAmount = originalAmount + cartItem.total;
@@ -81,7 +73,6 @@ const placeOrder = async (req, res) => {
     }
 
 
-    //console.log(req.session.newAmountUsingCoupon);
 
     const order = new Order({
       products: cartData.products,
@@ -109,13 +100,11 @@ const placeOrder = async (req, res) => {
         { _id: order._id },
         { $set: { paymentStatus: "order placed" } }
       );
-      // console.log("ssssssssssssssssss");
       if (cartData && cartData.products) {
         const cartItems = cartData.products;
 
         cartItems.map(async (cartItem) => {
           const product = await products.findById(cartItem.productId).exec();
-          //console.log("ithanu ippathe product : ", product);
           if (product) {
             product.quantity -= cartItem.quantity;
             await product.save();
@@ -128,7 +117,6 @@ const placeOrder = async (req, res) => {
       cartData.products = [];
       await cartData.save();
       res.json({ codSuccess: true });
-      //res.status(200).json({ data: "data" });
     } else if (paymentMethod == "Wallet") {
 
       console.log("wallet aanu ttooooooooo");
@@ -158,7 +146,7 @@ const placeOrder = async (req, res) => {
       console.log("iam razor");
 
       var options = {
-        amount: (originalAmount - (couponDiscount || 0)) * 100, // amount in the smallest currency unit
+        amount: (originalAmount - (couponDiscount || 0)) * 100, 
         currency: "INR",
         receipt: order._id,
       };
@@ -167,7 +155,6 @@ const placeOrder = async (req, res) => {
         if (err) {
           console.log(err);
         } else {
-          // res.status(201).json(razorpayOrder); // Sending the created order as a response
 
           res.json({ success: false, razorpayOrder });
 
@@ -188,7 +175,6 @@ const orderDetailsPage = async (req, res) => {
 
     const userId = req.session.user_id;
     let orderdetails = await Order.find({ userId: userId });
-    // console.log("in order details page: ",orderdetails);
     if (req.session.user_id) {
       res.render("./users/orderDetails", { orderdetails, user });
     } else {
@@ -215,13 +201,11 @@ const userupdatestatus = async (req, res) => {
     if (!wallet) {
       wallet = await Wallet.create({ user: order.userId });
     }
-    // Add a refund transaction to the wallet
     wallet.transactions.push({
       orderId: orderId,
       type: "Credit",
       amount: order.totalPrice,
     });
-    // Update the wallet balance
     wallet.balance += order.totalPrice;
     await wallet.save();
 
@@ -229,11 +213,9 @@ const userupdatestatus = async (req, res) => {
     await order.save();
     console.log("user updated order", order);
 
-    // Update product quantities
     for (const item of order.products) {
       const product = await products.findById(item.productId);
       if (product) {
-        // Update product quantity
         product.quantity += item.quantity;
         await product.save();
       }

@@ -110,7 +110,7 @@
         $('tbody tr').slice(startIndex, endIndex).show(); 
     }
 
-    // Function to generate pagination buttons
+    // function to generate pagination buttons
     function generatePaginationButtons() {
         var paginationHtml = '';
         for (var i = 1; i <= totalPages; i++) {
@@ -119,11 +119,11 @@
         $('#pagination').html(paginationHtml); 
     }
 
-    // Function to handle page change
+    // function to handle page change
     function changePage(page) {
         currentPage = page; 
-        showPage(currentPage); // Show items 
-        generatePaginationButtons(); // Regenerate pagination buttons
+        showPage(currentPage);  
+        generatePaginationButtons(); 
     }
 
     $(document).ready(function () {
@@ -144,13 +144,10 @@
                 productId: productId
             },
             success: function (response) {
-                // Handle success (e.g., show a success message or redirect)
                 alert('Offer applied successfully!');
-                // Optionally, redirect or refresh the page
                 // window.location.href = '/loadOfferForProducts';
             },
             error: function (error) {
-                // Handle error (e.g., show an error message)
                 alert('An error occurred while applying the offer.');
             }
         });

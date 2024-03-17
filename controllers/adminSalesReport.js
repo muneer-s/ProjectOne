@@ -4,10 +4,9 @@ const Order = require("../models/orderModel");
 const loadSalesReportPage = async (req, res) => {
   try {
     if (req.session.email) {
-      let filter = req.query.filter || 'all'; // Default to 'all' if no filter is provided
+      let filter = req.query.filter || 'all'; 
       let query = { orderStatus: "Delivered" };
 
-       // Adjust the query based on the filter option
        if (filter === 'daily') {
         const date = new Date();
         date.setDate(date.getDate() - 1);
@@ -25,7 +24,6 @@ const loadSalesReportPage = async (req, res) => {
         query = { orderStatus: "Delivered" };
       }
 
-      // Add date range filtering
       const startDate = req.query.startDate;
       const endDate = req.query.endDate;
       if (startDate && endDate) {
