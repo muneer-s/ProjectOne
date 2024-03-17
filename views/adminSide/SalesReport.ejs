@@ -11,25 +11,31 @@
         <div>
             <input type="text" id="searchInput" placeholder="Search order ID" class="form-control bg-white" onkeyup="searchOrders()" />
         </div>
+        <div>
+            <a href="" class="btn btn-primary" onclick="printPage()"><i class="text-muted material-icons md-post_add" ></i>Download</a>
+        </div>
     </div>
     <div class="card mb-4">
         <header class="card-header">
             <div class="row gx-3">
-                <div class="col-lg-4 col-md-6 me-auto">
+                <div id="searchByName" class="col-lg-3 col-md-6 me-auto">
                     <input type="text" placeholder="Search by Name..." class="form-control" id="filterInput" onkeyup="filterOrders()"/>
                 </div>
 
                
-                <div class="col-lg-4 col-md-6 me-auto" >
+                <div id="startDate&endDate" class="col-lg-3 col-md-6 me-auto" >
                     <label for="startDate">Start Date:</label>
                     <input type="date" id="startDate" class="form-control">
                     <label for="endDate">End Date:</label>
                     <input type="date" id="endDate" class="form-control">
                 </div>
+                <div id="checkId" class="col-lg-3 col-md-6 me-auto">
+                    <button class="btn btn-info btn-sm">check</button>
+                </div>
 
 
 
-                <div class="col-lg-2 col-6 col-md-3">
+                <div id="filterBy" class="col-lg-3 col-6 col-md-3">
                     <p>Filter By</p>
                     <select class="form-select">
                         <option>all</option>
@@ -102,6 +108,38 @@
         </nav>
     </div>
 </section>
+
+
+
+<script>
+    function printPage() {
+        // Hide unnecessary elements
+        document.getElementById("searchInput").style.display = "none"; // Hide search input
+        document.querySelector(".content-header > div:last-child").style.display = "none"; // Hide "Download" button
+        document.querySelector(".pagination-area").style.display = "none"; // Hide pagination
+        document.getElementById("searchByName").style.display = "none"
+        document.getElementById("startDate&endDate").style.display = "none"
+        document.getElementById("checkId").style.display = "none";
+        document.getElementById("filterBy").style.display = "none";
+
+
+    
+        // Print the page
+        window.print();
+    
+        // Show the hidden elements again
+        document.getElementById("searchInput").style.display = "block";
+        document.querySelector(".content-header > div:last-child").style.display = "block";
+        document.querySelector(".pagination-area").style.display = "block";
+        document.getElementById("searchByName").style.display = "block";
+        document.getElementById("startDate&endDate").style.display = "block"
+        document.getElementById("checkId").style.display = "block";
+        document.getElementById("filterBy").style.display = "none";
+
+
+
+    }
+    </script>
 
 
 
@@ -219,7 +257,7 @@
     </script>
 
     <!--strt date edn date -->
-    <script>
+    <!-- <script>
         document.addEventListener("DOMContentLoaded", function () {
     const startDateInput = document.getElementById("startDate");
     const endDateInput = document.getElementById("endDate");
@@ -237,7 +275,7 @@
     endDateInput.addEventListener("change", updateURLWithDateRange);
 });
 
-    </script>
+    </script> -->
     
 
 
