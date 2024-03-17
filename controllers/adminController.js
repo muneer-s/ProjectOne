@@ -513,7 +513,9 @@ const  deleteOfferFromProduct = async (req, res) => {
       if (!Product) {
           return res.status(404).send({ message: 'Product not found' });
       }
-      Product.offer = null; // Remove the offer
+      Product.offer = null;
+      Product.offerApplied = false 
+      Product.offerPrice = 0// Remove the offer
       await Product.save();
       res.send({ message: 'Offer deleted successfully' });
       

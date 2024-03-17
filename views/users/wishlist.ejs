@@ -53,16 +53,22 @@
                                 </div>
                             </td>
                             <td>
-                                <!-- <p>name</p> -->
                                 <p><%= Item.productId.name %></p>   
 
 
                             </td>
+                            <% if(Item.productId.offer && Item.productId.offerApplied == true){ %>
+                            <td><h5 class="text-success"><%= Item.productId.offerPrice %></h5></td>
+                            <% }else{ %>
                             <td>
-                                <!-- <h5>360.00</h5> -->
                                 <h5><%= Item.productId.price %></h5>
 
                             </td>
+                            <% } %>
+
+
+
+
                             <td>
                                 <a href="/deleteWishlist?id=<%= Item.productId._id %>"><button type="button" class="btn btn-danger">Delete</button></a>
                             </td>
