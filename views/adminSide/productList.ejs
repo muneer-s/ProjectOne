@@ -39,7 +39,6 @@
                             <th scope="col">Action</th>
                             <th scope="col"></th>
                             <th scope="col">Offer Action</th>
-                            <th scope="col">Remove Offer</th>
                             
 
 
@@ -73,6 +72,8 @@
                                         <td style="color: red;">No Offers</td>
                                         <% } %>
                                 
+
+                                        
                                 <td>
                                     <form method="post" action="/admin/changeProductStatus/<%= proDetails[i]._id %>" style="display: inline-block;">
                                         <!-- Add a class 'btn-update-status' to the button for easier selection -->
@@ -82,27 +83,25 @@
         
                                     </form>   
                                 </td>
+
+
                                 <td>
                                         <a href="/loadEditProduct?id=<%= proDetails[i]._id %>" class="btn btn-primary btn-sm">Edit</a>
                                 </td>
 
 
+                                <% if(proDetails[i].status == true){%>
                                 <% if(proDetails[i].offer){%>
-                                    <td>
-                                        <a href="" class="btn btn-success btn-sm">Offer Added</a>
-                                    </td>
+                                    <td><button class="btn btn-danger btn-sm delete-offer-btn" data-product-id="<%= proDetails[i]._id %>">Delete</button></td>
+
                                     <% }else{ %>
                                 <td>
                                     <a href="/loadOfferForProducts?id=<%= proDetails[i]._id %>" class="btn btn-info btn-sm">Add Offers</a>
                                 </td>
                                 <% } %>
-
-                                <% if(proDetails[i].offer){ %>
-                                <td><button class="btn btn-danger btn-sm delete-offer-btn" data-product-id="<%= proDetails[i]._id %>">Delete</button></td>
                                 <% }else{ %>
-                                    <td><button class="btn btn-light btn-sm">No Offer</button></td>
+                                    <td><h5 class="text-danger">Unlisted</h5></td>
                                     <% } %>
-
 
 
 

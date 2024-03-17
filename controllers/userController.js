@@ -8,6 +8,7 @@ const session = require("express-session");
 const toastr = require("toastr");
 const flash = require("connect-flash");
 const validateMongodbId = require("../utils/validationMongodb");
+const Offer = require("../models/offerModel") 
 
 //user registration
 const insertUser = async (req, res) => {
@@ -326,13 +327,18 @@ const loadProductPage = async (req, res) => {
     }
 
     const proDetails = await product
+    .find({status:true})
     .find(query)
     .sort(sortQuery) 
       .populate("category")
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .populate("offer");
+      // console.log("hi :::",proDetails);
 
-    let catDetails = await Category.find();
+
+
+    let catDetails = await Category.find({is_list:true});
 
     // Transform category names to uppercase
     catDetails = catDetails.map(category => ({

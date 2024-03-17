@@ -20,17 +20,29 @@ const loadCart = async (req, res) => {
       const cartDetails = await Cart.findOne({ userId: userData._id }).populate(
         { path: "products.productId", model: "product" }
       );
-      //console.log("this is cart item : ", cartDetails);
+
+
+
+
 
       const user = await User.findOne({ _id: userData._id });
       let originalAmount = 0;
 
       if (cartDetails) {
         cartDetails.products.forEach((cartItem) => {
-          let itemTotalPrice = cartItem.productId.price * cartItem.quantity;
+          if(cartItem.productId.offer && cartItem.productId.offerApplied == true){
+            var productPrice = cartItem.productId.offerPrice
+            console.log("ithil keriyo");
+          }else{
+            var productPrice = cartItem.productId.price
+            console.log("apooooooo ithhhhhhhhhhhhh");
+          }
+          console.log(productPrice);
+          let itemTotalPrice = productPrice * cartItem.quantity;
           originalAmount += itemTotalPrice;
         });
       }
+      console.log("this is cart item ---------------------------------- : ", cartDetails);
 
       res.render("./users/cart", {
         user,
@@ -81,11 +93,20 @@ const addToCart = async (req, res) => {
       (item) => item.productId.toString() === productId
     );
 
+    if(product.offer && product.offerApplied == true ){
+      console.log("ith work akindooooooooooo");
+      var productPrice = product.offerPrice
+    }else{
+      console.log("atho thanoooooooooo");
+      var productPrice = product.price
+    }
+
     if (existingProductIndex !== -1) {
       // If product is already in cart, update the quantity
       const existingProduct = userCart.products[existingProductIndex];
       const newTotalQuantity =
         existingProduct.quantity + parseInt(quantity, 10);
+
 
       if (newTotalQuantity > product.quantity) {
         return res.json({
@@ -94,8 +115,8 @@ const addToCart = async (req, res) => {
         });
       }
       userCart.products[existingProductIndex].quantity = newTotalQuantity;
-      userCart.products[existingProductIndex].total =
-        newTotalQuantity * product.price;
+      userCart.products[existingProductIndex].total = newTotalQuantity * Number(productPrice);
+      console.log("totalaanittoooo : ",userCart.products[existingProductIndex].total);
     } else {
       // If the product is not in the cart, add it
       if (parseInt(quantity, 10) > product.quantity) {
@@ -108,7 +129,7 @@ const addToCart = async (req, res) => {
       userCart.products.push({
         productId: productId,
         quantity: quantity,
-        total: quantity * product.price,
+        total: quantity * productPrice,
       });
     }
 
@@ -185,8 +206,23 @@ const submitQuantity = async (req, res) => {
       return res.status(404).send("Product not found in cart");
     }
 
+
+    if(existproduct.offer && existproduct.offerApplied == true ){
+      console.log("ith work akindooooooooooo");
+      var productPrice = existproduct.offerPrice
+    }else{
+      console.log("atho thanoooooooooo");
+      var productPrice = existproduct.price
+    }
+
+
+
+
+
+
+
     proData.quantity = quantity;
-    proData.total = quantity * existproduct.price;
+    proData.total = quantity * productPrice;
 
     await cartData.save();
 

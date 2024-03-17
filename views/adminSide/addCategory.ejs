@@ -40,8 +40,6 @@
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
-                                               
-                                                
                                                 <th>Name</th>
                                                 <th>Description</th>
                                                 <th>Status</th>
@@ -58,7 +56,14 @@
                                            
                                                 <td><%=category.Name%></td>
                                                 <td><%=category.Description%></td>
-                                                <td><%=category.is_list%></td>
+                                                <% if(category.is_list == true){ %>
+                                                <td><h5 class="text-success">List</h5></td>
+                                                <% }else{ %>
+                                                    <td><h5 class="text-danger">UnListed</h5></td>
+                                                    <% } %>
+
+
+
                                                 <% if(category.offer){%>
                                                     <td><%= category.offer.offerName %></td>
                                                     <% }else{ %>
@@ -80,11 +85,26 @@
                                                     </div>
                                                     <!-- dropdown //end -->
                                                 </td>
+
+
+                                                <% if(category.is_list == true){ %>
+
                                                 <% if(category.offer){ %>
-                                                    <td><a href="" class="btn btn-success btn-sm">Offer Added</a></td>
+                                                    <td><button class="btn btn-danger btn-sm delete-offer-btn" data-category-id="<%= category._id %>">Delete</button></td>
                                                     <% }else{ %>
                                                 <td><a href="/loadOfferForCategory?id=<%= category._id %>" class="btn btn-info btn-sm">Add Offer</a></td>
                                                 <% } %>
+                                                <% }else{ %>
+                                                    <td><h5 class="text-danger">Unlisted</h5></td>
+                                                    <% } %>
+
+
+                                                   
+
+
+
+
+
                                             </tr>
                                             <%})%>
                                            
@@ -106,3 +126,28 @@
 
 
 <%-include("../adminLayout/adminFooter")    %>
+
+<script>
+    $(document).ready(function() {
+        $('.delete-offer-btn').click(function(e) {
+            e.preventDefault();
+            const categoryId = $(this).data('category-id');
+            const confirmDelete = confirm("Are you sure you want to delete this offer?");
+            if (confirmDelete){
+            $.ajax({
+                url: '/deleteOffer/' + categoryId,
+                type: 'DELETE',
+                success: function(response) {
+                    alert(response.message);
+                    window.location.reload()
+                    // Optionally, refresh the page or update the UI to reflect the change
+                },
+                error: function(error) {
+                    alert('Error deleting offer');
+                }
+            });
+        }
+        });
+    });
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

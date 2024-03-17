@@ -56,9 +56,22 @@
                                             <p><%= cartItem.productId.name %></p>   
                                         </div>
                                 </td>
-                                <td>
-                                    <h5><%= cartItem.productId.price %></h5>
-                                </td>
+
+
+                                <% if(cartItem.productId.offerApplied == false){ %>
+                                    <td>
+                                        <h5><%= cartItem.productId.price %></h5>
+                                    </td>
+                                    <% }else{ %>
+                                        <td>
+                                            <h5><%= cartItem.productId.offerPrice  %></h5>
+                                        </td>
+                                        <% } %>
+
+
+
+
+
                                 <td>
                                     <div class="product_count">
                                         <input type="text" name="qty" id="sst<%= index %>" maxlength="12" value="<%= cartItem.quantity %>" title="Quantity:"
@@ -68,9 +81,28 @@
                                         <button onclick="decreaseQuantity('<%= cartItem._id %>', '<%= index %>')" class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
                                     </div>
                                 </td>
-                                <td>
-                                    <h5 id="totl<%= cartItem._id %>"><%=cartItem.productId.price*cartItem.quantity%></h5>
-                                </td>
+
+
+                                <% if(cartItem.productId.offerApplied == false){ %>
+                                    <td>
+                                        <h5 id="totl<%= cartItem._id %>"><%=cartItem.productId.price*cartItem.quantity%></h5>
+                                    </td>
+                                    <% }else{ %>
+                                        <td>
+                                            <h5 id="totl<%= cartItem._id %>"><%=cartItem.productId.offerPrice*cartItem.quantity%></h5>
+                                        </td>
+                                        <% } %>
+
+
+
+
+
+
+                                
+
+
+
+
                                 <td> <!-- New column for remove button -->
                                     <button onclick="removeItem('<%= cartItem._id %>')" class="remove-item-btn btn btn-sm btn-danger" type="button" >Remove</button>
                                 </td>

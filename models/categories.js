@@ -12,12 +12,16 @@ const categorySchema= new mongoose.Schema({
     },
     is_list:{
         type:Boolean,
-        required:false
+        required:true
     },
     offer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Offer',
       },
+      offerApplied:{
+        type:Boolean,
+        default:false
+      }
 
 });
 

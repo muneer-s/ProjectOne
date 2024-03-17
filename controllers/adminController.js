@@ -440,14 +440,22 @@ const loadOfferForProducts  = async (req,res)=>{
 //apply offer for product
 const applyOffer = async(req,res)=>{
   try {
-    console.log("8768587568756876587568765786786768767");
     const offerId = req.query.offerId;
     const productId = req.query.productId;
+
     const Product = await product.findById(productId);
     if (!Product) {
       return res.status(404).send('Product not found');
     }
+    const productPrice = Product.price
+
+    const offer  = await Offer.findById(offerId)
+    const offerDiscount = offer.percentage
+    const discountAmount = (productPrice * offerDiscount) / 100;
+
+    Product.offerPrice = productPrice - discountAmount;
     Product.offer = offerId;
+    Product.offerApplied = true
     await Product.save();
     res.redirect('/loadOfferForProducts');
  } catch (error) {
@@ -474,20 +482,18 @@ const loadOfferForCategory  = async (req,res)=>{
 
 const applyOfferForCategory = async(req,res)=>{
   try {
-    console.log("apply offer for category controll ethi");
     const offerId = req.query.offerId;
     const categoryId = req.query.categoryId;
-    console.log("i am offer id - ",offerId);
-    console.log("i am category id :",categoryId);
+    
 
 
     const Category = await categories.findById(categoryId);
-    console.log("apo njn catum : ",Category);
 
     if (!Category) {
       return res.status(404).send('Category not found');
     }
     Category.offer = offerId;
+    Category.offerApplied = true
     await Category.save();
     res.redirect('/loadOfferForCategory');
  } catch (error) {
@@ -518,6 +524,22 @@ const  deleteOfferFromProduct = async (req, res) => {
 }
 
 
+const deleteOfferFromCategory = async(req,res)=>{
+  try {
+    const category = await categories.findById(req.params.categoryId);
+    if (!category) {
+        return res.status(404).send({ message: "Category not found" });
+    }
+    category.offer = null; // Remove the offer
+    await category.save();
+    res.send({ message: "Offer deleted successfully" });
+} catch (error) {
+    res.status(500).send({ message: "Error deleting offer", error: error.message });
+}
+
+}
+
+
 
 
 
@@ -545,5 +567,6 @@ module.exports = {
   loadOfferForProducts,
   loadOfferForCategory,
   applyOfferForCategory,
-  deleteOfferFromProduct
+  deleteOfferFromProduct,
+  deleteOfferFromCategory
 };

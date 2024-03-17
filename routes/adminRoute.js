@@ -68,7 +68,7 @@ admin_route.get('/Coupon',isAdminLogin,adminCouponController.loadCouponPage)
 // save coupon
 admin_route.post('/couponSave',adminCouponController.saveCoupon)
 admin_route.get('/couponList',isAdminLogin,adminCouponController.viewCoupon)
-admin_route.get('/deleteCoupon',adminCouponController.deleteCoupon)
+admin_route.get('/deleteCoupon',isAdminLogin,adminCouponController.deleteCoupon)
 
 
 
@@ -77,21 +77,22 @@ admin_route.get('/deleteCoupon',adminCouponController.deleteCoupon)
 admin_route.get('/addoffer',isAdminLogin,adminOfferController.loadOfferPage)
 admin_route.post('/saveOffer',adminOfferController.saveOffer)
 admin_route.get('/viewOffer',isAdminLogin,adminOfferController.viewOffer)
-admin_route.get('/deleteOffer',adminOfferController.deleteOffer)
+admin_route.get('/deleteOffer',isAdminLogin,adminOfferController.deleteOffer)
 //offer for products
-admin_route.get('/loadOfferForProducts',adminController.loadOfferForProducts)
-admin_route.get('/applyOffer',adminController.applyOffer)
+admin_route.get('/loadOfferForProducts',isAdminLogin,adminController.loadOfferForProducts)
+admin_route.get('/applyOffer',isAdminLogin,adminController.applyOffer)
 // offer for category
-admin_route.get('/loadOfferForCategory',adminController.loadOfferForCategory)
-admin_route.get('/applyOfferForCategory',adminController.applyOfferForCategory)
+admin_route.get('/loadOfferForCategory',isAdminLogin,adminController.loadOfferForCategory)
+admin_route.get('/applyOfferForCategory',isAdminLogin,adminController.applyOfferForCategory)
 //delete offer from product
 admin_route.delete('/deleteOfferFromProduct',adminController.deleteOfferFromProduct)
-
+//delete offer from category
+admin_route.delete('/deleteOffer/:categoryId',adminController.deleteOfferFromCategory)
 
 
 
 //sales report
-admin_route.get('/SalesReport',adminSalesReportController.loadSalesReportPage)
+admin_route.get('/SalesReport',isAdminLogin,adminSalesReportController.loadSalesReportPage)
 
 
 

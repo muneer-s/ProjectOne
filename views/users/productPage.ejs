@@ -99,17 +99,37 @@
 									<img class="img-fluid" src="/assets/products/resized/<%= proDetails[i].productImages[0] %>" alt="/uploads/<%= proDetails[i].productImages[0] %>">
 									<div class="product-details">
 										<h6><%= proDetails[i].name %></h6>
-										<div class="price">
-											<h6>₹ <%= proDetails[i].price %></h6>
-										</div>
+										
 										<div class="price">
 											<h6><%= proDetails[i].category.Name %></h6>
 										</div>
-										<div class="prd-bottom m-0">
-											
-											
-											<a href="/singleProductPage/<%= proDetails[i]._id %>" class="social-info">
-												
+
+										<!-- <div class="price">
+											<h6>₹ <%= proDetails[i].price %></h6>
+										</div> -->
+
+
+
+										<% if(proDetails[i].offerApplied == false){ %>
+											<div class="price">
+												<h6>₹ <%= proDetails[i].price %></h6>
+											</div>
+											<% }else{ %>
+												<div >
+													<h6 class="text-danger"><strike>₹ <%= proDetails[i].price %></strike></h6>
+												</div>
+												<div class="price">
+													<h6 class="text-success">₹ <%= proDetails[i].offerPrice  %>   Offer applied</h6>
+												</div>
+												<% } %>
+
+
+
+
+
+
+										<div class="prd-bottom m-0">		
+											<a href="/singleProductPage/<%= proDetails[i]._id %>" class="social-info">	
 											</a>
 										</div>
 									</div>

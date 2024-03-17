@@ -207,6 +207,17 @@ const loadCheckOutPage = async (req, res) => {
         originalAmount += cartItem.total;
       });
     }
+
+
+
+
+
+
+
+
+
+
+    
     let wallet = await Wallet.findOne({ user: user_id });
     if (!wallet) {
         wallet = await Wallet.create({ user: user_id });

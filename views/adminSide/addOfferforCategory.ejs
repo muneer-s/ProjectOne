@@ -63,8 +63,11 @@
                             <td><%-offer[i].description %></td>
 
                            
-
+                            <% if(offer[i].is_listed === true){ %>
                             <td><a href="/applyOfferForCategory?offerId=<%-offer[i]._id %>&categoryId=<%= categoryId %>"><button class="btn btn-info ">Apply</button></a></td>
+                            <% }else{ %>
+                                <td><h5 class="text-danger">Expired</h5></td>
+                                <% } %>
 
                            
                     </tr>

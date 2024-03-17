@@ -45,6 +45,7 @@ user_route.post('/otpLoginLoad',userOtpLoginController.otpLoginLoad);
 user_route.get('/login',isUserLogout,userController.loginload);
 user_route.post('/login',userController.userlogin);
 
+
 // user home and logout
 user_route.get('/',userController.homeload);
 user_route.get('/logout',userController.logOut);
