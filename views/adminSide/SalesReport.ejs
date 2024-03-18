@@ -38,10 +38,10 @@
                 <div id="filterBy" class="col-lg-3 col-6 col-md-3">
                     <p>Filter By</p>
                     <select class="form-select">
-                        <option>all</option>
-                        <option>Daily</option>
-                        <option>Weekly</option>
-                        <option>Monthly</option>
+                        <option <%= (filter === 'all')?'selected':'' %> >all</option>
+                        <option <%= (filter === 'daily')?'selected':'' %> >Daily</option>
+                        <option <%= (filter === 'weekly')?'selected':'' %> >Weekly</option>
+                        <option <%= (filter === 'monthly')?'selected':'' %> >Monthly</option>
                     </select>
                 </div>
                 
@@ -255,6 +255,16 @@
         });
     });
     </script>
+
+
+    
+
+
+
+
+
+
+
 
     <!--strt date edn date -->
 

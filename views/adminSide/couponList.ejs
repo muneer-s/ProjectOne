@@ -36,7 +36,6 @@
                     </thead>
                     <tbody>
                         
-  
 
                     <% for(var i=0;i<coupon.length;i++){ %>
                         <tr>
@@ -86,7 +85,7 @@
 
 
 <script>
-    var itemsPerPage = 3; // Number of items per page
+    var itemsPerPage = 5; // Number of items per page
     var currentPage = 1; // Current page
     var totalItems = '<%= coupon.length %>'; // Total number of items
     var totalPages = Math.ceil(totalItems / itemsPerPage); // Total number of pages

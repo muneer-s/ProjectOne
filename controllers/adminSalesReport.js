@@ -41,7 +41,7 @@ const loadSalesReportPage = async (req, res) => {
 
       console.log("----------------------", orders);
 
-      res.render("./adminSide/SalesReport", { orders });
+      res.render("./adminSide/SalesReport", { orders, filter});
     }
   } catch (error) {
     console.log(error.message);
