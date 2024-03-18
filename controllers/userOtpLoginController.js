@@ -11,31 +11,26 @@ const otpload = (req, res) => {
   res.render("./users/otpLogin", { email });
 };
 
-// otp generate to entered email in login page
 const otpLogin = async (req, res) => {
   try {
     const existingUser = await User.findOne({ email: req.body.email });
 
-    // If email is not registered, send an appropriate response
     if (!existingUser) {
       console.log("there is no such email");
       req.flash("error", "There is no such user with this email");
       return res.redirect("/login");
     }
 
-    // generate a random 5-digit OTP
     const generateOTP = () => {
       return Math.floor(10000 + Math.random() * 90000);
     };
 
-    // Generate a 5-digit OTP
     const otp = generateOTP();
 
-    // Configure nodemailer transporter for sending emails
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
-      secure: false, // TLS authentication
+      secure: false, 
       requireTLS: true,
       auth: {
         user: "muni0209s@gmail.com",
@@ -43,18 +38,15 @@ const otpLogin = async (req, res) => {
       },
     });
 
-    // Compose mail options
     const mailOptions = {
       from: "muni0209s@gmail.com",
-      to: existingUser.email, // Use existingUser.email instead of req.body.email
+      to: existingUser.email, 
       subject: "OTP",
       text: `Your OTP is: ${otp}`,
     };
 
-    // Hash the OTP before saving it to the database
     const hashedOTP = await bcrypt.hash(otp.toString(), 10);
 
-    // Save hashed OTP to the OTP database
     const newOTP = new OTPdb({
       user_id: existingUser.email,
       hashedOTP: hashedOTP,
@@ -62,7 +54,6 @@ const otpLogin = async (req, res) => {
 
     await newOTP.save();
 
-    // Send OTP email
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         console.log(error);
@@ -78,7 +69,6 @@ const otpLogin = async (req, res) => {
   }
 };
 
-//in otplogin page , check entered otp match with generated otp
 const otpLoginLoad = async (req, res) => {
   try {
     const id = req.query.email;
@@ -95,17 +85,13 @@ const otpLoginLoad = async (req, res) => {
     } else {
       const { a, b, c, d, e } = req.body;
 
-      // Concatenate the individual digits to form the entered OTP
       const enteredOtp = a + b + c + d + e;
 
-      // Retrieve the hashed OTP from the database
       const dbOtpHash = existingOtpData.hashedOTP;
 
-      // Compare the entered OTP with the hashed OTP from the database using bcrypt
       const isOtpMatch = await bcrypt.compare(enteredOtp.toString(), dbOtpHash);
       console.log("newhased ", enteredOtp, "oldHashed ", isOtpMatch);
 
-      // Find the user based on the provided email
       const existingUser = await User.findOne({ email: id });
 
       if (isOtpMatch) {

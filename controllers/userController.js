@@ -8,7 +8,7 @@ const session = require("express-session");
 const toastr = require("toastr");
 const flash = require("connect-flash");
 const validateMongodbId = require("../utils/validationMongodb");
-const Offer = require("../models/offerModel") 
+const Offer = require("../models/offerModel");
 
 //user registration
 const insertUser = async (req, res) => {
@@ -301,11 +301,11 @@ const userlogin = async (req, res) => {
 const loadProductPage = async (req, res) => {
   try {
     const user_id = req.session.user_id;
-    const page = parseInt(req.query.page) || 1; 
-    const limit = 6; 
-    const skip = (page - 1) * limit; 
+    const page = parseInt(req.query.page) || 1;
+    const limit = 6;
+    const skip = (page - 1) * limit;
     const categoryFilter = req.query.category;
-    const sortOption = req.query.sort; 
+    const sortOption = req.query.sort;
     const searchQuery = req.query.query;
 
     const userData = await User.findOne({ _id: user_id });
@@ -314,33 +314,31 @@ const loadProductPage = async (req, res) => {
       query.category = categoryFilter;
     }
     if (searchQuery) {
-      query.name = { $regex: searchQuery, $options: 'i' }; // case-insensitive search
+      query.name = { $regex: searchQuery, $options: "i" }; // case-insensitive search
     }
 
     let sortQuery = {};
-    if (sortOption === 'low') {
-      sortQuery = { price: 1 }; 
-    } else if (sortOption === 'high') {
-      sortQuery = { price: -1 }; 
+    if (sortOption === "low") {
+      sortQuery = { price: 1 };
+    } else if (sortOption === "high") {
+      sortQuery = { price: -1 };
     }
 
     const proDetails = await product
-    .find({status:true})
-    .find(query)
-    .sort(sortQuery) 
+      .find({ status: true })
+      .find(query)
+      .sort(sortQuery)
       .populate("category")
       .skip(skip)
       .limit(limit)
       .populate("offer")
       .populate("categoryOffer");
 
+    let catDetails = await Category.find({ is_list: true });
 
-
-    let catDetails = await Category.find({is_list:true});
-
-    catDetails = catDetails.map(category => ({
-      ...category._doc, 
-      Name: category.Name.toUpperCase() 
+    catDetails = catDetails.map((category) => ({
+      ...category._doc,
+      Name: category.Name.toUpperCase(),
     }));
 
     // calculate total pages
@@ -353,7 +351,7 @@ const loadProductPage = async (req, res) => {
       user: userData,
       currentPage: page,
       totalPages,
-      sort:sortOption
+      sort: sortOption,
     });
   } catch (error) {
     console.log(error.message);
@@ -366,7 +364,6 @@ const loadSingleProductPage = async (req, res) => {
     const id = req.params.id;
 
     const products = await product.findOne({ _id: id }).populate("category");
-
 
     const user_id = req.session.user_id;
 
@@ -396,17 +393,14 @@ const filter = async (req, res) => {
   console.log(category);
 };
 
-const search = async(req,res)=>{
+const search = async (req, res) => {
   try {
     await loadProductPage(req, res);
- } catch (error) {
+  } catch (error) {
     console.error(error);
-    res.status(500).send('Server Error');
- }
-}
-
-
-
+    res.status(500).send("Server Error");
+  }
+};
 
 module.exports = {
   loadRegister,
@@ -421,5 +415,5 @@ module.exports = {
   loadSingleProductPage,
   resendOtp,
   filter,
-  search
+  search,
 };

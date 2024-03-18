@@ -7,9 +7,6 @@ const flash = require("connect-flash");
 const Cart = require("../models/cartModel");
 const mongoose = require("mongoose");
 
-
-
-
 //load cart page
 const loadCart = async (req, res) => {
   try {
@@ -21,24 +18,25 @@ const loadCart = async (req, res) => {
         { path: "products.productId", model: "product" }
       );
 
-
-
-
-
       const user = await User.findOne({ _id: userData._id });
       let originalAmount = 0;
 
       if (cartDetails) {
         cartDetails.products.forEach((cartItem) => {
-          if(cartItem.productId.offer && cartItem.productId.offerApplied == true){
-            var productPrice = cartItem.productId.offerPrice
+          if (
+            cartItem.productId.offer &&
+            cartItem.productId.offerApplied == true
+          ) {
+            var productPrice = cartItem.productId.offerPrice;
             console.log("product offer present");
-          }else if(cartItem.productId.categoryOffer && cartItem.productId.categoryOfferApplied){
-            var productPrice = cartItem.productId.categoryOfferPrice
+          } else if (
+            cartItem.productId.categoryOffer &&
+            cartItem.productId.categoryOfferApplied
+          ) {
+            var productPrice = cartItem.productId.categoryOfferPrice;
             console.log("category offer present");
-          }
-          else{
-            var productPrice = cartItem.productId.price
+          } else {
+            var productPrice = cartItem.productId.price;
             console.log(" no offer");
           }
           console.log(productPrice);
@@ -46,7 +44,10 @@ const loadCart = async (req, res) => {
           originalAmount += itemTotalPrice;
         });
       }
-      console.log("this is cart item ---------------------------------- : ", cartDetails);
+      console.log(
+        "this is cart item ---------------------------------- : ",
+        cartDetails
+      );
 
       res.render("./users/cart", {
         user,
@@ -95,14 +96,14 @@ const addToCart = async (req, res) => {
       (item) => item.productId.toString() === productId
     );
 
-    if(product.offer && product.offerApplied == true ){
+    if (product.offer && product.offerApplied == true) {
       console.log("ith work akindooooooooooo");
-      var productPrice = product.offerPrice
-    }else if(product.categoryOffer && product.categoryOfferApplied){
-      var productPrice = product.categoryOfferPrice
-    }else{
+      var productPrice = product.offerPrice;
+    } else if (product.categoryOffer && product.categoryOfferApplied) {
+      var productPrice = product.categoryOfferPrice;
+    } else {
       console.log("atho thanoooooooooo");
-      var productPrice = product.price
+      var productPrice = product.price;
     }
 
     if (existingProductIndex !== -1) {
@@ -111,7 +112,6 @@ const addToCart = async (req, res) => {
       const newTotalQuantity =
         existingProduct.quantity + parseInt(quantity, 10);
 
-
       if (newTotalQuantity > product.quantity) {
         return res.json({
           success: false,
@@ -119,8 +119,12 @@ const addToCart = async (req, res) => {
         });
       }
       userCart.products[existingProductIndex].quantity = newTotalQuantity;
-      userCart.products[existingProductIndex].total = newTotalQuantity * Number(productPrice);
-      console.log("totalaanittoooo : ",userCart.products[existingProductIndex].total);
+      userCart.products[existingProductIndex].total =
+        newTotalQuantity * Number(productPrice);
+      console.log(
+        "totalaanittoooo : ",
+        userCart.products[existingProductIndex].total
+      );
     } else {
       // If the product is not in the cart, add it
       if (parseInt(quantity, 10) > product.quantity) {
@@ -147,9 +151,6 @@ const addToCart = async (req, res) => {
     });
   }
 };
-
-
-
 
 //cart quantity update
 const quantityUpdate = async (req, res) => {
@@ -213,22 +214,18 @@ const submitQuantity = async (req, res) => {
       return res.status(404).send("Product not found in cart");
     }
 
-
-    if(existproduct.offer && existproduct.offerApplied == true ){
+    if (existproduct.offer && existproduct.offerApplied == true) {
       console.log("product offer is here");
-      var productPrice = existproduct.offerPrice
-    }else if(existproduct.categoryOffer && existproduct.categoryOfferApplied){
-      var productPrice = existproduct.categoryOfferPrice
-    }else{
+      var productPrice = existproduct.offerPrice;
+    } else if (
+      existproduct.categoryOffer &&
+      existproduct.categoryOfferApplied
+    ) {
+      var productPrice = existproduct.categoryOfferPrice;
+    } else {
       console.log("no more offers");
-      var productPrice = existproduct.price
+      var productPrice = existproduct.price;
     }
-
-
-
-
-
-
 
     proData.quantity = quantity;
     proData.total = quantity * productPrice;

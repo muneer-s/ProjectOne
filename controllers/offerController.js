@@ -5,8 +5,6 @@ const Cart = require("../models/cartModel");
 const mongoose = require("mongoose");
 const Offer = require("../models/offerModel");
 
-
-
 //admin load offer list
 const loadOfferPage = async (req, res) => {
   try {
@@ -76,53 +74,48 @@ const viewOffer = async (req, res) => {
 // Delete offer
 const deleteOffer = async (req, res) => {
   try {
-     const id = req.query.id;
- 
-     const productsWithOffer = await products.find({offer: new mongoose.Types.ObjectId(id)});
-     if (productsWithOffer.length === 0) {
-       console.log("Product with this offer ID not found");
-       return res.status(404).send("Product with this offer ID not found");
-     }
- 
-     console.log("Product(s) found with the offer");
- 
-     for (const product of productsWithOffer) {
-       product.offer = null;
-       product.offerApplied = false;
-       product.offerPrice = 0; 
- 
-       await product.save();
-     }
- 
-     const deleteItem = await Offer.deleteOne({_id: new mongoose.Types.ObjectId(id)});
- 
-     res.redirect("/viewOffer");
+    const id = req.query.id;
+
+    const productsWithOffer = await products.find({
+      offer: new mongoose.Types.ObjectId(id),
+    });
+    if (productsWithOffer.length === 0) {
+      console.log("Product with this offer ID not found");
+      return res.status(404).send("Product with this offer ID not found");
+    }
+
+    console.log("Product(s) found with the offer");
+
+    for (const product of productsWithOffer) {
+      product.offer = null;
+      product.offerApplied = false;
+      product.offerPrice = 0;
+
+      await product.save();
+    }
+
+    const deleteItem = await Offer.deleteOne({
+      _id: new mongoose.Types.ObjectId(id),
+    });
+
+    res.redirect("/viewOffer");
   } catch (error) {
-     console.log(error);
-     res.status(500).send("An error occurred while processing your request");
+    console.log(error);
+    res.status(500).send("An error occurred while processing your request");
   }
- };
- 
+};
 
 //load offer page for adding to product
 const loadOfferpageForAdding = async (req, res) => {
   try {
-
-    const productId = req.query.id
+    const productId = req.query.id;
     const offer = await Offer.find({});
 
-    res.render("./adminSide/addOfferforProduct", { offer,productId });
+    res.render("./adminSide/addOfferforProduct", { offer, productId });
   } catch (error) {
     console.log(error.message);
   }
 };
-
- 
-
-
-
-
-
 
 module.exports = {
   loadOfferPage,
@@ -130,5 +123,4 @@ module.exports = {
   viewOffer,
   deleteOffer,
   loadOfferpageForAdding,
-  
 };

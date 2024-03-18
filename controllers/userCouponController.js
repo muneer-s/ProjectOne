@@ -26,26 +26,23 @@ const applyCoupon = async (req, res) => {
     const couponfind = await Coupon.findOne({ Code: userInputData });
 
     const couponUsed = await Coupon.findOne({
-        Code:userInputData,
-        "userUsed.user_id": user_id,    
-      });
+      Code: userInputData,
+      "userUsed.user_id": user_id,
+    });
 
-      if( originalAmount < couponfind.MaxPrice ){
-        return res.json({mimimumValueError:true})
-      }
+    if (originalAmount < couponfind.MaxPrice) {
+      return res.json({ mimimumValueError: true });
+    }
 
-      if(couponUsed){
-        return res.json({couponsUsed:true});
-      }
-    
-    let DiscountAmount = couponfind.Discount
+    if (couponUsed) {
+      return res.json({ couponsUsed: true });
+    }
+
+    let DiscountAmount = couponfind.Discount;
     req.session.couponDiscount = DiscountAmount || 0;
-    let newAmountUsingCoupon = originalAmount - DiscountAmount
+    let newAmountUsingCoupon = originalAmount - DiscountAmount;
     //console.log(newAmountUsingCoupon);
-    req.session.newAmountUsingCoupon = newAmountUsingCoupon
-    
-
-
+    req.session.newAmountUsingCoupon = newAmountUsingCoupon;
 
     if (couponfind) {
       if (couponfind.status == false) {
@@ -53,7 +50,7 @@ const applyCoupon = async (req, res) => {
         return res.json({ success: false, message: "Coupon is not active." });
       } else {
         //console.log(couponfind.Discount);
-        req.session.couponCode = couponfind.Code
+        req.session.couponCode = couponfind.Code;
         console.log("Coupon applied successfully.");
         return res
           .status(200)
@@ -66,12 +63,10 @@ const applyCoupon = async (req, res) => {
     }
   } catch (error) {
     console.log(error.message);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "An error occurred while applying the coupon.",
-      });
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while applying the coupon.",
+    });
   }
 };
 
