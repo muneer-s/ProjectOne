@@ -30,7 +30,7 @@
                     <input type="date" id="endDate" class="form-control">
                 </div>
                 <div id="checkId" class="col-lg-3 col-md-6 me-auto">
-                    <button class="btn btn-info btn-sm">check</button>
+                    <button id="checkButton" class="btn btn-info btn-sm">check</button>
                 </div>
 
 
@@ -257,6 +257,24 @@
     </script>
 
     <!--strt date edn date -->
+
+    <script>
+        document.getElementById('checkButton').addEventListener('click', function() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            if (startDate && endDate) {
+                // Redirect to the same page with the dates as query parameters
+                window.location.href = `/SalesReport?startDate=${startDate}&endDate=${endDate}`;
+            } else {
+                alert('Please select both start and end dates.');
+            }
+        });
+        </script>
+        
+
+
+
+
     <!-- <script>
         document.addEventListener("DOMContentLoaded", function () {
     const startDateInput = document.getElementById("startDate");
@@ -278,7 +296,28 @@
     </script> -->
     
 
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to get query parameters from the URL
+            function getQueryParam(param) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(param);
+            }
+        
+            // Get startDate and endDate from the URL
+            const startDate = getQueryParam('startDate');
+            const endDate = getQueryParam('endDate');
+        
+            // Check if startDate and endDate are present and populate the input fields
+            if (startDate) {
+                document.getElementById('startDate').value = startDate;
+            }
+            if (endDate) {
+                document.getElementById('endDate').value = endDate;
+            }
+        });
+        </script>
+        
 
 
 

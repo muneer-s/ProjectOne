@@ -6,7 +6,6 @@ const userSchema= new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"product",
         required:true,
-        
     },
     quantity:{
         type:Number,
