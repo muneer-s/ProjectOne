@@ -59,6 +59,8 @@
                             </td>
                             <% if(Item.productId.offer && Item.productId.offerApplied == true){ %>
                             <td><h5 class="text-success"><%= Item.productId.offerPrice %></h5></td>
+                            <% }else if(Item.productId.categoryOffer && Item.productId.categoryOfferApplied){ %>
+                                <td><h5 class="text-success"><%= Item.productId.categoryOfferPrice %></h5></td>
                             <% }else{ %>
                             <td>
                                 <h5><%= Item.productId.price %></h5>
