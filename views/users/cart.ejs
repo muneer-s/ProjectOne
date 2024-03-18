@@ -59,9 +59,17 @@
 
 
                                 <% if(cartItem.productId.offerApplied == false){ %>
+                                    <% if(cartItem.productId.categoryOfferApplied){ %>
+                                        <td>
+                                            <h5><%= cartItem.productId.categoryOfferPrice  %></h5>
+                                        </td>
+                                        <% }else{ %>
                                     <td>
                                         <h5><%= cartItem.productId.price %></h5>
                                     </td>
+                                    <% } %>
+
+
                                     <% }else{ %>
                                         <td>
                                             <h5><%= cartItem.productId.offerPrice  %></h5>
@@ -84,9 +92,21 @@
 
 
                                 <% if(cartItem.productId.offerApplied == false){ %>
+                                    <% if(cartItem.productId.categoryOfferApplied){ %>
+                                        <td>
+                                            <h5 id="totl<%= cartItem._id %>"><%=cartItem.productId.categoryOfferPrice*cartItem.quantity%></h5>
+                                        </td>
+                                        <% }else{ %>
+
                                     <td>
                                         <h5 id="totl<%= cartItem._id %>"><%=cartItem.productId.price*cartItem.quantity%></h5>
                                     </td>
+                                    <% } %>
+
+
+
+
+
                                     <% }else{ %>
                                         <td>
                                             <h5 id="totl<%= cartItem._id %>"><%=cartItem.productId.offerPrice*cartItem.quantity%></h5>

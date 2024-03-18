@@ -32,10 +32,14 @@ const loadCart = async (req, res) => {
         cartDetails.products.forEach((cartItem) => {
           if(cartItem.productId.offer && cartItem.productId.offerApplied == true){
             var productPrice = cartItem.productId.offerPrice
-            console.log("ithil keriyo");
-          }else{
+            console.log("product offer present");
+          }else if(cartItem.productId.categoryOffer && cartItem.productId.categoryOfferApplied){
+            var productPrice = cartItem.productId.categoryOfferPrice
+            console.log("category offer present");
+          }
+          else{
             var productPrice = cartItem.productId.price
-            console.log("apooooooo ithhhhhhhhhhhhh");
+            console.log(" no offer");
           }
           console.log(productPrice);
           let itemTotalPrice = productPrice * cartItem.quantity;
@@ -81,14 +85,12 @@ const addToCart = async (req, res) => {
       return res.json({ success: false, message: "Product not found." });
     }
 
-    // find cart or create a new one if not exists
     let userCart = await Cart.findOne({ userId: req.session.user_id });
 
     if (!userCart) {
       userCart = new Cart({ userId: req.session.user_id, products: [] });
     }
 
-    // check if the product is already in cart
     const existingProductIndex = userCart.products.findIndex(
       (item) => item.productId.toString() === productId
     );
@@ -96,6 +98,8 @@ const addToCart = async (req, res) => {
     if(product.offer && product.offerApplied == true ){
       console.log("ith work akindooooooooooo");
       var productPrice = product.offerPrice
+    }else if(product.categoryOffer && product.categoryOfferApplied){
+      var productPrice = product.categoryOfferPrice
     }else{
       console.log("atho thanoooooooooo");
       var productPrice = product.price
@@ -143,6 +147,9 @@ const addToCart = async (req, res) => {
     });
   }
 };
+
+
+
 
 //cart quantity update
 const quantityUpdate = async (req, res) => {
@@ -208,10 +215,12 @@ const submitQuantity = async (req, res) => {
 
 
     if(existproduct.offer && existproduct.offerApplied == true ){
-      console.log("ith work akindooooooooooo");
+      console.log("product offer is here");
       var productPrice = existproduct.offerPrice
+    }else if(existproduct.categoryOffer && existproduct.categoryOfferApplied){
+      var productPrice = existproduct.categoryOfferPrice
     }else{
-      console.log("atho thanoooooooooo");
+      console.log("no more offers");
       var productPrice = existproduct.price
     }
 

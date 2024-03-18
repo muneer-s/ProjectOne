@@ -15,7 +15,8 @@ const loadProductList = async (req, res) => {
     const proDetails = await product
       .find()
       .populate("category")
-      .populate("offer");
+      .populate("offer")
+      .populate("categoryOffer")
     console.log(proDetails);
     res.render("./adminSide/productList", { proDetails });
   } catch (error) {
@@ -57,7 +58,6 @@ const addCategory = async (req, res) => {
     console.error(error.message);
     req.flash("error", "Internal Server Error");
     return res.redirect("/addCategory");
-
   }
 };
 
@@ -108,7 +108,6 @@ const adminverify = (req, res) => {
   }
 };
 
-
 //  user details
 const userDetails = async (req, res) => {
   try {
@@ -119,7 +118,6 @@ const userDetails = async (req, res) => {
     console.log(error.message);
   }
 };
-
 
 const blockuser = async (req, res) => {
   try {
@@ -171,7 +169,7 @@ const updateCategory = async (req, res) => {
       const updatedCategoryData = {
         Name: req.body.Name,
         Description: req.body.Description,
-        is_list: req.body.is_list === "on", 
+        is_list: req.body.is_list === "on",
       };
 
       const updatedCategory = await Category.findByIdAndUpdate(
@@ -202,7 +200,6 @@ const deleteCategory = async (req, res) => {
     console.error(error);
     req.flash("error", "Internal Server Error");
     res.redirect("/addCategory");
-
   }
 };
 
@@ -448,45 +445,43 @@ const loadOfferForCategory = async (req, res) => {
 
 const applyOfferForCategory = async (req, res) => {
   try {
-     const offerId = req.body.offerId;
-     const categoryId = req.body.categoryId;
- 
-     const Category = await categories.findById(categoryId);
-     const Products = await product.find({category: categoryId}); // Note the change here to Products
- 
-     if (!Category) {
-       return res.status(404).send("Category not found");
-     }
-     console.log("offer add cheyyunna products:: ", Products);
- 
-     for (let product of Products) {
-       if (product.offerApplied == true && product.offerPrice > 0) {
-         console.log("this product already have an offer");
-         continue; 
-       }
- 
-       const productPrice = product.price;
-       const offer = await Offer.findById(offerId);
-       const offerDiscount = offer.percentage;
-       const discountAmount = (productPrice * offerDiscount) / 100;
- 
-       product.offerPrice = productPrice - discountAmount;
-       product.offer = offerId;
-       product.offerApplied = true;
-       await product.save(); 
-     }
- 
-     Category.offer = offerId;
-     Category.offerApplied = true;
-     await Category.save();
-     res.send("Offer applied successfully");
- 
+    const offerId = req.body.offerId;
+    const categoryId = req.body.categoryId;
+
+    const Category = await categories.findById(categoryId);
+    const Products = await product.find({ category: categoryId });
+
+    if (!Category) {
+      return res.status(404).send("Category not found");
+    }
+    console.log("offer add cheyyunna products:: ", Products);
+
+    for (let product of Products) {
+      if (product.offerApplied == true && product.offerPrice > 0) {
+        console.log("this product already have an offer");
+        continue;
+      }
+
+      const productPrice = product.price;
+      const offer = await Offer.findById(offerId);
+      const offerDiscount = offer.percentage;
+      const discountAmount = (productPrice * offerDiscount) / 100;
+
+      product.categoryOfferPrice = productPrice - discountAmount;
+      product.categoryOffer = offerId;
+      product.categoryOfferApplied = true;
+      await product.save();
+    }
+
+    Category.offer = offerId;
+    Category.offerApplied = true;
+    await Category.save();
+    res.send("Offer applied successfully");
   } catch (error) {
-     console.error("Error applying offer:", error.message);
-     res.status(500).send("An error occurred while applying the offer");
+    console.error("Error applying offer:", error.message);
+    res.status(500).send("An error occurred while applying the offer");
   }
- };
- 
+};
 
 //delete ofer from product
 const deleteOfferFromProduct = async (req, res) => {
@@ -498,7 +493,7 @@ const deleteOfferFromProduct = async (req, res) => {
     }
     Product.offer = null;
     Product.offerApplied = false;
-    Product.offerPrice = 0; 
+    Product.offerPrice = 0;
     await Product.save();
     res.send({ message: "Offer deleted successfully" });
   } catch (error) {
@@ -506,22 +501,43 @@ const deleteOfferFromProduct = async (req, res) => {
   }
 };
 
+
+
 const deleteOfferFromCategory = async (req, res) => {
   try {
-    const category = await categories.findById(req.params.categoryId);
-    if (!category) {
-      return res.status(404).send({ message: "Category not found" });
-    }
-    category.offer = null;
-    category.offerApplied = false 
-    await category.save();
-    res.send({ message: "Offer deleted successfully" });
+     const categoryId = req.params.categoryId;
+     console.log("Delete category this");
+ 
+     console.log(categoryId);
+     const category = await categories.findById(req.params.categoryId);
+     if (!category) {
+       return res.status(404).send({ message: "Category not found" });
+     }
+ 
+     const products = await product.find({ category: categoryId });
+     if (!products || products.length === 0) {
+       return res.status(404).send({ message: "Products not found" });
+     }
+ 
+     for (let product of products) {
+       product.categoryOfferPrice = 0;
+       product.categoryOffer = null;
+       product.categoryOfferApplied = false;
+       await product.save(); 
+     }
+ 
+     category.offer = null;
+     category.offerApplied = false;
+     await category.save();
+     res.send({ message: "Offer deleted successfully" });
   } catch (error) {
-    res
-      .status(500)
-      .send({ message: "Error deleting offer", error: error.message });
+     console.error("Error deleting offer:", error.message);
+     res
+       .status(500)
+       .send({ message: "Error deleting offer", error: error.message });
   }
-};
+ };
+ 
 
 module.exports = {
   adminLoadHome,

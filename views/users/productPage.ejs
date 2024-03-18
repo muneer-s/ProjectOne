@@ -110,16 +110,26 @@
 											<h6><%= proDetails[i].category.Name %></h6>
 										</div>
 
-										<!-- <div class="price">
-											<h6>₹ <%= proDetails[i].price %></h6>
-										</div> -->
+										
 
 
 
 										<% if(proDetails[i].offerApplied == false){ %>
+											<% if(proDetails[i].categoryOffer){ %>
+												<div >
+													<h6 class="text-danger"><strike>₹ <%= proDetails[i].price %></strike></h6>
+												</div>
+												<div class="price">
+													<h6 class="text-success">₹ <%= proDetails[i].categoryOfferPrice  %> category  Offer applied</h6>
+												</div>
+												<% }else{ %>
 											<div class="price">
 												<h6>₹ <%= proDetails[i].price %></h6>
 											</div>
+											<% } %>
+
+
+
 											<% }else{ %>
 												<div >
 													<h6 class="text-danger"><strike>₹ <%= proDetails[i].price %></strike></h6>

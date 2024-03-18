@@ -273,14 +273,12 @@ const userlogin = async (req, res) => {
     //console.log("password:",password);
     //console.log("existing:",existingUser.password);
 
-    // Compare password with the hashed password db
     const isPasswordMatch = await bcrypt.compare(
       password,
       existingUser.password
     );
 
     if (isPasswordMatch) {
-      // Check if the user is blocked
       if (existingUser.is_blocked === true) {
         req.flash("blkerror", "User is blocked cannot login ");
         console.log("user is blocked cannot login");
@@ -305,7 +303,7 @@ const loadProductPage = async (req, res) => {
     const user_id = req.session.user_id;
     const page = parseInt(req.query.page) || 1; 
     const limit = 6; 
-    const skip = (page - 1) * limit; // Calculate how many items to skip
+    const skip = (page - 1) * limit; 
     const categoryFilter = req.query.category;
     const sortOption = req.query.sort; 
     const searchQuery = req.query.query;
@@ -316,14 +314,14 @@ const loadProductPage = async (req, res) => {
       query.category = categoryFilter;
     }
     if (searchQuery) {
-      query.name = { $regex: searchQuery, $options: 'i' }; // Case-insensitive search
+      query.name = { $regex: searchQuery, $options: 'i' }; // case-insensitive search
     }
 
     let sortQuery = {};
     if (sortOption === 'low') {
-      sortQuery = { price: 1 }; // Ascending order
+      sortQuery = { price: 1 }; 
     } else if (sortOption === 'high') {
-      sortQuery = { price: -1 }; // Descending order
+      sortQuery = { price: -1 }; 
     }
 
     const proDetails = await product
@@ -333,20 +331,19 @@ const loadProductPage = async (req, res) => {
       .populate("category")
       .skip(skip)
       .limit(limit)
-      .populate("offer");
-      // console.log("hi :::",proDetails);
+      .populate("offer")
+      .populate("categoryOffer");
 
 
 
     let catDetails = await Category.find({is_list:true});
 
-    // Transform category names to uppercase
     catDetails = catDetails.map(category => ({
-      ...category._doc, // Spread the existing category properties
-      Name: category.Name.toUpperCase() // Override the Name property with its uppercase version
+      ...category._doc, 
+      Name: category.Name.toUpperCase() 
     }));
 
-    // Calculate total pages
+    // calculate total pages
     const totalItems = await product.countDocuments({ status: true });
     const totalPages = Math.ceil(totalItems / limit);
 

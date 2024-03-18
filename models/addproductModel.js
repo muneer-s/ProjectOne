@@ -47,6 +47,17 @@ const productSchema = new mongoose.Schema({
   offerPrice: {
     type: Number,
   },
+  categoryOffer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Offer",
+  },
+  categoryOfferApplied: {
+    type: Boolean,
+    default: false,
+  },
+  categoryOfferPrice: {
+    type: Number,
+  },
 });
 
 module.exports = mongoose.model("product", productSchema);

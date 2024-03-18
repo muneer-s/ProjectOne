@@ -68,6 +68,8 @@
                                 <td><%= proDetails[i].quantity %></td>
                                 <% if(proDetails[i].offer){%>
                                     <td><%= proDetails[i].offer.offerName %></td>
+                                    <% }else if(proDetails[i].categoryOffer){ %>
+                                        <td><%= proDetails[i].categoryOffer.offerName %></td>
                                     <% }else{ %>
                                         <td style="color: red;">No Offers</td>
                                         <% } %>

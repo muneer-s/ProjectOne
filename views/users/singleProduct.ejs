@@ -41,7 +41,22 @@
 						<!-- <h2>₹ <%= products.price %></h2> -->
 
 						<% if(products.offerApplied == false){ %>
+
+
+							<% if(products.categoryOffer){ %>
+									<!-- <h2 class="text-danger"><strike>₹ <%= products.price %></strike></h2> -->
+									<h2 class="text-success">₹ <%= products.categoryOfferPrice  %> category  Offer applied</h2>
+								<% }else{ %>
 								<h2>₹ <%= products.price %></h2>
+							<% } %>
+
+
+
+								<!-- <h2>₹ <%= products.price %></h2> -->
+
+
+
+
 							<% }else{ %>
 									<!-- <h2 class="text-danger"><strike>₹ <%= products.price %></strike></h2> -->
 									<h2 class="text-success">₹ <%= products.offerPrice  %>   Offer applied</h2>
