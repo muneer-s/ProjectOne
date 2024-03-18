@@ -17,7 +17,7 @@ const loadProductList = async (req, res) => {
       .populate("category")
       .populate("offer")
       .populate("categoryOffer")
-    console.log(proDetails);
+    //console.log(proDetails);
     res.render("./adminSide/productList", { proDetails });
   } catch (error) {
     console.log(error.message);
@@ -454,7 +454,7 @@ const applyOfferForCategory = async (req, res) => {
     if (!Category) {
       return res.status(404).send("Category not found");
     }
-    console.log("offer add cheyyunna products:: ", Products);
+    //console.log("offer add cheyyunna products:: ", Products);
 
     for (let product of Products) {
       if (product.offerApplied == true && product.offerPrice > 0) {
@@ -506,9 +506,9 @@ const deleteOfferFromProduct = async (req, res) => {
 const deleteOfferFromCategory = async (req, res) => {
   try {
      const categoryId = req.params.categoryId;
-     console.log("Delete category this");
+     //console.log("Delete category this");
  
-     console.log(categoryId);
+     //console.log(categoryId);
      const category = await categories.findById(req.params.categoryId);
      if (!category) {
        return res.status(404).send({ message: "Category not found" });
