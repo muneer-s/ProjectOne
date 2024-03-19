@@ -9,7 +9,14 @@ const Coupon = require("../models/couponModel");
 
 const loadCouponPage = async (req, res) => {
   try {
-    res.render("./adminSide/addCoupon");
+    function getTomorrowDate() {
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      return tomorrow.toISOString().split('T')[0];
+  }
+  
+    res.render("./adminSide/addCoupon",{ getTomorrowDate: getTomorrowDate });
   } catch (error) {
     console.log(error.message);
   }

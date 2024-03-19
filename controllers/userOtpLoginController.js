@@ -15,27 +15,21 @@ const otpload = (req, res) => {
 const otpLogin = async (req, res) => {
   try {
     const existingUser = await User.findOne({ email: req.body.email });
-
-    // If email is not registered, send an appropriate response
     if (!existingUser) {
       console.log("there is no such email");
       req.flash("error", "There is no such user with this email");
       return res.redirect("/login");
     }
-
-    // generate a random 5-digit OTP
     const generateOTP = () => {
       return Math.floor(10000 + Math.random() * 90000);
     };
 
-    // Generate a 5-digit OTP
     const otp = generateOTP();
 
-    // Configure nodemailer transporter for sending emails
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
-      secure: false, // TLS authentication
+      secure: false,
       requireTLS: true,
       auth: {
         user: "muni0209s@gmail.com",
@@ -46,15 +40,13 @@ const otpLogin = async (req, res) => {
     // Compose mail options
     const mailOptions = {
       from: "muni0209s@gmail.com",
-      to: existingUser.email, // Use existingUser.email instead of req.body.email
+      to: existingUser.email,
       subject: "OTP",
       text: `Your OTP is: ${otp}`,
     };
 
-    // Hash the OTP before saving it to the database
     const hashedOTP = await bcrypt.hash(otp.toString(), 10);
 
-    // Save hashed OTP to the OTP database
     const newOTP = new OTPdb({
       user_id: existingUser.email,
       hashedOTP: hashedOTP,
@@ -62,7 +54,7 @@ const otpLogin = async (req, res) => {
 
     await newOTP.save();
 
-    // Send OTP email
+    // send OTP email
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         console.log(error);
@@ -78,11 +70,10 @@ const otpLogin = async (req, res) => {
   }
 };
 
-//in otplogin page , check entered otp match with generated otp
+//load otp login page
 const otpLoginLoad = async (req, res) => {
   try {
     const id = req.query.email;
-
     console.log(req.query);
     console.log(req.body);
 
@@ -95,35 +86,26 @@ const otpLoginLoad = async (req, res) => {
     } else {
       const { a, b, c, d, e } = req.body;
 
-      // Concatenate the individual digits to form the entered OTP
       const enteredOtp = a + b + c + d + e;
 
-      // Retrieve the hashed OTP from the database
       const dbOtpHash = existingOtpData.hashedOTP;
 
-      // Compare the entered OTP with the hashed OTP from the database using bcrypt
       const isOtpMatch = await bcrypt.compare(enteredOtp.toString(), dbOtpHash);
       console.log("newhased ", enteredOtp, "oldHashed ", isOtpMatch);
 
-      // Find the user based on the provided email
       const existingUser = await User.findOne({ email: id });
 
       if (isOtpMatch) {
-        // The entered OTP matches the stored OTP in the database
         console.log("otp verified");
 
-        // Set the user_id in the session and redirect to the home page
         req.session.user_id = existingUser._id;
         return res.redirect("/");
       } else {
-        // The entered OTP does not match the stored OTP in the database
-        //res.status(401).json({ error: 'Invalid OTP' });
         req.flash("otperror", "invalid OTP");
         return res.redirect("/otploginload");
       }
     }
   } catch (error) {
-    // Handle any other errors that may occur during the process
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }

@@ -15,7 +15,6 @@ const insertUser = async (req, res) => {
   try {
     const spassword = await securePassword(req.body.password);
 
-    // Check if the email already exists
     const existingUser = await User.findOne({ email: req.body.email });
 
     if (existingUser) {
@@ -25,7 +24,6 @@ const insertUser = async (req, res) => {
       });
     }
 
-    //  create the new user
     const user = new User({
       name: req.body.name,
       email: req.body.email,
@@ -34,11 +32,9 @@ const insertUser = async (req, res) => {
       is_admin: 0,
     });
 
-    // Save the new user
     const userData = await user.save();
 
     if (userData) {
-      // If userData is successfully saved, delete existing OTP records And send a verification email
       await OTPdb.deleteMany({});
       await sendVerifyMail(req.body.name, req.body.email, userData._id);
       console.log("before redir otp");
@@ -56,7 +52,6 @@ const insertUser = async (req, res) => {
 //password bycript
 const securePassword = async (password) => {
   try {
-    // Generating a password hash using bcrypt with cost factor set to 10
     const passwordHash = await bcrypt.hash(password, 10);
     return passwordHash;
   } catch (error) {
@@ -70,27 +65,23 @@ const sendVerifyMail = async (name, email, user_id) => {
     console.log("name is : " + name);
     console.log("email is : " + email);
 
-    // Function to generate a random 5-digit OTP
     const generateOTP = () => {
       return Math.floor(10000 + Math.random() * 90000);
     };
 
-    // Generate OTP
     const otp = generateOTP();
 
-    // Create a nodemailer transporter for sending emails
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
-      secure: false, // Disable secure connection for Gmail
+      secure: false, 
       requireTLS: true,
       auth: {
-        user: "muni0209s@gmail.com", // Your Gmail email address
-        pass: "qrie kkvo lfmp chrb", // Your Gmail app password
+        user: "muni0209s@gmail.com", 
+        pass: "qrie kkvo lfmp chrb", 
       },
     });
 
-    // Define email options
     const mailOptions = {
       from: "muni0209s@gmail.com",
       to: email,
@@ -98,17 +89,14 @@ const sendVerifyMail = async (name, email, user_id) => {
       text: `Your OTP is: ${otp}`,
     };
 
-    // Hash the OTP using bcrypt
     const hashedOTP = await bcrypt.hash(otp.toString(), 10);
 
-    // Save the hashed OTP along with user_id in the database
     const newOTP = new OTPdb({
       user_id: user_id,
       hashedOTP: hashedOTP,
     });
     await newOTP.save();
 
-    // Send the email with the OTP
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         console.log(error);
@@ -124,39 +112,30 @@ const sendVerifyMail = async (name, email, user_id) => {
 //  verify OTP
 const verifyOtp = async (req, res) => {
   try {
-    //user ID from query parameters
     const id = req.query.id;
-
-    // Find OTP in db based on user ID
     const existingOtpData = await OTPdb.findOne({ user_id: id });
-
     if (!existingOtpData) {
       res.status(404).json({ error: "User ID not found" });
     } else {
-      // Extract OTP digits from request body
       const { a, b, c, d, e } = req.body;
 
       const enteredOtp = a + b + c + d + e;
 
-      // Retrieve the hashed OTP
       const dbOtpHash = existingOtpData.hashedOTP;
 
-      // Compare entered OTP with hashed OTP
       const isOtpMatch = await bcrypt.compare(enteredOtp.toString(), dbOtpHash);
 
       console.log("newhased", enteredOtp, "oldHashed", dbOtpHash);
 
       if (isOtpMatch) {
-        // Attempt to update the user's information in the database to mark them as verified
         const updateInfo = await User.updateOne(
           { _id: req.query.id },
           { $set: { is_verified: 1 } }
         );
 
-        //console.log('update info: ',updateInfo);
 
         if (updateInfo) {
-          req.session.user_id = req.query.id; ///////session
+          req.session.user_id = req.query.id; //------session created-----------------
 
           console.log("otp verified");
           res.redirect("/");
@@ -198,7 +177,6 @@ const homeload = async (req, res) => {
       req.session.user_id = null;
     }
 
-    // Retrieve user data from the database based on the user_id
     const userData = await User.findOne({ _id: user_id, is_blocked: false });
 
     res.render("./users/home", { user: userData });
@@ -227,18 +205,14 @@ const otpload = (req, res) => {
 //resend otp
 const resendOtp = async (req, res) => {
   try {
-    // delete all existing OTP
     await OTPdb.deleteMany({});
 
     const user_id = req.session.user_id;
 
-    // Fetch user data
     const userData = await User.findOne({ _id: user_id });
 
-    // Send verification email with the user's name, email, and user ID
     await sendVerifyMail(userData.name, userData.email, user_id);
 
-    // Redirect to the OTP page with the user's ID as a query parameter
     res.redirect(`/otp?id=${userData._id}`);
   } catch (error) {
     console.log(error);
@@ -250,12 +224,10 @@ const userlogin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validate email using regex
     const emailRegex = /\S+@\S+\.\S+/;
 
     if (!emailRegex.test(email)) {
       console.log("error ----Invalid email format ");
-      // return res.status(400).json({ message: 'Invalid email format' });
     }
 
     if (!password) {
@@ -269,9 +241,6 @@ const userlogin = async (req, res) => {
       req.flash("unferror", "User not found!!there is no such User");
       return res.redirect("/login");
     }
-
-    //console.log("password:",password);
-    //console.log("existing:",existingUser.password);
 
     const isPasswordMatch = await bcrypt.compare(
       password,
@@ -290,14 +259,12 @@ const userlogin = async (req, res) => {
     } else {
       req.flash("pwerror", "authentication failed   !!!!  Invalid password");
       return res.redirect("/login");
-      //return res.status(401).json({ message: 'authentication failed   !!!!  Invalid password' });
     }
   } catch (error) {
     console.error(error);
   }
 };
 
-//user product page load
 const loadProductPage = async (req, res) => {
   try {
     const user_id = req.session.user_id;
@@ -343,7 +310,6 @@ const loadProductPage = async (req, res) => {
       Name: category.Name.toUpperCase() 
     }));
 
-    // calculate total pages
     const totalItems = await product.countDocuments({ status: true });
     const totalPages = Math.ceil(totalItems / limit);
 

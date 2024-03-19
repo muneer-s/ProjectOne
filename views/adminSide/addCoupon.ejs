@@ -35,9 +35,9 @@
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Exp Date</label>
-                                        <input type="date" placeholder="Type here" class="form-control" id="Exp_Date" name="Exp_Date"  title="Please enter a non-empty value." required />
-                                    
+                                        <input type="date" placeholder="Type here" class="form-control" id="Exp_Date" name="Exp_Date" title="Please enter a non-empty value." required min="<%= getTomorrowDate() %>" />
                                     </div>
+                                    
                                 
 
                                     
@@ -56,3 +56,6 @@
 
 
             <%-include("../adminLayout/adminFooter")    %>
+
+
+           

@@ -12,7 +12,6 @@ const Cart = require("../models/cartModel");
 
 
 
-
 const loadOrderList = async (req, res) => {
   try {
     if (req.session.email) {
