@@ -16,7 +16,7 @@ const loadProductList = async (req, res) => {
       .find()
       .populate("category")
       .populate("offer")
-      .populate("categoryOffer")
+      .populate("categoryOffer");
     //console.log(proDetails);
     res.render("./adminSide/productList", { proDetails });
   } catch (error) {
@@ -501,43 +501,40 @@ const deleteOfferFromProduct = async (req, res) => {
   }
 };
 
-
-
 const deleteOfferFromCategory = async (req, res) => {
   try {
-     const categoryId = req.params.categoryId;
-     //console.log("Delete category this");
- 
-     //console.log(categoryId);
-     const category = await categories.findById(req.params.categoryId);
-     if (!category) {
-       return res.status(404).send({ message: "Category not found" });
-     }
- 
-     const products = await product.find({ category: categoryId });
-     if (!products || products.length === 0) {
-       return res.status(404).send({ message: "Products not found" });
-     }
- 
-     for (let product of products) {
-       product.categoryOfferPrice = 0;
-       product.categoryOffer = null;
-       product.categoryOfferApplied = false;
-       await product.save(); 
-     }
- 
-     category.offer = null;
-     category.offerApplied = false;
-     await category.save();
-     res.send({ message: "Offer deleted successfully" });
+    const categoryId = req.params.categoryId;
+    //console.log("Delete category this");
+
+    //console.log(categoryId);
+    const category = await categories.findById(req.params.categoryId);
+    if (!category) {
+      return res.status(404).send({ message: "Category not found" });
+    }
+
+    const products = await product.find({ category: categoryId });
+    if (!products || products.length === 0) {
+      return res.status(404).send({ message: "Products not found" });
+    }
+
+    for (let product of products) {
+      product.categoryOfferPrice = 0;
+      product.categoryOffer = null;
+      product.categoryOfferApplied = false;
+      await product.save();
+    }
+
+    category.offer = null;
+    category.offerApplied = false;
+    await category.save();
+    res.send({ message: "Offer deleted successfully" });
   } catch (error) {
-     console.error("Error deleting offer:", error.message);
-     res
-       .status(500)
-       .send({ message: "Error deleting offer", error: error.message });
+    console.error("Error deleting offer:", error.message);
+    res
+      .status(500)
+      .send({ message: "Error deleting offer", error: error.message });
   }
- };
- 
+};
 
 module.exports = {
   adminLoadHome,

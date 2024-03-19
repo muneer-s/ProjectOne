@@ -4,23 +4,22 @@ const Order = require("../models/orderModel");
 const loadSalesReportPage = async (req, res) => {
   try {
     if (req.session.email) {
-      let filter = req.query.filter || 'all'; 
+      let filter = req.query.filter || "all";
       let query = { orderStatus: "Delivered" };
 
-       if (filter === 'daily') {
+      if (filter === "daily") {
         const date = new Date();
         date.setDate(date.getDate() - 1);
         query.createdAt = { $gte: date };
-      } else if (filter === 'weekly') {
+      } else if (filter === "weekly") {
         const date = new Date();
         date.setDate(date.getDate() - 7);
         query.createdAt = { $gte: date };
-      } else if (filter === 'monthly') {
+      } else if (filter === "monthly") {
         const date = new Date();
         date.setDate(date.getDate() - 30);
         query.createdAt = { $gte: date };
-      }
-      else if(filter === 'all') {
+      } else if (filter === "all") {
         query = { orderStatus: "Delivered" };
       }
 
@@ -32,8 +31,6 @@ const loadSalesReportPage = async (req, res) => {
         query.createdAt = { $gte: start, $lte: end };
       }
 
-
-
       const orders = await Order.find(query)
         .populate("products.productId")
         .populate("address")
@@ -41,7 +38,7 @@ const loadSalesReportPage = async (req, res) => {
 
       console.log("----------------------", orders);
 
-      res.render("./adminSide/SalesReport", { orders, filter});
+      res.render("./adminSide/SalesReport", { orders, filter });
     }
   } catch (error) {
     console.log(error.message);
