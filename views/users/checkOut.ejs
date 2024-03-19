@@ -235,6 +235,16 @@
                 <% } %>
             </ul>
 
+
+            <% if(appliedCoupon){ %>
+
+            <div>
+              <label for="">Coupon Code : <%= appliedCoupon.Code %></label>
+              <br>
+              <label for="">Coupon Discount : <%= appliedCoupon.Discount %></label>
+            </div>
+            <% } %>
+
             <div style="margin-bottom: 20px">
               <a class="primary-btn" id="addCouponBtn" href="">Add Coupon</a>
               <div id="couponDiv" style="display: none">

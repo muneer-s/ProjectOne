@@ -5,6 +5,9 @@ const Cart = require("../models/cartModel");
 const mongoose = require("mongoose");
 const Coupon = require("../models/couponModel");
 
+
+
+
 //apply coupon
 const applyCoupon = async (req, res) => {
   try {

@@ -161,6 +161,7 @@ const loadCheckOutPage = async (req, res) => {
     const Coupons = await Coupon.find({ status: true });
     const totalUsingCoupon = req.session.newAmountUsingCoupon;
     const couponCode = req.session.couponCode;
+    const appliedCoupon = await Coupon.findOne({Code:couponCode})
     const cartDetails = await Cart.findOne({ userId: user_id }).populate({
       path: "products.productId",
       model: "product",
@@ -191,6 +192,7 @@ const loadCheckOutPage = async (req, res) => {
           totalUsingCoupon: totalUsingCoupon,
           couponCode,
           wallet,
+          appliedCoupon
         },
         (err, html) => {
           if (err) {
