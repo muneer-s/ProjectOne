@@ -11,15 +11,17 @@ const otpload = (req, res) => {
   res.render("./users/otpLogin", { email });
 };
 
-// otp generate to entered email in login page
 const otpLogin = async (req, res) => {
   try {
     const existingUser = await User.findOne({ email: req.body.email });
+
+
     if (!existingUser) {
       console.log("there is no such email");
       req.flash("error", "There is no such user with this email");
       return res.redirect("/login");
     }
+
     const generateOTP = () => {
       return Math.floor(10000 + Math.random() * 90000);
     };
@@ -29,7 +31,9 @@ const otpLogin = async (req, res) => {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
-      secure: false,
+
+      secure: false, 
+
       requireTLS: true,
       auth: {
         user: "muni0209s@gmail.com",
@@ -37,7 +41,6 @@ const otpLogin = async (req, res) => {
       },
     });
 
-    // Compose mail options
     const mailOptions = {
       from: "muni0209s@gmail.com",
       to: existingUser.email,
@@ -54,7 +57,7 @@ const otpLogin = async (req, res) => {
 
     await newOTP.save();
 
-    // send OTP email
+
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         console.log(error);
@@ -71,6 +74,7 @@ const otpLogin = async (req, res) => {
 };
 
 //load otp login page
+
 const otpLoginLoad = async (req, res) => {
   try {
     const id = req.query.email;

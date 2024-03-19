@@ -25,9 +25,7 @@ const loadOrder = async (req, res) => {
 
       const orderId = req.session.oderData._id;
 
-
       req.session.oderData = null;
-
 
       const orders = await Order.findOne({ _id: orderId }).populate(
         "products.productId"
@@ -41,8 +39,6 @@ const loadOrder = async (req, res) => {
   }
 };
 
-
-
 //placeorder
 const placeOrder = async (req, res) => {
   try {
@@ -50,7 +46,7 @@ const placeOrder = async (req, res) => {
     let { couponDiscount } = req.session;
     let couponCode = req.session.couponCode;
 
-    const totalWithCoupon = req.session.newAmountUsingCoupon
+    const totalWithCoupon = req.session.newAmountUsingCoupon;
 
     const addressId = req.body.selectedAddressId;
     const paymentIntent = req.body.paymentMethod;
@@ -64,15 +60,12 @@ const placeOrder = async (req, res) => {
     const address = user.address[0];
     const orderId = orderid.generate();
 
-
     let originalAmount = 0;
     if (cartData) {
       cartData.products.forEach((cartItem) => {
         originalAmount = originalAmount + cartItem.total;
       });
     }
-
-
 
     const order = new Order({
       products: cartData.products,
@@ -118,10 +111,9 @@ const placeOrder = async (req, res) => {
       await cartData.save();
       res.json({ codSuccess: true });
     } else if (paymentMethod == "Wallet") {
-
       console.log("wallet aanu ttooooooooo");
-      const totalAmount = req.body.totalAmount
-      
+      const totalAmount = req.body.totalAmount;
+
       const wallet = await Wallet.findOne({ user: req.session.user_id });
       wallet.balance -= totalAmount;
       wallet.transactions.push({
@@ -137,16 +129,14 @@ const placeOrder = async (req, res) => {
       );
       req.session.oderData = order;
 
-
       cartData.products = [];
       await cartData.save();
       res.json({ walletSuccess: true });
-
     } else {
       console.log("iam razor");
 
       var options = {
-        amount: (originalAmount - (couponDiscount || 0)) * 100, 
+        amount: (originalAmount - (couponDiscount || 0)) * 100,
         currency: "INR",
         receipt: order._id,
       };
@@ -155,7 +145,6 @@ const placeOrder = async (req, res) => {
         if (err) {
           console.log(err);
         } else {
-
           res.json({ success: false, razorpayOrder });
 
           console.log("razorpay order ", razorpayOrder);
