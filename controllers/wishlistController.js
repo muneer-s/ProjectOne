@@ -6,6 +6,7 @@ const Cart = require("../models/cartModel");
 const mongoose = require("mongoose");
 const wishlist = require("../models/wishlistModel");
 
+//load wishlist page to user
 const loadWishlist = async (req, res) => {
   try {
     if (req.session.user_id) {
@@ -60,6 +61,7 @@ const addToWishlist = async (req, res) => {
   }
 };
 
+//delete a product from wishlist
 const deleteProductFromWishlist = async (req, res) => {
   const userId = req.session.user_id;
   const query = req.query.id;
