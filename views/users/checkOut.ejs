@@ -199,24 +199,22 @@
 
                 <% } %>
 
-
-
-
-
-
-
-
-
-
+                  
               <div class="radion_btn">
+                <% if( totalUsingCoupon || subTotal > 1000){ %>
+                  <input disabled  type="radio"  id="f-option6-cash"  name="selector"  value="Cash on delivery"  />
+                <label for="f-option6-cash">Cash on Delivery</label>
+                <label style="-ms-text-size-adjust: 5; font-size: 10px; color: brown;" for="">order above 1000Rs not allowed in COD</label>
+                <div class="check"></div>
+                <% }else{ %>
+
                 <input  type="radio"  id="f-option6-cash"  name="selector"  value="Cash on delivery"  />
                 <label for="f-option6-cash">Cash on Delivery</label>
                 <div class="check"></div>
+                <% } %>
+
+
               </div>
-
-
-
-              
             </div>
 
 

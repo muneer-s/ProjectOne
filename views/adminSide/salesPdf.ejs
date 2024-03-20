@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sales Report</title>
+    <style>
+       body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .address-details {
+            list-style-type: none;
+            padding: 0;
+        }
+        .address-details li {
+            margin-bottom: 5px;
+        }
+        .product-name {
+            max-width: 200px;
+            word-wrap: break-word;
+        }
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sales Report</h1>
+    <table style="font-size: 12px;">
+        <thead>
+          <tr>
+            <th>Order Id</th>
+            <th>Customer Name</th>
+            <th>Address</th>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Order Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if(orderData && orderData.length > 0) { %>
+              <% orderData.reverse().forEach((item)=> { %>
+                <tr>
+                  <td><%= item.orderId %></td>
+                 <td><h5><%= item.userId.name %></h5></td>
+                  <td><ul class="address-details">
+                      <li><%= item.address.fullName %></li>
+                      <li><%= item.address.phone %></li>
+                      <li><%= item.address.address %>, <%= item.address.location %>, <%= item.address.city %></li>
+                      <li><%= item.address.state %>, <%= item.address.pinCode %></li>
+                  </ul></td>
+                                                                        
+                  <td class="product-name">
+                      <% item.products.forEach((product)=> { %>
+                         <%= product.productId.name %> <br>
+                      <% }); %>
+                  </td>
+                     <td style="text-align: center;">
+                      <% item.products.forEach((product)=> { %>
+                         <%= product.quantity %> <br>
+                      <% }); %>
+                  </td>
+                  
+                  <td>
+                    <% item.products.forEach((product)=> { %>
+                        <%= product.total %> <br>
+                     <% }); %>
+
+                  </td>
+                  <td><%= item.orderStatus %></td>
+                  <td><%= item.createdAt.toLocaleDateString() %></td>
+                </tr>
+              <% }); %>
+            <% } else { %>
+              <tr>
+                <td colspan="8">No Data</td>
+              </tr>
+            <% } %>
+        </tbody>
+      </table>
+</body>
+</html>

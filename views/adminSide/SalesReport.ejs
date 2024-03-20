@@ -12,7 +12,10 @@
             <input type="text" id="searchInput" placeholder="Search order ID" class="form-control bg-white" onkeyup="searchOrders()" />
         </div>
         <div>
-            <a href="" class="btn btn-primary" onclick="printPage()"><i class="text-muted material-icons md-post_add" ></i>Download</a>
+            <a href="" class="btn btn-primary" onclick="downloadSalesReport(event)"><i class="text-muted material-icons md-post_add" ></i>Download</a>
+            <!-- <a href="" class="btn btn-primary" onclick="printPage()"><i class="text-muted material-icons md-post_add" ></i>Download</a> -->
+
+            <!-- <a href="#" class="btn btn-solid" onclick="downloadSalesReport()">Download sales report</a> -->
         </div>
     </div>
     <div class="card mb-4">
@@ -110,8 +113,37 @@
 </section>
 
 
+<!--pdf download-->
 
 <script>
+
+    function downloadSalesReport(event) {
+        event.preventDefault()
+        console.log("edoooooooooooooooooooooooooooo");
+        fetch('/download-salesreport')
+          .then(response => response.blob())
+          .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'sales.pdf';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+          })
+          .catch(error => console.error('Error downloading orders:', error));
+    }
+    
+    </script>
+
+
+
+
+
+
+
+<!-- <script>
     function printPage() {
         // Hide unnecessary elements
         document.getElementById("searchInput").style.display = "none"; // Hide search input
@@ -121,9 +153,6 @@
         document.getElementById("startDate&endDate").style.display = "none"
         document.getElementById("checkId").style.display = "none";
         document.getElementById("filterBy").style.display = "none";
-
-
-    
         // Print the page
         window.print();
     
@@ -135,11 +164,8 @@
         document.getElementById("startDate&endDate").style.display = "block"
         document.getElementById("checkId").style.display = "block";
         document.getElementById("filterBy").style.display = "none";
-
-
-
     }
-    </script>
+    </script> -->
 
 
 
