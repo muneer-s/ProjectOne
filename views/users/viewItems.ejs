@@ -18,7 +18,10 @@
 
 <!--================Order Details Area =================-->
 <section class="order_details section_gap">
+   
+
     <div class="container">
+
 
         <div class="row order_d_inner">
             <% orders.forEach(item=>{ %>
@@ -31,6 +34,8 @@
                         <li><a href="#"><span>Date</span> : <%= item.createdAt.toLocaleDateString() %></a></li>
                         <li><a href="#"><span>Total</span> : <%= item.totalPrice %></a></li>
                         <li><a href="#"><span>Payment method</span> : <%= item.paymentIntent %></a></li>
+                        <li><a href="#"><span>order Status</span> : <%= item.orderStatus %></a></li>
+
                     </ul>
                 </div>
             </div>
@@ -38,6 +43,7 @@
                 <div class="details_item">
                     <h4>Billing Address</h4>
                     <ul class="list">
+                        <li><a href="#"><span>Name</span> : <%= item.address.fullName %></a></li>
                         <li><a href="#"><span>Street</span> : <%= item.address.location %></a></li>
                         <li><a href="#"><span>City</span> : <%= item.address.city %></a></li>
                         <li><a href="#"><span>State</span> : <%= item.address.state %></a></li>
@@ -48,6 +54,23 @@
             <% }) %>
             
         </div>
+
+        <% orders.forEach((item)=>{  %>
+        <% if(item.orderStatus === 'Delivered'){ %>
+        <div class="btn-container">
+            <a href="" class="btn btn-primary" onclick="downloadinvoice(event,'<%=orderId%>')"><i class="text-muted material-icons" ></i>Download</a><br>
+    
+        </div>
+        <% }else{ %>
+            <div class="btn-container">
+            </div>
+            <% } %>
+
+            <% }) %>
+
+
+
+
         <div class="order_details_table">
 
 
@@ -65,13 +88,7 @@
                         <tr>
                             <% orders.forEach(order => { %>
                                 <p>Order ID: <%= order.orderId %></p>
-                                <!-- <table> -->
-                                    <!-- <thead>
-                                        <tr>
-                                            <th>Product ID</th>
-                                        </tr>
-                                    </thead> -->
-                                    <!-- <tbody> -->
+                               
                                         <% order.products.forEach(product => { %>
                                             <tr>
                                                 <td><%= product.productId.name %></td>
@@ -82,8 +99,7 @@
                                         <% }); %>
                                         <tr>
                                         </tr>
-                                    <!-- </tbody> -->
-                                <!-- </table> -->
+                                 
                             <% }); %>
                             
                         
@@ -101,3 +117,25 @@
 </section>
 <!--================End Order Details Area =================-->
 <%-include("../layouts/footer")    %>
+<!--download invoice-->
+<script>
+
+    function downloadinvoice(event,orderId) {
+        event.preventDefault()
+        console.log("hellooooooo");
+        fetch(`/download-invoice/${orderId}`)
+          .then(response => response.blob())
+          .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'invoice.pdf';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+          })
+          .catch(error => console.error('Error downloading orders:', error));
+    }
+    
+    </script>

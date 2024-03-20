@@ -13,6 +13,16 @@ const { success } = require("toastr");
 const Coupon = require("../models/couponModel");
 const Wallet = require("../models/walletModel");
 
+
+
+var instance = new Razorpay({
+  key_id: process.env.key_id,
+  key_secret: process.env.key_secret,
+});
+
+
+
+
 const loadOrder = async (req, res) => {
   try {
     if (req.session.user_id) {
@@ -141,9 +151,11 @@ const placeOrder = async (req, res) => {
         receipt: order._id,
       };
       req.session.oderData = order;
+
       instance.orders.create(options, function (err, razorpayOrder) {
         if (err) {
-          console.log(err);
+          console.log("razorpay adich poyiiiiiiiiiiiiiiiiiiiiiiiii");
+          console.log(err.message);
         } else {
           res.json({ success: false, razorpayOrder });
 
@@ -217,23 +229,22 @@ const userupdatestatus = async (req, res) => {
   }
 };
 
-var instance = new Razorpay({
-  key_id: process.env.key_id,
-  key_secret: process.env.key_secret,
-});
+
 
 const verifyPayment = async (req, res) => {
   try {
+    console.log("verufyyyyyyyyyyyyyyyyyyyyyyyyy");
     const userId = req.session.user_id;
-    // console.log("userid tto : ",userId);
+    console.log("userid tto : ",userId);
     const cart = await Cart.findOne({ userId }).populate("products.productId");
-    // console.log("cart tto : ",cart);
-    // console.log('req body : ', req.body);
+    console.log("cart tto : ",cart);
+    console.log('req body : ', req.body);
     const response = req.body.response;
     const bodyOrder = req.body.order;
+    console.log("ithaanu response : ",response);
+    console.log(("this bodyorder : ",bodyOrder));
 
-    // console.log("response : ",response);
-    console.log("bodyorder : ", bodyOrder);
+   
     var crypto = require("crypto");
     let hmac = crypto.createHmac("sha256", "Bcd9iqDRBd0iWJlO6C5GlsfD");
 
@@ -245,6 +256,7 @@ const verifyPayment = async (req, res) => {
     console.log("ith ath : ", response.razorpay_signature);
 
     if (hmac == response.razorpay_signature) {
+      console.log("change order status");
       //change order status
       await Order.updateOne(
         { _id: bodyOrder.receipt },
@@ -260,7 +272,7 @@ const verifyPayment = async (req, res) => {
           $inc: { quantity: -quantityToSubtract },
         });
       }
-
+console.log("session dlt cheyyaattoooooooooooooooooooo");
       //delete req.session.discountAmount;
       cart.products = [];
       const cartData = await cart.save();
@@ -270,6 +282,8 @@ const verifyPayment = async (req, res) => {
     console.log("verify err ", error.message);
   }
 };
+
+
 
 module.exports = {
   loadOrder,

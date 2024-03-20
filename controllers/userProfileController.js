@@ -11,6 +11,10 @@ const Cart = require("../models/cartModel");
 const Order = require("../models/orderModel");
 const Coupon = require("../models/couponModel");
 const Wallet = require("../models/walletModel");
+const ejs = require('ejs');
+const path = require('path');
+const puppeteer = require('puppeteer');
+const fs = require('fs');
 
 //load user profile page
 const userProfileLoad = async (req, res) => {
@@ -223,8 +227,9 @@ const loadViewItems = async (req, res) => {
       const orders = await Order.find({ _id: orderId }).populate(
         "products.productId"
       );
+      console.log('555555555555555555555',orders);
 
-      res.render("./users/viewItems", { orders, user });
+      res.render("./users/viewItems", { orders, user,orderId });
     } else {
       res.render("./users/login");
     }
@@ -232,6 +237,64 @@ const loadViewItems = async (req, res) => {
     console.log(error.message);
   }
 };
+
+//download invoice
+const downloadInvoice = async (req, res) => {
+  try {
+      const orderId = req.params.id;
+      const userId = req.session.user_id;
+      const userData = await User.findOne({ _id: userId });
+      const user = await User.findOne({ _id: userData._id });
+      const orders = await Order.find({ _id: orderId }).populate(
+        "products.productId"
+      );
+
+      const templatePath = path.join(__dirname, '..', 'views', 'users', "viewItemPdf.ejs");
+      
+      const renderTemplate = async () => {
+          try { 
+            if (!fs.existsSync(templatePath)) {
+              console.error(`Template file does not exist at path: ${templatePath}`);
+              throw new Error('Template file does not exist');
+          } 
+              return await ejs.renderFile(templatePath, {orders,user});
+          } catch (err) {
+              console.error('Error rendering EJS template:', err);
+              res.status(500).send('Error rendering sales report');
+          }
+      };
+
+
+      const htmlContent = await renderTemplate();
+
+      if (!htmlContent) {
+          return;
+      }
+
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.setViewport({ width: 1280, height: 800 });
+      await page.setContent(htmlContent);
+      const pdfBuffer = await page.pdf({ format: "A4" });
+
+      res.set({
+          "Content-Type": "application/pdf",
+          "Content-Length": pdfBuffer.length,
+      });
+      res.send(pdfBuffer);
+
+      await browser.close();
+  } catch (error) {
+      console.error('Error generating sales report:', error);
+      res.status(500).send('Error generating sales report');
+  }
+}
+
+
+
+
+
+
 
 //edit address
 const editAddress = async (req, res) => {
@@ -288,4 +351,5 @@ module.exports = {
   loadViewItems,
   editAddress,
   saveEditAddress,
+  downloadInvoice
 };

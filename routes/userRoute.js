@@ -87,6 +87,9 @@ user_route.get('/viewItems/:id',userProfileController.loadViewItems)
 //edit address
 user_route.get('/user/:userId/address/:id',userProfileController.editAddress)
 user_route.put('/address/:id',userProfileController.saveEditAddress)
+//download invoice
+user_route.get('/download-invoice/:id',userProfileController.downloadInvoice)
+
 
 
 
