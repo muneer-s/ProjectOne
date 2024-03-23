@@ -12,6 +12,9 @@ const { Promise } = require("mongoose");
 const { success } = require("toastr");
 const Coupon = require("../models/couponModel");
 const Wallet = require("../models/walletModel");
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
 
 
@@ -52,7 +55,7 @@ const loadOrder = async (req, res) => {
 //placeorder
 const placeOrder = async (req, res) => {
   try {
-    console.log("place order req.body ", req.body);
+    //console.log("place order req.body ", req.body);
     let { couponDiscount } = req.session;
     let couponCode = req.session.couponCode;
 
@@ -82,7 +85,6 @@ const placeOrder = async (req, res) => {
       orderId: orderId,
       totalPrice: originalAmount - (couponDiscount || 0),
       paymentIntent: req.body.paymentMethod,
-      paymentStatus: "Pending",
       address: address,
       userId: userId,
     });
@@ -95,13 +97,14 @@ const placeOrder = async (req, res) => {
     }
 
     await order.save();
+    req.session.order_id = order._id
 
     const paymentMethod = req.body.paymentMethod;
 
     if (paymentMethod == "Cash on delivery") {
       await Order.updateOne(
         { _id: order._id },
-        { $set: { paymentStatus: "order placed" } }
+        { $set: { orderStatus: "Order Placed" } }
       );
       if (cartData && cartData.products) {
         const cartItems = cartData.products;
@@ -121,7 +124,8 @@ const placeOrder = async (req, res) => {
       await cartData.save();
       res.json({ codSuccess: true });
     } else if (paymentMethod == "Wallet") {
-      console.log("wallet aanu ttooooooooo");
+
+      //console.log("wallet aanu ttooooooooo");
       const totalAmount = req.body.totalAmount;
 
       const wallet = await Wallet.findOne({ user: req.session.user_id });
@@ -135,7 +139,7 @@ const placeOrder = async (req, res) => {
       await wallet.save();
       await Order.updateOne(
         { _id: order._id },
-        { $set: { paymentStatus: "order placed" } }
+        { $set: { orderStatus: "Order Placed" } }
       );
       req.session.oderData = order;
 
@@ -143,6 +147,7 @@ const placeOrder = async (req, res) => {
       await cartData.save();
       res.json({ walletSuccess: true });
     } else {
+
       console.log("iam razor");
 
       var options = {
@@ -154,7 +159,6 @@ const placeOrder = async (req, res) => {
 
       instance.orders.create(options, function (err, razorpayOrder) {
         if (err) {
-          console.log("razorpay adich poyiiiiiiiiiiiiiiiiiiiiiiiii");
           console.log(err.message);
         } else {
           res.json({ success: false, razorpayOrder });
@@ -167,6 +171,105 @@ const placeOrder = async (req, res) => {
     console.log(error.message);
   }
 };
+
+//razorpay failed orders
+const failedOrders = async(req,res)=>{
+  try {
+    const userId = req.session.user_id;
+    let cartData = await Cart.findOne({ userId: userId });
+
+    
+
+    await Order.updateOne(
+      { _id: req.session.order_id },
+      { $set: { orderStatus: "Pending" } }
+    );
+
+    cartData.products = [];
+    await cartData.save();
+    
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
+
+//rerty razorpay
+const retryPayment =  async (req, res) => {
+  try {
+      const orderId = req.body.orderId;
+      console.log("order id kittitund : ",orderId);
+      const order = await Order.findById(orderId);
+      console.log("order : ",order);
+
+      if (!order) {
+          return res.status(404).send({ message: 'Order not found' });
+      }
+
+      const {totalPrice } = order
+      
+      var options = {
+        amount: totalPrice * 100,
+        currency: "INR",
+        receipt: orderId,
+      };
+      req.session.oderData = order;
+
+     const ordeer = await  instance.orders.create(options)
+console.log(ordeer);
+          res.json({ success: true, razorpayOrder:ordeer });
+
+        
+      
+
+
+  } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: 'Server error' });
+  }
+}
+
+const retryCallback = async(req,res) =>{
+  try {
+    const userId = req.session.user_id;
+    const cart = await Cart.findOne({ userId }).populate("products.productId");
+    console.log(req.body);
+    const response = req.body.response;
+    const bodyOrder = req.body.order;
+   console.log("ith bory order : ",bodyOrder);
+const order = await Order.findOne({_id:bodyOrder})
+   
+    var crypto = require("crypto");
+    let hmac = crypto.createHmac("sha256", "Bcd9iqDRBd0iWJlO6C5GlsfD");
+
+    hmac.update(
+      response.razorpay_order_id + "|" + response.razorpay_payment_id
+    );
+    hmac = hmac.digest("hex");
+    console.log("ith hmac : ", hmac);
+    console.log("ith ath : ", response.razorpay_signature);
+
+    if (hmac == response.razorpay_signature) {
+      console.log("change order status");
+     console.log(order);
+     order.orderStatus = "Order Placed"
+    await order.save();
+console.log("session dlt cheyyaattoooooooooooooooooooo");
+   res.json({status:true})
+    }
+  } catch (error) {
+    console.log("verify err ", error.message);
+  }
+}
+
+
+
+
+
+
+
+
 
 const orderDetailsPage = async (req, res) => {
   try {
@@ -190,8 +293,6 @@ const userupdatestatus = async (req, res) => {
   try {
     const orderId = req.params.orderId;
     const { status } = req.body;
-    console.log("user updated order id", orderId);
-    console.log(("user updated status", status));
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
@@ -212,7 +313,6 @@ const userupdatestatus = async (req, res) => {
 
     order.orderStatus = status;
     await order.save();
-    console.log("user updated order", order);
 
     for (const item of order.products) {
       const product = await products.findById(item.productId);
@@ -260,7 +360,7 @@ const verifyPayment = async (req, res) => {
       //change order status
       await Order.updateOne(
         { _id: bodyOrder.receipt },
-        { $set: { paymentStatus: "order placed" } }
+        { $set: { orderStatus: "Order Placed" } }
       );
       // Update product quantities
       for (const item of cart.products) {
@@ -291,4 +391,7 @@ module.exports = {
   orderDetailsPage,
   userupdatestatus,
   verifyPayment,
+  failedOrders,
+  retryPayment,
+  retryCallback
 };

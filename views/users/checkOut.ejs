@@ -201,20 +201,34 @@
 
                   
               <div class="radion_btn">
-                <% if( totalUsingCoupon || subTotal > 1000){ %>
-                  <input disabled  type="radio"  id="f-option6-cash"  name="selector"  value="Cash on delivery"  />
+                <% if(totalUsingCoupon){ %>
+                  <% if(totalUsingCoupon > 1000){ %>
+                    <input disabled  type="radio"  id="f-option6-cash"  name="selector"  value="Cash on delivery"  />
                 <label for="f-option6-cash">Cash on Delivery</label>
                 <label style="-ms-text-size-adjust: 5; font-size: 10px; color: brown;" for="">order above 1000Rs not allowed in COD</label>
                 <div class="check"></div>
                 <% }else{ %>
-
-                <input  type="radio"  id="f-option6-cash"  name="selector"  value="Cash on delivery"  />
+                  <input  type="radio"  id="f-option6-cash"  name="selector"  value="Cash on delivery"  />
                 <label for="f-option6-cash">Cash on Delivery</label>
                 <div class="check"></div>
                 <% } %>
 
+                  <% }else{ %>
+                    <% if(subTotal>1000){ %>
+                      <input disabled  type="radio"  id="f-option6-cash"  name="selector"  value="Cash on delivery"  />
+                      <label for="f-option6-cash">Cash on Delivery</label>
+                      <label style="-ms-text-size-adjust: 5; font-size: 10px; color: brown;" for="">order above 1000Rs not allowed in COD</label>
+                      <div class="check"></div>
+                      <% }else{ %>
+                        <input  type="radio"  id="f-option6-cash"  name="selector"  value="Cash on delivery"  />
+                <label for="f-option6-cash">Cash on Delivery</label>
+                <div class="check"></div>
+                        <% } %>
+
+                  <% } %>
 
               </div>
+              
             </div>
 
 
@@ -264,7 +278,7 @@
                 <% } %>
               </div>
             <div class="">
-              <a class="primary-btn mt-2" id="proceed-btn" onclick="order(event)" href="#">Proceed</a>
+              <a class="primary-btn mt-2" id="proceed-btn" onclick="order(event)" href="">Proceed</a>
             </div>
 
             <!-- <a class="primary-btn" id="razorpay-btn" onclick="online(event)" style="display: none;" href="#">Pay with RazorPay</a> -->
@@ -275,29 +289,8 @@
   </div>
 </section>
 <!--================End Checkout Area =================-->
-<%-include("../layouts/footer") %>
-<!-- 
-    <script>
-        // Function to handle radio button changes
-        function handlePaymentMethodChange() {
-            const cashOnDeliveryRadio = document.getElementById('f-option6-cash');
-            const razorpayRadio = document.getElementById('f-option6-razorpay');
-            const proceedBtn = document.getElementById('proceed-btn');
-            const razorpayBtn = document.getElementById('razorpay-btn');
+<%-include("../layouts/footer") %> 
     
-            if (cashOnDeliveryRadio.checked) {
-                proceedBtn.style.display = 'block';
-                razorpayBtn.style.display = 'none';
-            } else if (razorpayRadio.checked) {
-                proceedBtn.style.display = 'none';
-                razorpayBtn.style.display = 'block';
-            }
-        }
-    
-        // Attach event listeners to the radio buttons
-        document.getElementById('f-option6-cash').addEventListener('change', handlePaymentMethodChange);
-        document.getElementById('f-option6-razorpay').addEventListener('change', handlePaymentMethodChange);
-    </script> -->
 
 <!-- modal for Display -->
 
@@ -483,7 +476,7 @@
           }, 2000);
         }
         else if (response.success == false) {
-          razorpayPayment(response.razorpayOrder);
+          razorpayPayment(response.razorpayOrder,dataToSend);
         }
       },
       error: function (error) {
@@ -494,7 +487,7 @@
 
   
 
-  function razorpayPayment(order) {
+  function razorpayPayment(order,dataToSend) {
     var options = {
       key: "rzp_test_hJV1rnkg9P9IlZ", 
       amount: "30000", 
@@ -522,6 +515,18 @@
       },
     };
     var rzp1 = new Razorpay(options);
+
+    
+    rzp1.on('payment.failed',function(response){
+      alert("payment failed ")
+      fetch('/failedOrders',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({dataToSend})
+      })
+    })
     rzp1.open();
   }
 
@@ -544,6 +549,8 @@
       },
     });
   }
+
+
 </script>
 
 <!-- coupon management -->

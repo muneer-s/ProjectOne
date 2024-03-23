@@ -103,6 +103,9 @@ user_route.get('/CheckOutPage',userProfileController.loadCheckOutPage)
 user_route.get('/order',orderController.loadOrder)
 user_route.post('/placeOrder',orderController.placeOrder)
 user_route.post('/verifyPayment',orderController.verifyPayment)
+user_route.post('/failedOrders',orderController.failedOrders)
+user_route.post('/retryPayment',orderController.retryPayment)
+user_route.post('/retry-callback',orderController.retryCallback)
 
 
 

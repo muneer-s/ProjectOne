@@ -10,6 +10,7 @@ const flash = require("connect-flash");
 const validateMongodbId = require("../utils/validationMongodb");
 const Offer = require("../models/offerModel");
 
+
 //user registration
 const insertUser = async (req, res) => {
   try {

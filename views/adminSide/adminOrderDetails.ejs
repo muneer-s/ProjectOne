@@ -16,19 +16,24 @@
                 <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
                     <span> <i class="material-icons md-calendar_today"></i> <b><%= orders[0].createdAt.toLocaleDateString() %></b> </span> <br />
                 </div>
+                <% if(orders[0].orderStatus === "Cancel"){ %>
+                    <p>Order Already Cancelled</p>
+                    <% }else if(orders[0].orderStatus === "Pending"){ %>
+                        <p>Order Payment is Pending</p>
+                        <% }else if(orders[0].orderStatus === "Return"){ %>
+                            <p>Order Returned</p>  
+                    <% }else{ %>
                 <div class="col-lg-6 col-md-6 ms-auto text-md-end">
                     <select id="status-select" class="form-select d-inline-block mb-lg-0 mr-5 mw-200">
                         <option>Change status</option>
-                        <option>Pending</option>
                         <option>Shipped</option>
                         <option>Out of delivery</option>
                         <option>Delivered</option>
                         <option>Cancel</option>
-
-                        
                     </select>
                     <a id="save-button" class="btn btn-primary" href="">Save</a>
                 </div>
+                <% } %>
             </div>
         </header>
         <!-- card-header end// -->
