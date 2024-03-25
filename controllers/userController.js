@@ -10,7 +10,6 @@ const flash = require("connect-flash");
 const validateMongodbId = require("../utils/validationMongodb");
 const Offer = require("../models/offerModel");
 
-
 //user registration
 const insertUser = async (req, res) => {
   try {
@@ -19,7 +18,6 @@ const insertUser = async (req, res) => {
     const existingUser = await User.findOne({ email: req.body.email });
 
     if (existingUser) {
-      console.log("This email is already in use");
       return res.render("./users/registration", {
         errorMessage: "Email address is already in use.",
       });
@@ -38,7 +36,6 @@ const insertUser = async (req, res) => {
     if (userData) {
       await OTPdb.deleteMany({});
       await sendVerifyMail(req.body.name, req.body.email, userData._id);
-      console.log("before redir otp");
       res.redirect(`/otp?id=${userData._id}`);
     } else {
       return res.render("./users/registration", {
@@ -63,9 +60,6 @@ const securePassword = async (password) => {
 //for send  mail (otp)  to verify
 const sendVerifyMail = async (name, email, user_id) => {
   try {
-    console.log("name is : " + name);
-    console.log("email is : " + email);
-
     const generateOTP = () => {
       return Math.floor(10000 + Math.random() * 90000);
     };
@@ -75,11 +69,11 @@ const sendVerifyMail = async (name, email, user_id) => {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
-      secure: false, 
+      secure: false,
       requireTLS: true,
       auth: {
-        user: "muni0209s@gmail.com", 
-        pass: "qrie kkvo lfmp chrb", 
+        user: "muni0209s@gmail.com",
+        pass: "qrie kkvo lfmp chrb",
       },
     });
 
@@ -134,11 +128,9 @@ const verifyOtp = async (req, res) => {
           { $set: { is_verified: 1 } }
         );
 
-
         if (updateInfo) {
           req.session.user_id = req.query.id; //------session created-----------------
 
-          console.log("otp verified");
           res.redirect("/");
         }
       } else {
@@ -228,17 +220,16 @@ const userlogin = async (req, res) => {
     const emailRegex = /\S+@\S+\.\S+/;
 
     if (!emailRegex.test(email)) {
-      console.log("error ----Invalid email format ");
+      console.log("error-Invalid email format ");
     }
 
     if (!password) {
-      console.log("error-------Password cannot be empty");
+      console.log("error-Password cannot be empty");
     }
 
     const existingUser = await User.findOne({ email: email });
 
     if (!existingUser) {
-      console.log("user not found");
       req.flash("unferror", "User not found!!there is no such User");
       return res.redirect("/login");
     }
@@ -251,7 +242,6 @@ const userlogin = async (req, res) => {
     if (isPasswordMatch) {
       if (existingUser.is_blocked === true) {
         req.flash("blkerror", "User is blocked cannot login ");
-        console.log("user is blocked cannot login");
         return res.redirect("/login");
       } else {
         req.session.user_id = existingUser._id;
@@ -357,7 +347,6 @@ const logOut = async (req, res) => {
 // filter
 const filter = async (req, res) => {
   const category = await req.query.az;
-  console.log(category);
 };
 
 const search = async (req, res) => {

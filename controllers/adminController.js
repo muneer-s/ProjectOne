@@ -8,7 +8,7 @@ const session = require("express-session");
 const flash = require("connect-flash");
 // const { default: products } = require("razorpay/dist/types/products");
 const Offer = require("../models/offerModel");
-const Order = require("../models/orderModel")
+const Order = require("../models/orderModel");
 
 //load productList
 const loadProductList = async (req, res) => {
@@ -18,7 +18,6 @@ const loadProductList = async (req, res) => {
       .populate("category")
       .populate("offer")
       .populate("categoryOffer");
-    //console.log(proDetails);
     res.render("./adminSide/productList", { proDetails });
   } catch (error) {
     console.log(error.message);
@@ -65,100 +64,62 @@ const addCategory = async (req, res) => {
 //admin home page loading
 const adminLoadHome = async (req, res) => {
   try {
-     const topProduct = await Order.aggregate([
-       { $unwind: "$products" }, // Unwind the products array
-       {
-         $lookup: {
-           from: "products", // Name of the collection to join with
-           localField: "products.productId", // Field from the Order document
-           foreignField: "_id", // Field from the Product document
-           as: "productDetails" // Output array with the joined documents
-         }
-       },
-       {
-         $group: {
-           _id: "$products.productId", // Group by productId
-           productName: { $first: "$productDetails.name" }, // Extract the name from the first document in the productDetails array
-           totalQuantitySold: { "$sum": "$products.quantity" } // Sum the quantity for each product
-         }
-       },
-       { $project: { _id: 0, productName: 1, totalQuantitySold: 1 } }, // Project the desired fields
-       { $sort: { totalQuantitySold: -1 } }, // Sort by totalQuantitySold in descending order
-       { $limit: 5 }
-     ]);
-
-     
-     const topCategory = await Order.aggregate([
-      // First, join the 'products' collection to get product details
+    const topProduct = await Order.aggregate([
+      { $unwind: "$products" },
       {
-         $lookup: {
-           from: 'products', // Assuming the collection name for Product model is 'products'
-           localField: 'products.productId',
-           foreignField: '_id',
-           as: 'productDetails'
-         }
+        $lookup: {
+          from: "products",
+          localField: "products.productId",
+          foreignField: "_id",
+          as: "productDetails",
+        },
       },
-      // Unwind the 'productDetails' array to access its fields
-      { $unwind: '$productDetails' },
-      // Second, join the 'categories' collection to get category details
-      {
-         $lookup: {
-           from: 'categories', // Assuming the collection name for Category model is 'categories'
-           localField: 'productDetails.category',
-           foreignField: '_id',
-           as: 'categoryDetails'
-         }
-      },
-      // Unwind the 'categoryDetails' array to access its fields
-      { $unwind: '$categoryDetails' },
-      // Group by the category name and sum the quantities sold
       {
         $group: {
-           _id: '$categoryDetails.Name', // Group by the category name
-           totalQuantitySold: { $sum: '$productDetails.quantity' } // Correctly sum the quantities sold for each category
-        }
-       },
-      // Sort by the total quantity sold
+          _id: "$products.productId",
+          productName: { $first: "$productDetails.name" },
+          totalQuantitySold: { $sum: "$products.quantity" },
+        },
+      },
+      { $project: { _id: 0, productName: 1, totalQuantitySold: 1 } },
       { $sort: { totalQuantitySold: -1 } },
-      // Limit to the top 3 categories
-      { $limit: 3 }
-     ]);
-     
-     
+      { $limit: 10 },
+    ]);
 
+    const topCategory = await Order.aggregate([
+      {
+        $lookup: {
+          from: "products",
+          localField: "products.productId",
+          foreignField: "_id",
+          as: "productDetails",
+        },
+      },
+      { $unwind: "$productDetails" },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "productDetails.category",
+          foreignField: "_id",
+          as: "categoryDetails",
+        },
+      },
+      { $unwind: "$categoryDetails" },
+      {
+        $group: {
+          _id: "$categoryDetails.Name",
+          totalQuantitySold: { $sum: "$productDetails.quantity" },
+        },
+      },
+      { $sort: { totalQuantitySold: -1 } },
+      { $limit: 10 },
+    ]);
 
-console.log(topCategory);
-
-
-     res.render("./adminSide/AdminHome", { topProduct,topCategory });
+    res.render("./adminSide/AdminHome", { topProduct, topCategory });
   } catch (error) {
-     console.log(error.message);
+    console.log(error.message);
   }
- };
-
-
-
- 
-
-    
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+};
 
 //admin login page load
 const adminloadlogin = async (req, res) => {
@@ -189,7 +150,6 @@ const adminverify = (req, res) => {
       req.session.email = email;
       res.redirect("/adminHome");
     } else {
-      console.log("Invalid credentials");
       req.flash("error", "Invalid credentials");
       return res.redirect("/adminLogin");
     }
@@ -354,7 +314,6 @@ const addProduct = async (req, res) => {
 const updateProductStatus = async (req, res) => {
   try {
     const { productId } = req.params;
-    //console.log(productId);
 
     const foundProduct = await product.findById(productId);
 
@@ -472,7 +431,6 @@ const deleteProductImage = async (req, res) => {
       { _id: productId },
       { $pull: { productImages: imageUrl } }
     );
-    console.log("imagum kitti - ", removeImage);
     if (removeImage) {
       res.json({ success: true });
     } else {
@@ -544,7 +502,6 @@ const applyOfferForCategory = async (req, res) => {
     if (!Category) {
       return res.status(404).send("Category not found");
     }
-    //console.log("offer add cheyyunna products:: ", Products);
 
     for (let product of Products) {
       if (product.offerApplied == true && product.offerPrice > 0) {
@@ -594,9 +551,7 @@ const deleteOfferFromProduct = async (req, res) => {
 const deleteOfferFromCategory = async (req, res) => {
   try {
     const categoryId = req.params.categoryId;
-    //console.log("Delete category this");
 
-    //console.log(categoryId);
     const category = await categories.findById(req.params.categoryId);
     if (!category) {
       return res.status(404).send({ message: "Category not found" });
@@ -626,14 +581,6 @@ const deleteOfferFromCategory = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
-
-
 module.exports = {
   adminLoadHome,
   adminloadlogin,
@@ -660,5 +607,4 @@ module.exports = {
   applyOfferForCategory,
   deleteOfferFromProduct,
   deleteOfferFromCategory,
-  
 };

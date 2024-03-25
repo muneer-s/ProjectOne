@@ -15,7 +15,6 @@ const otpLogin = async (req, res) => {
   try {
     const existingUser = await User.findOne({ email: req.body.email });
 
-
     if (!existingUser) {
       console.log("there is no such email");
       req.flash("error", "There is no such user with this email");
@@ -32,7 +31,7 @@ const otpLogin = async (req, res) => {
       host: "smtp.gmail.com",
       port: 587,
 
-      secure: false, 
+      secure: false,
 
       requireTLS: true,
       auth: {
@@ -57,7 +56,6 @@ const otpLogin = async (req, res) => {
 
     await newOTP.save();
 
-
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         console.log(error);
@@ -78,11 +76,8 @@ const otpLogin = async (req, res) => {
 const otpLoginLoad = async (req, res) => {
   try {
     const id = req.query.email;
-    console.log(req.query);
-    console.log(req.body);
 
     const existingOtpData = await OTPdb.findOne({ user_id: id });
-    console.log("data==>", existingOtpData);
 
     if (!existingOtpData) {
       req.flash("error", "User ID not found");
@@ -100,8 +95,6 @@ const otpLoginLoad = async (req, res) => {
       const existingUser = await User.findOne({ email: id });
 
       if (isOtpMatch) {
-        console.log("otp verified");
-
         req.session.user_id = existingUser._id;
         return res.redirect("/");
       } else {

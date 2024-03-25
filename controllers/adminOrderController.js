@@ -10,7 +10,6 @@ const orderid = require("order-id")("key");
 const Order = require("../models/orderModel");
 const Cart = require("../models/cartModel");
 
-
 const loadOrderList = async (req, res) => {
   try {
     if (req.session.email) {
@@ -67,18 +66,6 @@ const updateOrderStatus = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 module.exports = {
   loadOrderList,

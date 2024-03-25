@@ -12,19 +12,14 @@ const { Promise } = require("mongoose");
 const { success } = require("toastr");
 const Coupon = require("../models/couponModel");
 const Wallet = require("../models/walletModel");
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-
-
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 
 var instance = new Razorpay({
   key_id: process.env.key_id,
   key_secret: process.env.key_secret,
 });
-
-
-
 
 const loadOrder = async (req, res) => {
   try {
@@ -55,7 +50,6 @@ const loadOrder = async (req, res) => {
 //placeorder
 const placeOrder = async (req, res) => {
   try {
-    //console.log("place order req.body ", req.body);
     let { couponDiscount } = req.session;
     let couponCode = req.session.couponCode;
 
@@ -97,7 +91,7 @@ const placeOrder = async (req, res) => {
     }
 
     await order.save();
-    req.session.order_id = order._id
+    req.session.order_id = order._id;
 
     const paymentMethod = req.body.paymentMethod;
 
@@ -124,8 +118,6 @@ const placeOrder = async (req, res) => {
       await cartData.save();
       res.json({ codSuccess: true });
     } else if (paymentMethod == "Wallet") {
-
-      //console.log("wallet aanu ttooooooooo");
       const totalAmount = req.body.totalAmount;
 
       const wallet = await Wallet.findOne({ user: req.session.user_id });
@@ -147,9 +139,6 @@ const placeOrder = async (req, res) => {
       await cartData.save();
       res.json({ walletSuccess: true });
     } else {
-
-      console.log("iam razor");
-
       var options = {
         amount: (originalAmount - (couponDiscount || 0)) * 100,
         currency: "INR",
@@ -173,12 +162,10 @@ const placeOrder = async (req, res) => {
 };
 
 //razorpay failed orders
-const failedOrders = async(req,res)=>{
+const failedOrders = async (req, res) => {
   try {
     const userId = req.session.user_id;
     let cartData = await Cart.findOne({ userId: userId });
-
-    
 
     await Order.updateOne(
       { _id: req.session.order_id },
@@ -187,59 +174,46 @@ const failedOrders = async(req,res)=>{
 
     cartData.products = [];
     await cartData.save();
-    
   } catch (error) {
     console.log(error.message);
   }
-}
+};
 
-
-
-//rerty razorpay
-const retryPayment =  async (req, res) => {
+//retry razorpay
+const retryPayment = async (req, res) => {
   try {
-      const orderId = req.body.orderId;
-      console.log("order id kittitund : ",orderId);
-      const order = await Order.findById(orderId);
-      console.log("order : ",order);
+    const orderId = req.body.orderId;
+    const order = await Order.findById(orderId);
 
-      if (!order) {
-          return res.status(404).send({ message: 'Order not found' });
-      }
+    if (!order) {
+      return res.status(404).send({ message: "Order not found" });
+    }
 
-      const {totalPrice } = order
-      
-      var options = {
-        amount: totalPrice * 100,
-        currency: "INR",
-        receipt: orderId,
-      };
-      req.session.oderData = order;
+    const { totalPrice } = order;
 
-     const ordeer = await  instance.orders.create(options)
-console.log(ordeer);
-          res.json({ success: true, razorpayOrder:ordeer });
+    var options = {
+      amount: totalPrice * 100,
+      currency: "INR",
+      receipt: orderId,
+    };
+    req.session.oderData = order;
 
-        
-      
-
-
+    const ordeer = await instance.orders.create(options);
+    res.json({ success: true, razorpayOrder: ordeer });
   } catch (error) {
-      console.error(error);
-      res.status(500).send({ message: 'Server error' });
+    console.error(error);
+    res.status(500).send({ message: "Server error" });
   }
-}
+};
 
-const retryCallback = async(req,res) =>{
+const retryCallback = async (req, res) => {
   try {
     const userId = req.session.user_id;
     const cart = await Cart.findOne({ userId }).populate("products.productId");
-    console.log(req.body);
     const response = req.body.response;
     const bodyOrder = req.body.order;
-   console.log("ith bory order : ",bodyOrder);
-const order = await Order.findOne({_id:bodyOrder})
-   
+    const order = await Order.findOne({ _id: bodyOrder });
+
     var crypto = require("crypto");
     let hmac = crypto.createHmac("sha256", "Bcd9iqDRBd0iWJlO6C5GlsfD");
 
@@ -247,29 +221,16 @@ const order = await Order.findOne({_id:bodyOrder})
       response.razorpay_order_id + "|" + response.razorpay_payment_id
     );
     hmac = hmac.digest("hex");
-    console.log("ith hmac : ", hmac);
-    console.log("ith ath : ", response.razorpay_signature);
 
     if (hmac == response.razorpay_signature) {
-      console.log("change order status");
-     console.log(order);
-     order.orderStatus = "Order Placed"
-    await order.save();
-console.log("session dlt cheyyaattoooooooooooooooooooo");
-   res.json({status:true})
+      order.orderStatus = "Order Placed";
+      await order.save();
+      res.json({ status: true });
     }
   } catch (error) {
     console.log("verify err ", error.message);
   }
-}
-
-
-
-
-
-
-
-
+};
 
 const orderDetailsPage = async (req, res) => {
   try {
@@ -329,22 +290,13 @@ const userupdatestatus = async (req, res) => {
   }
 };
 
-
-
 const verifyPayment = async (req, res) => {
   try {
-    console.log("verufyyyyyyyyyyyyyyyyyyyyyyyyy");
     const userId = req.session.user_id;
-    console.log("userid tto : ",userId);
     const cart = await Cart.findOne({ userId }).populate("products.productId");
-    console.log("cart tto : ",cart);
-    console.log('req body : ', req.body);
     const response = req.body.response;
     const bodyOrder = req.body.order;
-    console.log("ithaanu response : ",response);
-    console.log(("this bodyorder : ",bodyOrder));
 
-   
     var crypto = require("crypto");
     let hmac = crypto.createHmac("sha256", "Bcd9iqDRBd0iWJlO6C5GlsfD");
 
@@ -352,27 +304,19 @@ const verifyPayment = async (req, res) => {
       response.razorpay_order_id + "|" + response.razorpay_payment_id
     );
     hmac = hmac.digest("hex");
-    console.log("ith hmac : ", hmac);
-    console.log("ith ath : ", response.razorpay_signature);
 
     if (hmac == response.razorpay_signature) {
-      console.log("change order status");
-      //change order status
       await Order.updateOne(
         { _id: bodyOrder.receipt },
         { $set: { orderStatus: "Order Placed" } }
       );
-      // Update product quantities
       for (const item of cart.products) {
-        console.log("iam itesm", item);
         const productId = item.productId._id;
         const quantityToSubtract = item.quantity;
-        // Subtract the quantity from the product in the database
         await products.findByIdAndUpdate(productId, {
           $inc: { quantity: -quantityToSubtract },
         });
       }
-console.log("session dlt cheyyaattoooooooooooooooooooo");
       //delete req.session.discountAmount;
       cart.products = [];
       const cartData = await cart.save();
@@ -383,8 +327,6 @@ console.log("session dlt cheyyaattoooooooooooooooooooo");
   }
 };
 
-
-
 module.exports = {
   loadOrder,
   placeOrder,
@@ -393,5 +335,5 @@ module.exports = {
   verifyPayment,
   failedOrders,
   retryPayment,
-  retryCallback
+  retryCallback,
 };

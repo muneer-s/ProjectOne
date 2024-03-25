@@ -95,7 +95,6 @@ admin_route.delete('/deleteOffer/:categoryId',adminController.deleteOfferFromCat
 //sales report
 admin_route.get('/SalesReport',isAdminLogin,adminSalesReportController.loadSalesReportPage)
 admin_route.get('/download-salesreport',adminSalesReportController.downloadSalesReport)
-// admin_route.get('/hellloooooo',adminSalesReportController.sales)
 
 
 

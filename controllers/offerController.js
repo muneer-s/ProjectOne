@@ -14,11 +14,9 @@ const loadOfferPage = async (req, res) => {
   }
 };
 
-
 //save offer
 const saveOffer = async (req, res) => {
   try {
-    console.log(req.body);
     const {
       addOffer,
       startingDate,
@@ -31,7 +29,6 @@ const saveOffer = async (req, res) => {
     const isListed = req.body.is_listed === "on" ? true : false;
 
     const existingOffer = await Offer.findOne({ offerName: addOffer });
-    console.log("exist", existingOffer);
 
     if (existingOffer) {
       req.flash("error", "Offer with the same name already exists.");
@@ -84,8 +81,6 @@ const deleteOffer = async (req, res) => {
       console.log("Product with this offer ID not found");
       return res.status(404).send("Product with this offer ID not found");
     }
-
-    console.log("Product(s) found with the offer");
 
     for (const product of productsWithOffer) {
       product.offer = null;

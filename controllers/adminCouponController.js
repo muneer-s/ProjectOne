@@ -5,17 +5,16 @@ const Cart = require("../models/cartModel");
 const mongoose = require("mongoose");
 const Coupon = require("../models/couponModel");
 
-
 const loadCouponPage = async (req, res) => {
   try {
     function getTomorrowDate() {
       const today = new Date();
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
-      return tomorrow.toISOString().split('T')[0];
-  }
-  
-    res.render("./adminSide/addCoupon",{ getTomorrowDate: getTomorrowDate });
+      return tomorrow.toISOString().split("T")[0];
+    }
+
+    res.render("./adminSide/addCoupon", { getTomorrowDate: getTomorrowDate });
   } catch (error) {
     console.log(error.message);
   }
@@ -26,7 +25,6 @@ const saveCoupon = async (req, res) => {
     const { coupon_code, Discount, Max_Price, Exp_Date } = req.body;
 
     const existingCoupon = await Coupon.findOne({ Code: coupon_code });
-    console.log("exist : ", existingCoupon);
 
     if (existingCoupon) {
       req.flash("error", "Coupon with the same name already exists.");

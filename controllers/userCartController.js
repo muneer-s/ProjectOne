@@ -28,26 +28,18 @@ const loadCart = async (req, res) => {
             cartItem.productId.offerApplied == true
           ) {
             var productPrice = cartItem.productId.offerPrice;
-            console.log("product offer present");
           } else if (
             cartItem.productId.categoryOffer &&
             cartItem.productId.categoryOfferApplied
           ) {
             var productPrice = cartItem.productId.categoryOfferPrice;
-            console.log("category offer present");
           } else {
             var productPrice = cartItem.productId.price;
-            console.log(" no offer");
           }
-          console.log(productPrice);
           let itemTotalPrice = productPrice * cartItem.quantity;
           originalAmount += itemTotalPrice;
         });
       }
-      console.log(
-        "this is cart item ---------------------------------- : ",
-        cartDetails
-      );
 
       res.render("./users/cart", {
         user,
@@ -58,7 +50,7 @@ const loadCart = async (req, res) => {
       res.redirect("/login");
     }
   } catch (error) {
-    console.log("load cart err0r founded " + error.message);
+    console.log("load cart error founded " + error.message);
   }
 };
 
@@ -72,7 +64,6 @@ const addToCart = async (req, res) => {
         message: "User not authenticated. Please log in.",
       });
     }
-    //console.log("quantityuyuyu:   ",quantity);
 
     const user = await User.findOne({ _id: req.session.user_id });
 
@@ -97,17 +88,14 @@ const addToCart = async (req, res) => {
     );
 
     if (product.offer && product.offerApplied == true) {
-      console.log("ith work akindooooooooooo");
       var productPrice = product.offerPrice;
     } else if (product.categoryOffer && product.categoryOfferApplied) {
       var productPrice = product.categoryOfferPrice;
     } else {
-      console.log("atho thanoooooooooo");
       var productPrice = product.price;
     }
 
     if (existingProductIndex !== -1) {
-      // If product is already in cart, update the quantity
       const existingProduct = userCart.products[existingProductIndex];
       const newTotalQuantity =
         existingProduct.quantity + parseInt(quantity, 10);
@@ -121,12 +109,7 @@ const addToCart = async (req, res) => {
       userCart.products[existingProductIndex].quantity = newTotalQuantity;
       userCart.products[existingProductIndex].total =
         newTotalQuantity * Number(productPrice);
-      console.log(
-        "totalaanittoooo : ",
-        userCart.products[existingProductIndex].total
-      );
     } else {
-      // If the product is not in the cart, add it
       if (parseInt(quantity, 10) > product.quantity) {
         return res.json({
           success: false,
@@ -173,11 +156,9 @@ const quantityUpdate = async (req, res) => {
         message: "Product not found in the cart.",
       });
     }
-    // Increment or decrement the quantity based on count
     if (count == 1) {
       existingProduct.quantity += 1;
     } else if (count == -1 && existingProduct.quantity > 1) {
-      // Ensure quantity doesn't go below 1
       existingProduct.quantity -= 1;
     } else {
       return res.json({ success: false, message: "Invalid count." });
@@ -206,16 +187,13 @@ const submitQuantity = async (req, res) => {
 
     let proData = cartData.products.find((item) => item._id.toString() === id);
     const existproduct = await products.findOne({ _id: proData.productId });
-    // console.log("ith cart data : ", cartData);
-    // console.log("ith prodata : ", proData);
-    // console.log("existproduct : ", existproduct);
+
     if (!proData) {
       console.log("Product not found in cart");
       return res.status(404).send("Product not found in cart");
     }
 
     if (existproduct.offer && existproduct.offerApplied == true) {
-      console.log("product offer is here");
       var productPrice = existproduct.offerPrice;
     } else if (
       existproduct.categoryOffer &&
@@ -223,7 +201,6 @@ const submitQuantity = async (req, res) => {
     ) {
       var productPrice = existproduct.categoryOfferPrice;
     } else {
-      console.log("no more offers");
       var productPrice = existproduct.price;
     }
 
@@ -231,8 +208,6 @@ const submitQuantity = async (req, res) => {
     proData.total = quantity * productPrice;
 
     await cartData.save();
-
-    // console.log("Cart updated successfully");
 
     if (proData) {
       res.json({ success: true });

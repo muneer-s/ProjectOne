@@ -11,10 +11,10 @@ const Cart = require("../models/cartModel");
 const Order = require("../models/orderModel");
 const Coupon = require("../models/couponModel");
 const Wallet = require("../models/walletModel");
-const ejs = require('ejs');
-const path = require('path');
-const puppeteer = require('puppeteer');
-const fs = require('fs');
+const ejs = require("ejs");
+const path = require("path");
+const puppeteer = require("puppeteer");
+const fs = require("fs");
 
 //load user profile page
 const userProfileLoad = async (req, res) => {
@@ -23,7 +23,6 @@ const userProfileLoad = async (req, res) => {
     if (user_id) {
       const user = await User.findOne({ _id: user_id });
       const wallet = await Wallet.findOne({ user: user_id });
-      console.log("this is wallte: ", wallet);
 
       if (!wallet) {
         wallet = await Wallet.create({ user: user_id });
@@ -165,7 +164,7 @@ const loadCheckOutPage = async (req, res) => {
     const Coupons = await Coupon.find({ status: true });
     const totalUsingCoupon = req.session.newAmountUsingCoupon;
     const couponCode = req.session.couponCode;
-    const appliedCoupon = await Coupon.findOne({Code:couponCode})
+    const appliedCoupon = await Coupon.findOne({ Code: couponCode });
     const cartDetails = await Cart.findOne({ userId: user_id }).populate({
       path: "products.productId",
       model: "product",
@@ -196,7 +195,7 @@ const loadCheckOutPage = async (req, res) => {
           totalUsingCoupon: totalUsingCoupon,
           couponCode,
           wallet,
-          appliedCoupon
+          appliedCoupon,
         },
         (err, html) => {
           if (err) {
@@ -207,7 +206,6 @@ const loadCheckOutPage = async (req, res) => {
         }
       );
     } else {
-      console.log("please login....user not loged in ");
       res.render("./users/login");
     }
   } catch (error) {
@@ -227,9 +225,8 @@ const loadViewItems = async (req, res) => {
       const orders = await Order.find({ _id: orderId }).populate(
         "products.productId"
       );
-      console.log('555555555555555555555',orders);
 
-      res.render("./users/viewItems", { orders, user,orderId });
+      res.render("./users/viewItems", { orders, user, orderId });
     } else {
       res.render("./users/login");
     }
@@ -241,60 +238,61 @@ const loadViewItems = async (req, res) => {
 //download invoice
 const downloadInvoice = async (req, res) => {
   try {
-      const orderId = req.params.id;
-      const userId = req.session.user_id;
-      const userData = await User.findOne({ _id: userId });
-      const user = await User.findOne({ _id: userData._id });
-      const orders = await Order.find({ _id: orderId }).populate(
-        "products.productId"
-      );
+    const orderId = req.params.id;
+    const userId = req.session.user_id;
+    const userData = await User.findOne({ _id: userId });
+    const user = await User.findOne({ _id: userData._id });
+    const orders = await Order.find({ _id: orderId }).populate(
+      "products.productId"
+    );
 
-      const templatePath = path.join(__dirname, '..', 'views', 'users', "viewItemPdf.ejs");
-      
-      const renderTemplate = async () => {
-          try { 
-            if (!fs.existsSync(templatePath)) {
-              console.error(`Template file does not exist at path: ${templatePath}`);
-              throw new Error('Template file does not exist');
-          } 
-              return await ejs.renderFile(templatePath, {orders,user});
-          } catch (err) {
-              console.error('Error rendering EJS template:', err);
-              res.status(500).send('Error rendering sales report');
-          }
-      };
+    const templatePath = path.join(
+      __dirname,
+      "..",
+      "views",
+      "users",
+      "viewItemPdf.ejs"
+    );
 
-
-      const htmlContent = await renderTemplate();
-
-      if (!htmlContent) {
-          return;
+    const renderTemplate = async () => {
+      try {
+        if (!fs.existsSync(templatePath)) {
+          console.error(
+            `Template file does not exist at path: ${templatePath}`
+          );
+          throw new Error("Template file does not exist");
+        }
+        return await ejs.renderFile(templatePath, { orders, user });
+      } catch (err) {
+        console.error("Error rendering EJS template:", err);
+        res.status(500).send("Error rendering sales report");
       }
+    };
 
-      const browser = await puppeteer.launch();
-      const page = await browser.newPage();
-      await page.setViewport({ width: 1280, height: 800 });
-      await page.setContent(htmlContent);
-      const pdfBuffer = await page.pdf({ format: "A4" });
+    const htmlContent = await renderTemplate();
 
-      res.set({
-          "Content-Type": "application/pdf",
-          "Content-Length": pdfBuffer.length,
-      });
-      res.send(pdfBuffer);
+    if (!htmlContent) {
+      return;
+    }
 
-      await browser.close();
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 800 });
+    await page.setContent(htmlContent);
+    const pdfBuffer = await page.pdf({ format: "A4" });
+
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Length": pdfBuffer.length,
+    });
+    res.send(pdfBuffer);
+
+    await browser.close();
   } catch (error) {
-      console.error('Error generating sales report:', error);
-      res.status(500).send('Error generating sales report');
+    console.error("Error generating sales report:", error);
+    res.status(500).send("Error generating sales report");
   }
-}
-
-
-
-
-
-
+};
 
 //edit address
 const editAddress = async (req, res) => {
@@ -351,5 +349,5 @@ module.exports = {
   loadViewItems,
   editAddress,
   saveEditAddress,
-  downloadInvoice
+  downloadInvoice,
 };

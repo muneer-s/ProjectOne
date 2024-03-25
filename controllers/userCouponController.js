@@ -5,7 +5,6 @@ const Cart = require("../models/cartModel");
 const mongoose = require("mongoose");
 const Coupon = require("../models/couponModel");
 
-
 //apply coupon
 const applyCoupon = async (req, res) => {
   try {
@@ -43,18 +42,13 @@ const applyCoupon = async (req, res) => {
     req.session.couponDiscount = DiscountAmount || 0;
 
     let newAmountUsingCoupon = originalAmount - DiscountAmount;
-    //console.log(newAmountUsingCoupon);
     req.session.newAmountUsingCoupon = newAmountUsingCoupon;
-
 
     if (couponfind) {
       if (couponfind.status == false) {
         return res.json({ success: false, message: "Coupon is not active." });
       } else {
-
-        //console.log(couponfind.Discount);
         req.session.couponCode = couponfind.Code;
-        console.log("Coupon applied successfully.");
         return res
           .status(200)
           .json({ success: true, message: "Coupon applied successfully." });
@@ -71,7 +65,6 @@ const applyCoupon = async (req, res) => {
     });
   }
 };
-
 
 module.exports = {
   applyCoupon,
