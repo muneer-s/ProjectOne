@@ -75,26 +75,28 @@
                             </div> -->
             <!--basic details-->                       
                <hr class="border-light m-0">
-                            <form id="updateUserData">
-                                <div class="card-body">
-                                    <div class="form-group">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" class="form-control" name="name" value="<%= user.name %>">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">E-mail</label>
-                                        <input type="text" class="form-control mb-1" name="email" value="<%= user.email %>">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Number</label>
-                                        <input type="text" class="form-control mb-1" name="mobile" value="<%= user.mobile %>">
-                                    </div>  
-                                    <div class="text-right mt-3">
-                                        <button type="button" id="saveChangesBtn" class="btn btn-primary">Save changes</button>&nbsp;
-                                        <!-- <button type="button" id="cancelBtn" class="btn btn-default">Cancel</button> -->
-                                    </div>                                 
-                                </div>
-                            </form>                           
+               <form id="updateUserData">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" value="<%= user.name %>">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">E-mail</label>
+                        <input type="text" class="form-control mb-1" id="emailInput" name="email" value="<%= user.email %>">
+                        <div id="emailError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Number</label>
+                        <input type="text" class="form-control mb-1" id="numberInput" name="mobile" value="<%= user.mobile %>">
+                        <div id="numberError" class="error-message"></div>
+                    </div> 
+                    <div class="text-right mt-3">
+                        <button type="button" id="saveChangesBtn" class="btn btn-primary">Save changes</button>&nbsp;
+                    </div>                                 
+                </div>
+            </form>
+            
                         </div>
                         <!--password change-->
                         <div class="tab-pane fade" id="account-change-password">
@@ -185,7 +187,13 @@
                             <div class="card-body pb-2">
                                 <div class="form-group">
                                     <label class="form-label">Current Wallet : </label>
-                                    <label for=""><%= wallet.balance %></label>
+                                    <!-- <label for=""><%= wallet.balance %></label> -->
+                                    <% if (wallet) { %>
+                                        <label for=""><%= wallet.balance %></label>
+                                    <% } else { %>
+                                        <label for="">Wallet not found</label>
+                                    <% } %>
+                                    
                                 </div>
                                 
                             </div>
@@ -592,6 +600,41 @@
         });
     
         </script>
-        
+        <!--validation user profile-->
+        <script>
+            document.getElementById('saveChangesBtn').addEventListener('click', function() {
+                var emailInput = document.getElementById('emailInput');
+                var emailError = document.getElementById('emailError');
+                var emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+
+                var numberInput = document.getElementById('numberInput');
+                var numberError = document.getElementById('numberError');
+                var numberPattern = /^\d+$/;
+
+
+                if (!emailPattern.test(emailInput.value)) {
+                 emailError.innerHTML = 'Please enter a valid Gmail address.';
+                    emailInput.classList.add('is-invalid');
+                } else {
+                    emailError.innerHTML = '';
+                    emailInput.classList.remove('is-invalid');
+        // Submit the form or perform further actions
+        // document.getElementById('updateUserData').submit();
+        if (!numberPattern.test(numberInput.value)) {
+        numberError.innerHTML = 'Please enter a valid number.';
+        numberInput.classList.add('is-invalid');
+    } else {
+        numberError.innerHTML = '';
+        numberInput.classList.remove('is-invalid');
+    }
+
+    if (emailPattern.test(emailInput.value) && numberPattern.test(numberInput.value)) {
+        // Both email and number are valid, you can submit the form or perform further actions
+        // document.getElementById('updateUserData').submit();
+    }
+    }
+});
+
+        </script>
 
     

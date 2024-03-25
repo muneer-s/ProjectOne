@@ -64,6 +64,7 @@ const placeOrder = async (req, res) => {
       { address: { $elemMatch: { _id: addressId } } }
     );
 
+    
     const address = user.address[0];
     const orderId = orderid.generate();
 
