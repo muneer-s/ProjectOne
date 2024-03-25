@@ -19,6 +19,8 @@ const adminSalesReportController = require("../controllers/adminSalesReport")
 
  // Admin home
 admin_route.get('/adminHome',isAdminLogin,adminController.adminLoadHome);
+// chart
+admin_route.post('/admin/chartData',adminController.getDetailsChart)
 
 // Admin login
 admin_route.get('/adminLogin',isAdminLogout,adminController.adminloadlogin);

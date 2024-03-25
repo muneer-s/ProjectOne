@@ -8,9 +8,9 @@
             <h2 class="content-title card-title">Dashboard</h2>
             <p>Whole data about your business here</p>
         </div>
-        <div>
+        <!-- <div>
             <a href="#" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Create report</a>
-        </div>
+        </div> -->
     </div>
     <div class="row">
         <div class="col-lg-3">
@@ -64,14 +64,24 @@
     </div>
     <div class="row">
         <div class="col-xl-8 col-lg-12">
-            <div class="card mb-4">
+            
+            <!-- <div class="card mb-4">
                 <article class="card-body">
                     <h5 class="card-title">Sale statistics</h5>
                     <canvas id="myChart" height="120px"></canvas>
                 </article>
-            </div>
+            </div> -->
             <div class="row">
-                <div class="col-lg-5">
+              <select id="intervalSelect" onchange="updateChart()"style="background-color: rgb(255, 255, 255); width: 100px; height: 25px; margin-top: 10px; margin-left: 10px;">
+			     <option value="daily">Daily</option>
+			     <option value="weekly">Weekly</option>
+			     <option value="monthly">Monthly</option>
+			     <option value="yearly">Yearly</option>
+		      </select>
+		    <div style="width: 90%;">
+			  <canvas id="myChart6"></canvas>
+		    </div>
+                <!-- <div class="col-lg-5">
                     <div class="card mb-4">
                         <article class="card-body">
                             <h5 class="card-title">New Members</h5>
@@ -109,8 +119,8 @@
                             </div>
                         </article>
                     </div>
-                </div>
-                <div class="col-lg-7">
+                </div> -->
+                <!-- <div class="col-lg-7">
                     <div class="card mb-4">
                         <article class="card-body">
                             <h5 class="card-title">Recent activities</h5>
@@ -183,10 +193,10 @@
                             </ul>
                         </article>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
-        <div class="col-xl-4 col-lg-12">
+        <!-- <div class="col-xl-4 col-lg-12">
             <div class="card mb-4">
                 <article class="card-body">
                     <h5 class="card-title">Revenue Base on Area</h5>
@@ -218,68 +228,55 @@
                     </div>
                 </article>
             </div>
-        </div>
+        </div> -->
     </div>
     
-   
-    <div class="table-responsive">
+   <br><br><br>
+    <div class="table-responsive" style="margin-top: 20px;">
         <div class="table-responsive">
             <h1>Best Selling Products</h1>
-            <table class="table align-middle table-nowrap mb-0">
-                
-                <thead class="table-light">
+            <table class="table align-middle table-nowrap mb-0 table-striped table-hover" style="font-size: 16px; /* Increase font size */
+            color: #333;">
+                <thead class="table-light" style="background-color: #f8f9fa;">
                     <tr>
-                        
-                        <th class="align-middle" scope="col">Product Name</th>
-                        <th class="align-middle" scope="col">Sale count</th>
-                       
+                        <th style="padding: 15px;" class="align-middle" scope="col">Product Name</th>
+                        <th style="padding: 15px;" class="align-middle" scope="col">Sale count</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% topProduct.forEach((item)=>{ %>
                     <tr>
-                        
-                        <td><%= item.productName %></td>
-                        <td><%= item.totalQuantitySold %></td>
-                        
+                        <td style="padding: 15px;"><%= item.productName %></td>
+                        <td style="padding: 15px;"><%= item.totalQuantitySold %></td> 
                     </tr>
-                   
                     <% }) %>
                 </tbody>
             </table>
-
         </div>
-    </div>
+    </div><br><br><br>
 
 
-    <div class="table-responsive">
+    <div class="table-responsive" style="margin-top: 20px">
         <div class="table-responsive">
             <h1>Best Selling Category</h1>
-            <table class="table align-middle table-nowrap mb-0">
-                
-                <thead class="table-light">
-                    <tr>
-                        
-                        <th class="align-middle" scope="col">Product Name</th>
-                        <th class="align-middle" scope="col">Sale count</th>
-                       
+            <table style="font-size: 16px; color: #fff; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);" class="table align-middle table-nowrap mb-0 table-striped table-hover table-dark">
+                <thead class="table-light" style="background-color: #343a40;">
+                    <tr>        
+                        <th style="padding: 15px;" class="align-middle" scope="col">Category Name</th>      
                     </tr>
                 </thead>
                 <tbody>
                     <% topCategory.forEach((item)=>{ %>
-                    <tr>
-                        
-                        <td><%= item._id %></td>
-                        <td><%= item.orderCount %></td>
-                        
+                    <tr> 
+                        <td style="padding: 15px;"><%= item._id %></td>   
                     </tr>
-                   
                     <% }) %>
                 </tbody>
             </table>
-
         </div>
     </div>
+    
+    <br><br><br>
 </section>
 
 
@@ -294,3 +291,57 @@
 
 
 <%-include("../adminLayout/adminFooter")    %>
+
+<script>
+    // Function to update chart based on selected interval
+    function updateChart() {
+        var interval = document.getElementById('intervalSelect').value;
+
+        // Making AJAX request
+        $.ajax({
+            type: 'POST',
+            url: '/admin/chartData',
+            data: { filter: interval },
+            success: function (response) {
+
+                var labels = response.label;
+                var salesCount = response.salesCount;
+
+                myChart.data.labels = labels;
+                myChart.data.datasets[0].data = salesCount;
+                myChart.update();
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            }
+        });
+    }
+
+    var data = {
+        labels: [],
+        datasets: [{
+            label: 'Sales Count',
+            backgroundColor: '#27ae60',
+            borderColor: 'rgb(255, 99, 132)',
+            data: []
+        }]
+    };
+
+    var config = {
+        type: 'bar',
+        data: data,
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    };
+
+    var ctx = document.getElementById('myChart6').getContext('2d');
+    var myChart = new Chart(ctx, config);
+    updateChart();
+</script>

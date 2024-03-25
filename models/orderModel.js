@@ -1,52 +1,54 @@
 const mongoose = require("mongoose");
 
-const orderSchema= new mongoose.Schema({
-    products:[{
-    productId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"product",     
+const orderSchema = new mongoose.Schema(
+  {
+    products: [
+      {
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "product",
+        },
+        quantity: {
+          type: Number,
+        },
+        total: {
+          type: Number,
+        },
+        offer: {
+          type: String,
+          default: false,
+        },
+      },
+    ],
+    orderId: {
+      type: String,
     },
-    quantity:{
-        type:Number,
+    totalPrice: {
+      type: Number,
     },
-    total:{
-        type:Number
+    paymentIntent: {
+      type: String,
     },
-    offer:{
-        type:String,
-        default:false
-    }
+    requestReson: {
+      type: String,
+      default: "Not Request",
+    },
+    orderStatus: {
+      type: String,
+      default: "Order Placed",
+    },
+    address: {
+      type: Object,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    expectedDeliver: {
+      type: String,
+    },
+  },
+  { timestamps: true }
+);
 
-}],
-orderId:{
-    type:String,
-},
-totalPrice:{
-    type:Number
-},
-paymentIntent:{
-    type:String
-},
-requestReson:{
-    type:String,
-    default:"Not Request"
-},
-orderStatus:{
-    type:String,
-    default:"Order Placed",
-  
-},
-address:{
-    type:Object
-},
-userId:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"User"
-},
-expectedDeliver:{
-    type:String
-},
-},
-{timestamps:true});
-
-module.exports=mongoose.model('Order',orderSchema)
+module.exports = mongoose.model("Order", orderSchema);

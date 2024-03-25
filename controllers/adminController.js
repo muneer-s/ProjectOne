@@ -121,6 +121,149 @@ const adminLoadHome = async (req, res) => {
   }
 };
 
+// chart loading
+const getDetailsChart = async (req,res) =>{
+  try {
+    let labelObj = {};
+    let salesCount;
+    let findQuerry;
+    let currentYear;
+    let currentMonth;
+    let index;
+
+
+    switch (req.body.filter.toLowerCase()) {
+        case "weekly":
+            currentYear = new Date().getFullYear();
+            currentMonth = new Date().getMonth() + 1;
+
+            labelObj = {
+                Sun: 0,
+                Mon: 1,
+                Tue: 2,
+                Wed: 3,
+                Thu: 4,
+                Fri: 5,
+                Sat: 6,
+            };
+
+            salesCount = new Array(7).fill(0);
+
+            findQuerry = {
+              createdAt: {
+                    $gte: new Date(currentYear, currentMonth - 1, 1),
+                    $lte: new Date(currentYear, currentMonth, 0, 23, 59, 59),
+                },
+            };
+            index = 0;
+            break;
+        case "monthly":
+            currentYear = new Date().getFullYear();
+            labelObj = {
+                Jan: 0,
+                Feb: 1,
+                Mar: 2,
+                Apr: 3,
+                May: 4,
+                Jun: 5,
+                Jul: 6,
+                Aug: 7,
+                Sep: 8,
+                Oct: 9,
+                Nov: 10,
+                Dec: 11,
+            };
+
+            salesCount = new Array(12).fill(0);
+
+            findQuerry = {
+              createdAt: {
+                    $gte: new Date(currentYear, 0, 1),
+                    $lte: new Date(currentYear, 11, 31, 23, 59, 59),
+                },
+            };
+            index = 1;
+            break;
+        case "daily":
+            currentYear = new Date().getFullYear();
+            currentMonth = new Date().getMonth() + 1;
+            let end = new Date(currentYear, currentMonth, 0, 23, 59, 59);
+            end = String(end).split(" ")[2];
+            end = Number(end);
+
+            for (let i = 0; i < end; i++) {
+                labelObj[`${i + 1}`] = i;
+            }
+
+            salesCount = new Array(end).fill(0);
+
+            findQuerry = {
+              createdAt: {
+                    $gt: new Date(currentYear, currentMonth - 1, 1),
+                    $lte: new Date(currentYear, currentMonth, 0, 23, 59, 59),
+                },
+            };
+
+            index = 2;
+            break;
+        case "yearly":
+            findQuerry = {};
+
+            const ord = await Order.find().sort({ createdAt: 1 });
+            const stDate = ord[0].createdAt.getFullYear();
+            const endDate = ord[ord.length - 1].createdAt.getFullYear();
+
+            for (let i = 0; i <= Number(endDate) - Number(stDate); i++) {
+                labelObj[`${stDate + i}`] = i;
+            }
+
+            salesCount = new Array(Object.keys(labelObj).length).fill(0);
+
+            index = 3;
+            break;
+        default:
+            return res.json({
+                label: [],
+                salesCount: [],
+            });
+    }
+
+
+
+    const orders = await Order.aggregate(
+        [
+            {
+                $match: findQuerry
+            },
+            {
+                '$unwind': {
+                    'path': '$products'
+                }
+            }
+        ]
+    );
+    // console.log(orders);
+
+    orders.forEach((order) => {
+        if (index === 2) {
+            salesCount[
+                labelObj[Number(String(order.createdAt).split(" ")[index])]
+            ] += 1;
+        } else {
+            salesCount[labelObj[String(order.createdAt).split(" ")[index]]] += 1;
+        }
+    });
+
+    res.json({
+        label: Object.keys(labelObj),
+        salesCount,
+    });
+} catch (err) {
+  //  res.status(500).redirect('/err500');
+  console.log(err);
+}
+}
+
 //admin login page load
 const adminloadlogin = async (req, res) => {
   try {
@@ -607,4 +750,5 @@ module.exports = {
   applyOfferForCategory,
   deleteOfferFromProduct,
   deleteOfferFromCategory,
+  getDetailsChart
 };
