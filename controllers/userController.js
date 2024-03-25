@@ -161,6 +161,7 @@ const loginload = async (req, res) => {
 const homeload = async (req, res) => {
   try {
     const user_id = req.session.user_id;
+    const products = await product.find({status:true})
 
     const checkUser = await User.findOne({
       _id: req.session.user_id,
@@ -172,7 +173,7 @@ const homeload = async (req, res) => {
 
     const userData = await User.findOne({ _id: user_id, is_blocked: false });
 
-    res.render("./users/home", { user: userData });
+    res.render("./users/home", { user: userData , Products:products });
   } catch (error) {
     console.log(error.message + "error from user home page");
   }
