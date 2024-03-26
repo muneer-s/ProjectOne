@@ -64,6 +64,26 @@ const addCategory = async (req, res) => {
 //admin home page loading
 const adminLoadHome = async (req, res) => {
   try {
+
+
+
+    const orderCount  = await Order.countDocuments()
+    const userCount = await User.countDocuments()
+
+    const revenue = await Order.aggregate([
+      {
+        $group: {
+          _id: null, 
+          total: {
+            $sum: "$totalPrice" 
+          }
+        }
+      }
+    ]);   
+
+
+
+
     const topProduct = await Order.aggregate([
       { $unwind: "$products" },
       {
@@ -115,7 +135,11 @@ const adminLoadHome = async (req, res) => {
       { $limit: 10 },
     ]);
 
-    res.render("./adminSide/AdminHome", { topProduct, topCategory });
+
+
+
+
+    res.render("./adminSide/AdminHome", { topProduct, topCategory,orderCount,userCount,revenue: revenue[0]  });
   } catch (error) {
     console.log(error.message);
   }
