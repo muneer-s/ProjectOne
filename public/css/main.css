@@ -1226,18 +1226,7 @@ h1, h2, h3, h4, h5, h6 {
     @media (max-width: 991px) {
       .banner-area .active-banner-slider .owl-nav {
         display: none; } }
-    .banner-area .active-banner-slider .owl-nav .owl-prev,
-    .banner-area .active-banner-slider .owl-nav .owl-next {
-      display: inline-block;
-      margin: 10px;
-      opacity: .5;
-      -webkit-transition: all 0.3s ease 0s;
-      -moz-transition: all 0.3s ease 0s;
-      -o-transition: all 0.3s ease 0s;
-      transition: all 0.3s ease 0s; }
-      .banner-area .active-banner-slider .owl-nav .owl-prev:hover,
-      .banner-area .active-banner-slider .owl-nav .owl-next:hover {
-        opacity: 1; }
+
   .banner-area .banner-content {
     padding-left: 10px; }
     @media (max-width: 991px) {
@@ -1439,6 +1428,7 @@ h1, h2, h3, h4, h5, h6 {
   padding-top: 70px;
   padding-bottom: 50px; }
   .active-product-area .owl-nav div {
+    
     position: absolute;
     left: 35%;
     top: 7%;

@@ -136,9 +136,6 @@ const adminLoadHome = async (req, res) => {
     ]);
 
 
-
-
-
     res.render("./adminSide/AdminHome", { topProduct, topCategory,orderCount,userCount,revenue: revenue[0]  });
   } catch (error) {
     console.log(error.message);
