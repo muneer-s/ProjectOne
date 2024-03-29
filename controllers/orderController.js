@@ -75,6 +75,16 @@ const placeOrder = async (req, res) => {
       });
     }
 
+   
+
+    if (couponCode) {
+      await Coupon.findOneAndUpdate(
+        { Code: couponCode },
+        { $push: { userUsed: { user_id: userId } } }
+      );
+    }
+
+     
     const order = new Order({
       products: cartData.products,
       orderId: orderId,
@@ -83,13 +93,6 @@ const placeOrder = async (req, res) => {
       address: address,
       userId: userId,
     });
-
-    if (couponCode) {
-      await Coupon.findOneAndUpdate(
-        { Code: couponCode },
-        { $push: { userUsed: { user_id: userId } } }
-      );
-    }
 
     await order.save();
     req.session.order_id = order._id;
@@ -161,6 +164,32 @@ const placeOrder = async (req, res) => {
     console.log(error.message);
   }
 };
+
+
+//remove coupon 
+const removeCoupon =  async (req, res) => {
+  try {
+     // Assuming you're using sessions to store coupon information
+     req.session.couponDiscount = null;
+     req.session.couponCode = null;
+     req.session.newAmountUsingCoupon = null;
+ 
+     // Optionally, update the order in the database to reflect the removal of the coupon
+     // This depends on how you're storing orders in your database
+ 
+     res.json({ success: true });
+  } catch (error) {
+     console.error(error);
+     res.status(500).json({ success: false, message: 'An error occurred while removing the coupon.' });
+  }
+ }
+ 
+
+
+
+
+
+
 
 //razorpay failed orders
 const failedOrders = async (req, res) => {
@@ -337,4 +366,5 @@ module.exports = {
   failedOrders,
   retryPayment,
   retryCallback,
+  removeCoupon
 };

@@ -232,7 +232,7 @@
             </div>
 
 
-            <ul class="list list_2">
+            <ul class="list list_2"  id="refreshId">
               <% if(typeof totalUsingCoupon !== "undefined"){ %>
                 <li>
                   <a >Subtotal <span>₹ <%=totalUsingCoupon %></span></a>
@@ -240,6 +240,7 @@
                 </li>
               
               <% }else{ %>
+               
                 <li>
                   <a name="subTotal">Subtotal <span>₹ <%=subTotal %></span></a>
                   <input class="subTotal" type="hidden" value=" <%=subTotal %>">
@@ -255,7 +256,12 @@
               <br>
               <label for="">Coupon Discount : <%= appliedCoupon.Discount %></label>
             </div>
+            <div>
+              <a class="primary-btn" id="removeCouponBtn" href="">Remove Coupon</a>
+            </div><br>
             <% } %>
+
+           
 
             <div style="margin-bottom: 20px">
               <a class="primary-btn" id="addCouponBtn" href="">Add Coupon</a>
@@ -568,8 +574,55 @@
 </script>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+<!--remove coupon -->
+<script>
+document.getElementById("removeCouponBtn").addEventListener("click", function(event) {
+  event.preventDefault()
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'This action cannot be undone!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, remove the coupon',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // If user confirms, proceed with coupon removal
+            fetch('/removeCoupon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => {
+              response.json()
+              console.log('lamlmalmalmlaml');
+              window.location.reload()})
+            .then(data => {
+              console.log('lololol');
+              window.location.reload()
+                if (data.success) {
+                  // window.location.href= window.location.href
+                  // $('#refreshId').load(location.href + ' #refreshId');
+                } else {
+                    alert('Failed to remove the coupon.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while removing the coupon.');
+            });
+        }
+    });
+});
+
+
+</script>
 
 
 

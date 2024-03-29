@@ -259,62 +259,66 @@ const userlogin = async (req, res) => {
 
 const loadProductPage = async (req, res) => {
   try {
-    const user_id = req.session.user_id;
-    const page = parseInt(req.query.page) || 1;
-    const limit = 6;
-    const skip = (page - 1) * limit;
-    const categoryFilter = req.query.category;
-    const sortOption = req.query.sort;
-    const searchQuery = req.query.query;
-
-    const userData = await User.findOne({ _id: user_id });
-    let query = { status: true };
-    if (categoryFilter) {
-      query.category = categoryFilter;
-    }
-    if (searchQuery) {
-      query.name = { $regex: searchQuery, $options: "i" }; // case-insensitive search
-    }
-
-    let sortQuery = {};
-    if (sortOption === "low") {
-      sortQuery = { price: 1 };
-    } else if (sortOption === "high") {
-      sortQuery = { price: -1 };
-    }
-
-    const proDetails = await product
-      .find({ status: true })
-      .find(query)
-      .sort(sortQuery)
-      .populate("category")
-      .skip(skip)
-      .limit(limit)
-      .populate("offer")
-      .populate("categoryOffer");
-
-    let catDetails = await Category.find({ is_list: true });
-
-    catDetails = catDetails.map((category) => ({
-      ...category._doc,
-      Name: category.Name.toUpperCase(),
-    }));
-
-    const totalItems = await product.countDocuments({ status: true });
-    const totalPages = Math.ceil(totalItems / limit);
-
-    res.render("./users/productPage", {
-      proDetails,
-      catDetails,
-      user: userData,
-      currentPage: page,
-      totalPages,
-      sort: sortOption,
-    });
+     const user_id = req.session.user_id;
+     const page = parseInt(req.query.page) || 1;
+     const limit = 6;
+     const skip = (page - 1) * limit;
+     const categoryFilter = req.query.category;
+     const sortOption = req.query.sort;
+     const searchQuery = req.query.query;
+ 
+     const userData = await User.findOne({ _id: user_id });
+     let query = { status: true };
+     if (categoryFilter) {
+       query.category = categoryFilter;
+     }
+     if (searchQuery) {
+       query.name = { $regex: searchQuery, $options: "i" }; // case-insensitive search
+     }
+ 
+     let sortQuery = {};
+     if (sortOption === "low") {
+       sortQuery = { price: 1 };
+     } else if (sortOption === "high") {
+       sortQuery = { price: -1 };
+     }
+ 
+     // Adjust the query to include the category filter when counting total items
+     const totalItems = await product.countDocuments(query);
+     const totalPages = Math.ceil(totalItems / limit);
+ 
+     // Use the same query to fetch the products, including the category filter and price sorting
+     const proDetails = await product
+       .find(query)
+       .sort(sortQuery)
+       .skip(skip)
+       .limit(limit)
+       .populate("category")
+       .populate("offer")
+       .populate("categoryOffer");
+ 
+     let catDetails = await Category.find({ is_list: true });
+ 
+     catDetails = catDetails.map((category) => ({
+       ...category._doc,
+       Name: category.Name.toUpperCase(),
+     }));
+ 
+     res.render("./users/productPage", {
+       proDetails,
+       catDetails,
+       user: userData,
+       currentPage: page,
+       totalPages,
+       sort: sortOption,
+       categoryFilter: categoryFilter,
+       searchQuery:searchQuery
+     });
   } catch (error) {
-    console.log(error.message);
+     console.log(error.message);
   }
-};
+ };
+ 
 
 //user load single product page
 const loadSingleProductPage = async (req, res) => {

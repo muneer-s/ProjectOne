@@ -122,7 +122,6 @@
 
     function downloadinvoice(event,orderId) {
         event.preventDefault()
-        console.log("hellooooooo");
         fetch(`/download-invoice/${orderId}`)
           .then(response => response.blob())
           .then(blob => {
