@@ -40,7 +40,39 @@ const loadSalesReportPage = async (req, res) => {
         .populate("address")
         .populate("userId");
 
-      res.render("./adminSide/SalesReport", { orders, filter });
+      ////////////////////////
+
+      const orderData = await Order.find({ orderStatus: "Delivered" })
+        .populate("products.productId")
+        .populate("address")
+        .populate("userId");
+
+      const ordersWithActualPrice = orderData.map((order) => {
+        return order.products.reduce(
+          (acc, product) => acc + product.productId.price * product.quantity,
+          0
+        );
+      });
+
+      const totalSum = ordersWithActualPrice.reduce(
+        (acc, totalPrice) => acc + totalPrice,
+        0
+      );
+
+      const orderTotalAmt = orderData.reduce((total, order) => {
+        return total + order.totalPrice;
+      }, 0);
+      const discountAmount = totalSum - orderTotalAmt;
+
+      ///////////////////////
+
+      res.render("./adminSide/SalesReport", {
+        orders,
+        filter,
+        orderData,
+        discountAmount,
+        orderTotalAmt,
+      });
     }
   } catch (error) {
     console.log(error.message);
@@ -53,6 +85,23 @@ const downloadSalesReport = async (req, res) => {
       .populate("products.productId")
       .populate("address")
       .populate("userId");
+
+    const ordersWithActualPrice = orderData.map((order) => {
+      return order.products.reduce(
+        (acc, product) => acc + product.productId.price * product.quantity,
+        0
+      );
+    });
+
+    const totalSum = ordersWithActualPrice.reduce(
+      (acc, totalPrice) => acc + totalPrice,
+      0
+    );
+
+    const orderTotalAmt = orderData.reduce((total, order) => {
+      return total + order.totalPrice;
+    }, 0);
+    const discountAmount = totalSum - orderTotalAmt;
 
     const templatePath = path.join(
       __dirname,
@@ -70,7 +119,11 @@ const downloadSalesReport = async (req, res) => {
           );
           throw new Error("Template file does not exist");
         }
-        return await ejs.renderFile(templatePath, { orderData });
+        return await ejs.renderFile(templatePath, {
+          orderData,
+          discountAmount,
+          orderTotalAmt,
+        });
       } catch (err) {
         console.error("Error rendering EJS template:", err);
         res.status(500).send("Error rendering sales report");

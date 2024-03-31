@@ -29,7 +29,7 @@ const userProfileLoad = async (req, res) => {
       }
       res.render("./users/userProfile", { user, wallet });
     } else {
-      res.render("./users/login");
+      res.redirect("/login");
     }
   } catch (err) {
     console.error(err);

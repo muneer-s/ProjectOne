@@ -32,6 +32,9 @@ const insertUser = async (req, res) => {
     });
 
     const userData = await user.save();
+    console.log(userData);
+    req.session.user_email = userData.email;
+    console.log(req.session.user_email);
 
     if (userData) {
       await OTPdb.deleteMany({});
@@ -161,7 +164,7 @@ const loginload = async (req, res) => {
 const homeload = async (req, res) => {
   try {
     const user_id = req.session.user_id;
-    const products = await product.find({status:true})
+    const products = await product.find({ status: true });
 
     const checkUser = await User.findOne({
       _id: req.session.user_id,
@@ -173,7 +176,7 @@ const homeload = async (req, res) => {
 
     const userData = await User.findOne({ _id: user_id, is_blocked: false });
 
-    res.render("./users/home", { user: userData , Products:products });
+    res.render("./users/home", { user: userData, Products: products });
   } catch (error) {
     console.log(error.message + "error from user home page");
   }
@@ -192,7 +195,7 @@ const loadRegister = async (req, res) => {
 //otp page load
 const otpload = (req, res) => {
   const id = req.query.id;
-
+  console.log("load otp page ", id);
   res.render("./users/otp", { id });
 };
 
@@ -201,11 +204,11 @@ const resendOtp = async (req, res) => {
   try {
     await OTPdb.deleteMany({});
 
-    const user_id = req.session.user_id;
+    const user_email = req.session.user_email;
 
-    const userData = await User.findOne({ _id: user_id });
+    const userData = await User.findOne({ email: user_email });
 
-    await sendVerifyMail(userData.name, userData.email, user_id);
+    await sendVerifyMail(userData.name, userData.email, userData._id);
 
     res.redirect(`/otp?id=${userData._id}`);
   } catch (error) {
@@ -259,66 +262,65 @@ const userlogin = async (req, res) => {
 
 const loadProductPage = async (req, res) => {
   try {
-     const user_id = req.session.user_id;
-     const page = parseInt(req.query.page) || 1;
-     const limit = 6;
-     const skip = (page - 1) * limit;
-     const categoryFilter = req.query.category;
-     const sortOption = req.query.sort;
-     const searchQuery = req.query.query;
- 
-     const userData = await User.findOne({ _id: user_id });
-     let query = { status: true };
-     if (categoryFilter) {
-       query.category = categoryFilter;
-     }
-     if (searchQuery) {
-       query.name = { $regex: searchQuery, $options: "i" }; // case-insensitive search
-     }
- 
-     let sortQuery = {};
-     if (sortOption === "low") {
-       sortQuery = { price: 1 };
-     } else if (sortOption === "high") {
-       sortQuery = { price: -1 };
-     }
- 
-     // Adjust the query to include the category filter when counting total items
-     const totalItems = await product.countDocuments(query);
-     const totalPages = Math.ceil(totalItems / limit);
- 
-     // Use the same query to fetch the products, including the category filter and price sorting
-     const proDetails = await product
-       .find(query)
-       .sort(sortQuery)
-       .skip(skip)
-       .limit(limit)
-       .populate("category")
-       .populate("offer")
-       .populate("categoryOffer");
- 
-     let catDetails = await Category.find({ is_list: true });
- 
-     catDetails = catDetails.map((category) => ({
-       ...category._doc,
-       Name: category.Name.toUpperCase(),
-     }));
- 
-     res.render("./users/productPage", {
-       proDetails,
-       catDetails,
-       user: userData,
-       currentPage: page,
-       totalPages,
-       sort: sortOption,
-       categoryFilter: categoryFilter,
-       searchQuery:searchQuery
-     });
+    const user_id = req.session.user_id;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 6;
+    const skip = (page - 1) * limit;
+    const categoryFilter = req.query.category;
+    const sortOption = req.query.sort;
+    const searchQuery = req.query.query;
+
+    const userData = await User.findOne({ _id: user_id });
+    let query = { status: true };
+    if (categoryFilter) {
+      query.category = categoryFilter;
+    }
+    if (searchQuery) {
+      query.name = { $regex: searchQuery, $options: "i" }; // case-insensitive search
+    }
+
+    let sortQuery = {};
+    if (sortOption === "low") {
+      sortQuery = { price: 1 };
+    } else if (sortOption === "high") {
+      sortQuery = { price: -1 };
+    }
+
+    // Adjust the query to include the category filter when counting total items
+    const totalItems = await product.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / limit);
+
+    // Use the same query to fetch the products, including the category filter and price sorting
+    const proDetails = await product
+      .find(query)
+      .sort(sortQuery)
+      .skip(skip)
+      .limit(limit)
+      .populate("category")
+      .populate("offer")
+      .populate("categoryOffer");
+
+    let catDetails = await Category.find({ is_list: true });
+
+    catDetails = catDetails.map((category) => ({
+      ...category._doc,
+      Name: category.Name.toUpperCase(),
+    }));
+
+    res.render("./users/productPage", {
+      proDetails,
+      catDetails,
+      user: userData,
+      currentPage: page,
+      totalPages,
+      sort: sortOption,
+      categoryFilter: categoryFilter,
+      searchQuery: searchQuery,
+    });
   } catch (error) {
-     console.log(error.message);
+    console.log(error.message);
   }
- };
- 
+};
 
 //user load single product page
 const loadSingleProductPage = async (req, res) => {
