@@ -40,8 +40,6 @@ const loadSalesReportPage = async (req, res) => {
         .populate("address")
         .populate("userId");
 
-      ////////////////////////
-
       const orderData = await Order.find({ orderStatus: "Delivered" })
         .populate("products.productId")
         .populate("address")
@@ -63,8 +61,6 @@ const loadSalesReportPage = async (req, res) => {
         return total + order.totalPrice;
       }, 0);
       const discountAmount = totalSum - orderTotalAmt;
-
-      ///////////////////////
 
       res.render("./adminSide/SalesReport", {
         orders,

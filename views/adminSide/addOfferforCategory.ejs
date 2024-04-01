@@ -1,8 +1,4 @@
-
 <%-include("../adminLayout/adminHeader")    %>
-
-
-
 
 <section class="content-main">
     <div class="content-header">
@@ -13,9 +9,7 @@
     <div class="card mb-4">
         <header class="card-header">
             <div class="row gx-3">
-                <!-- <div class="col-lg-4 col-md-6 me-auto">
-                    <input type="text" id="userNameSearchInput" placeholder="Search by Name..." class="form-control" />
-                </div> -->
+                
             </div>
         </header>
         <!-- card-header end// -->
@@ -107,7 +101,7 @@
         $('tbody tr').slice(startIndex, endIndex).show(); 
     }
 
-    // Function to generate pagination buttons
+    // function for generate pagination buttons
     function generatePaginationButtons() {
         var paginationHtml = '';
         for (var i = 1; i <= totalPages; i++) {
@@ -116,11 +110,11 @@
         $('#pagination').html(paginationHtml); 
     }
 
-    // Function to handle page change
+    // function to handle page change
     function changePage(page) {
         currentPage = page; 
-        showPage(currentPage); // Show items 
-        generatePaginationButtons(); // Regenerate pagination buttons
+        showPage(currentPage); 
+        generatePaginationButtons(); 
     }
 
     $(document).ready(function () {
@@ -139,12 +133,10 @@
             categoryId: categoryId
         },
         success: function(response) {
-            // Handle success, e.g., show a success message or reload the page
             alert('Offer applied successfully');
-            location.reload(); // Reload the page to reflect the changes
+            location.reload(); 
         },
         error: function(error) {
-            // Handle error, e.g., show an error message
             alert('An error occurred while applying the offer');
         }
     });

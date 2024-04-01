@@ -60,7 +60,7 @@ const updateProfile = async (req, res) => {
   }
 };
 
-//check if the current password is correct
+//check current password is correct
 const checkPassword = async (req, res) => {
   const { currentPassword } = req.body;
 

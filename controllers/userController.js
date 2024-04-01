@@ -132,8 +132,7 @@ const verifyOtp = async (req, res) => {
         );
 
         if (updateInfo) {
-          req.session.user_id = req.query.id; //------session created-----------------
-
+          req.session.user_id = req.query.id; //----session created
           res.redirect("/");
         }
       } else {
@@ -276,7 +275,7 @@ const loadProductPage = async (req, res) => {
       query.category = categoryFilter;
     }
     if (searchQuery) {
-      query.name = { $regex: searchQuery, $options: "i" }; // case-insensitive search
+      query.name = { $regex: searchQuery, $options: "i" };
     }
 
     let sortQuery = {};
@@ -286,11 +285,9 @@ const loadProductPage = async (req, res) => {
       sortQuery = { price: -1 };
     }
 
-    // Adjust the query to include the category filter when counting total items
     const totalItems = await product.countDocuments(query);
     const totalPages = Math.ceil(totalItems / limit);
 
-    // Use the same query to fetch the products, including the category filter and price sorting
     const proDetails = await product
       .find(query)
       .sort(sortQuery)

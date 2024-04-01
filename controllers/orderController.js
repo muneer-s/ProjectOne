@@ -28,13 +28,9 @@ const loadOrder = async (req, res) => {
       delete req.session.couponDiscount;
 
       const userId = req.session.user_id;
-
       const user = await User.findOne({ _id: userId });
-
       const orderId = req.session.oderData._id;
-
       req.session.oderData = null;
-
       const orders = await Order.findOne({ _id: orderId }).populate(
         "products.productId"
       );
@@ -64,7 +60,6 @@ const placeOrder = async (req, res) => {
       { address: { $elemMatch: { _id: addressId } } }
     );
 
-    
     const address = user.address[0];
     const orderId = orderid.generate();
 
@@ -75,8 +70,6 @@ const placeOrder = async (req, res) => {
       });
     }
 
-   
-
     if (couponCode) {
       await Coupon.findOneAndUpdate(
         { Code: couponCode },
@@ -84,7 +77,6 @@ const placeOrder = async (req, res) => {
       );
     }
 
-     
     const order = new Order({
       products: cartData.products,
       orderId: orderId,
@@ -165,31 +157,23 @@ const placeOrder = async (req, res) => {
   }
 };
 
-
-//remove coupon 
-const removeCoupon =  async (req, res) => {
+//remove coupon
+const removeCoupon = async (req, res) => {
   try {
-     // Assuming you're using sessions to store coupon information
-     req.session.couponDiscount = null;
-     req.session.couponCode = null;
-     req.session.newAmountUsingCoupon = null;
- 
-     // Optionally, update the order in the database to reflect the removal of the coupon
-     // This depends on how you're storing orders in your database
- 
-     res.json({ success: true });
+    req.session.couponDiscount = null;
+    req.session.couponCode = null;
+    req.session.newAmountUsingCoupon = null;
+    res.json({ success: true });
   } catch (error) {
-     console.error(error);
-     res.status(500).json({ success: false, message: 'An error occurred while removing the coupon.' });
+    console.error(error);
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "An error occurred while removing the coupon.",
+      });
   }
- }
- 
-
-
-
-
-
-
+};
 
 //razorpay failed orders
 const failedOrders = async (req, res) => {
@@ -347,7 +331,6 @@ const verifyPayment = async (req, res) => {
           $inc: { quantity: -quantityToSubtract },
         });
       }
-      //delete req.session.discountAmount;
       cart.products = [];
       const cartData = await cart.save();
       cartData ? res.json({ status: true }) : null;
@@ -366,5 +349,5 @@ module.exports = {
   failedOrders,
   retryPayment,
   retryCallback,
-  removeCoupon
+  removeCoupon,
 };

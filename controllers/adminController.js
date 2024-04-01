@@ -6,7 +6,6 @@ const path = require("path");
 const categories = require("../models/categories");
 const session = require("express-session");
 const flash = require("connect-flash");
-// const { default: products } = require("razorpay/dist/types/products");
 const Offer = require("../models/offerModel");
 const Order = require("../models/orderModel");
 
@@ -64,25 +63,18 @@ const addCategory = async (req, res) => {
 //admin home page loading
 const adminLoadHome = async (req, res) => {
   try {
-
-
-
-    const orderCount  = await Order.countDocuments()
-    const userCount = await User.countDocuments()
-
+    const orderCount = await Order.countDocuments();
+    const userCount = await User.countDocuments();
     const revenue = await Order.aggregate([
       {
         $group: {
-          _id: null, 
+          _id: null,
           total: {
-            $sum: "$totalPrice" 
-          }
-        }
-      }
-    ]);   
-
-
-
+            $sum: "$totalPrice",
+          },
+        },
+      },
+    ]);
 
     const topProduct = await Order.aggregate([
       { $unwind: "$products" },
@@ -134,16 +126,20 @@ const adminLoadHome = async (req, res) => {
       { $sort: { totalQuantitySold: -1 } },
       { $limit: 10 },
     ]);
-
-
-    res.render("./adminSide/AdminHome", { topProduct, topCategory,orderCount,userCount,revenue: revenue[0]  });
+    res.render("./adminSide/AdminHome", {
+      topProduct,
+      topCategory,
+      orderCount,
+      userCount,
+      revenue: revenue[0],
+    });
   } catch (error) {
     console.log(error.message);
   }
 };
 
 // chart loading
-const getDetailsChart = async (req,res) =>{
+const getDetailsChart = async (req, res) => {
   try {
     let labelObj = {};
     let salesCount;
@@ -152,138 +148,130 @@ const getDetailsChart = async (req,res) =>{
     let currentMonth;
     let index;
 
-
     switch (req.body.filter.toLowerCase()) {
-        case "weekly":
-            currentYear = new Date().getFullYear();
-            currentMonth = new Date().getMonth() + 1;
+      case "weekly":
+        currentYear = new Date().getFullYear();
+        currentMonth = new Date().getMonth() + 1;
 
-            labelObj = {
-                Sun: 0,
-                Mon: 1,
-                Tue: 2,
-                Wed: 3,
-                Thu: 4,
-                Fri: 5,
-                Sat: 6,
-            };
+        labelObj = {
+          Sun: 0,
+          Mon: 1,
+          Tue: 2,
+          Wed: 3,
+          Thu: 4,
+          Fri: 5,
+          Sat: 6,
+        };
 
-            salesCount = new Array(7).fill(0);
+        salesCount = new Array(7).fill(0);
 
-            findQuerry = {
-              createdAt: {
-                    $gte: new Date(currentYear, currentMonth - 1, 1),
-                    $lte: new Date(currentYear, currentMonth, 0, 23, 59, 59),
-                },
-            };
-            index = 0;
-            break;
-        case "monthly":
-            currentYear = new Date().getFullYear();
-            labelObj = {
-                Jan: 0,
-                Feb: 1,
-                Mar: 2,
-                Apr: 3,
-                May: 4,
-                Jun: 5,
-                Jul: 6,
-                Aug: 7,
-                Sep: 8,
-                Oct: 9,
-                Nov: 10,
-                Dec: 11,
-            };
+        findQuerry = {
+          createdAt: {
+            $gte: new Date(currentYear, currentMonth - 1, 1),
+            $lte: new Date(currentYear, currentMonth, 0, 23, 59, 59),
+          },
+        };
+        index = 0;
+        break;
+      case "monthly":
+        currentYear = new Date().getFullYear();
+        labelObj = {
+          Jan: 0,
+          Feb: 1,
+          Mar: 2,
+          Apr: 3,
+          May: 4,
+          Jun: 5,
+          Jul: 6,
+          Aug: 7,
+          Sep: 8,
+          Oct: 9,
+          Nov: 10,
+          Dec: 11,
+        };
 
-            salesCount = new Array(12).fill(0);
+        salesCount = new Array(12).fill(0);
 
-            findQuerry = {
-              createdAt: {
-                    $gte: new Date(currentYear, 0, 1),
-                    $lte: new Date(currentYear, 11, 31, 23, 59, 59),
-                },
-            };
-            index = 1;
-            break;
-        case "daily":
-            currentYear = new Date().getFullYear();
-            currentMonth = new Date().getMonth() + 1;
-            let end = new Date(currentYear, currentMonth, 0, 23, 59, 59);
-            end = String(end).split(" ")[2];
-            end = Number(end);
+        findQuerry = {
+          createdAt: {
+            $gte: new Date(currentYear, 0, 1),
+            $lte: new Date(currentYear, 11, 31, 23, 59, 59),
+          },
+        };
+        index = 1;
+        break;
+      case "daily":
+        currentYear = new Date().getFullYear();
+        currentMonth = new Date().getMonth() + 1;
+        let end = new Date(currentYear, currentMonth, 0, 23, 59, 59);
+        end = String(end).split(" ")[2];
+        end = Number(end);
 
-            for (let i = 0; i < end; i++) {
-                labelObj[`${i + 1}`] = i;
-            }
+        for (let i = 0; i < end; i++) {
+          labelObj[`${i + 1}`] = i;
+        }
 
-            salesCount = new Array(end).fill(0);
+        salesCount = new Array(end).fill(0);
 
-            findQuerry = {
-              createdAt: {
-                    $gt: new Date(currentYear, currentMonth - 1, 1),
-                    $lte: new Date(currentYear, currentMonth, 0, 23, 59, 59),
-                },
-            };
+        findQuerry = {
+          createdAt: {
+            $gt: new Date(currentYear, currentMonth - 1, 1),
+            $lte: new Date(currentYear, currentMonth, 0, 23, 59, 59),
+          },
+        };
 
-            index = 2;
-            break;
-        case "yearly":
-            findQuerry = {};
+        index = 2;
+        break;
+      case "yearly":
+        findQuerry = {};
 
-            const ord = await Order.find().sort({ createdAt: 1 });
-            const stDate = ord[0].createdAt.getFullYear();
-            const endDate = ord[ord.length - 1].createdAt.getFullYear();
+        const ord = await Order.find().sort({ createdAt: 1 });
+        const stDate = ord[0].createdAt.getFullYear();
+        const endDate = ord[ord.length - 1].createdAt.getFullYear();
 
-            for (let i = 0; i <= Number(endDate) - Number(stDate); i++) {
-                labelObj[`${stDate + i}`] = i;
-            }
+        for (let i = 0; i <= Number(endDate) - Number(stDate); i++) {
+          labelObj[`${stDate + i}`] = i;
+        }
 
-            salesCount = new Array(Object.keys(labelObj).length).fill(0);
+        salesCount = new Array(Object.keys(labelObj).length).fill(0);
 
-            index = 3;
-            break;
-        default:
-            return res.json({
-                label: [],
-                salesCount: [],
-            });
+        index = 3;
+        break;
+      default:
+        return res.json({
+          label: [],
+          salesCount: [],
+        });
     }
-
-
-
-    const orders = await Order.aggregate(
-        [
-            {
-                $match: findQuerry
-            },
-            {
-                '$unwind': {
-                    'path': '$products'
-                }
-            }
-        ]
-    );
-    // console.log(orders);
+    const orders = await Order.aggregate([
+      {
+        $match: findQuerry,
+      },
+      {
+        $unwind: {
+          path: "$products",
+        },
+      },
+    ]);
 
     orders.forEach((order) => {
-        if (index === 2) {
-            salesCount[
-                labelObj[Number(String(order.createdAt).split(" ")[index])]
-            ] += 1;
-        } else {
-            salesCount[labelObj[String(order.createdAt).split(" ")[index]]] += 1;
-        }
+      if (index === 2) {
+        salesCount[
+          labelObj[Number(String(order.createdAt).split(" ")[index])]
+        ] += 1;
+      } else {
+        salesCount[labelObj[String(order.createdAt).split(" ")[index]]] += 1;
+      }
     });
 
     res.json({
-        label: Object.keys(labelObj),
-        salesCount,
+      label: Object.keys(labelObj),
+      salesCount,
     });
-} catch (err) {
-  //  res.status(500).redirect('/err500');
-  console.log(err);
-}
-}
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 //admin login page load
 const adminloadlogin = async (req, res) => {
@@ -472,8 +460,6 @@ const addProduct = async (req, res) => {
   }
 };
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 // update the product status
 const updateProductStatus = async (req, res) => {
   try {
@@ -506,11 +492,8 @@ const updateProductStatus = async (req, res) => {
 const loadEditProduct = async (req, res) => {
   try {
     const productId = req.query.id;
-
     const categories = await Category.find();
-
     const productItem = await product.findById(productId);
-
     res.render("adminSide/editProduct", { product: productItem, categories });
   } catch (error) {
     console.log(error);
@@ -522,9 +505,7 @@ const postEditProduct = async (req, res) => {
   try {
     const { product_name, description, price, quantity, category, productId } =
       req.body;
-
     let productImages = [];
-
     for (let i = 0; i < req.files.length; i++) {
       const uploadedImagePath = req.files[i].path;
 
@@ -537,7 +518,6 @@ const postEditProduct = async (req, res) => {
         "resized",
         req.files[i].filename
       );
-
       await sharp(uploadedImagePath)
         .resize(840, 840, { fit: "fill" })
         .toFile(resizedImagePath);
@@ -771,5 +751,5 @@ module.exports = {
   applyOfferForCategory,
   deleteOfferFromProduct,
   deleteOfferFromCategory,
-  getDetailsChart
+  getDetailsChart,
 };

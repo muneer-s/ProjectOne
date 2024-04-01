@@ -5,9 +5,7 @@
                         <h2 class="content-title card-title">Categories</h2>
                         <p>Add, edit or delete a category</p>
                     </div>
-                    <!-- <div>
-                        <input type="text" placeholder="Search Categories" class="form-control bg-white" />
-                    </div> -->
+                    
                 </div>
                 <div class="card">
                     <div class="card-body">
@@ -79,7 +77,6 @@
                                                         <div class="dropdown-menu">
                                                             
                                                             <a class="dropdown-item" href="/editCategory/<%=category._id%>">Edit</a>
-                                                            <!-- <a class="dropdown-item text-danger" href="#">Delete</a> -->
                                                             <a href="/deleteCategory/<%=category._id%>" class="dropdown-item " onclick="return confirm('Are you sure you want to delete this category?')">Delete</a>
                                                         </div>
                                                     </div>
@@ -97,12 +94,6 @@
                                                 <% }else{ %>
                                                     <td><h5 class="text-danger">Unlisted</h5></td>
                                                     <% } %>
-
-
-                                                   
-
-
-
 
 
                                             </tr>
@@ -140,7 +131,6 @@
                 success: function(response) {
                     alert(response.message);
                     window.location.reload()
-                    // Optionally, refresh the page or update the UI to reflect the change
                 },
                 error: function(error) {
                     alert('Error deleting offer');
