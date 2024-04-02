@@ -15,7 +15,7 @@ const loadWishlist = async (req, res) => {
       const user = await User.findOne({ _id: userData._id });
 
       const wishlistData = await wishlist
-        .findOne({})
+        .findOne({userId:userId})
         .populate({ path: "products.productId", model: "product" })
         .populate("userId");
 
