@@ -276,7 +276,7 @@ const getDetailsChart = async (req, res) => {
 //admin login page load
 const adminloadlogin = async (req, res) => {
   try {
-    res.render("./adminSide/AdminLogin");
+    res.render("./adminSide/adminLogin");
   } catch (error) {
     console.log(error.message);
   }
