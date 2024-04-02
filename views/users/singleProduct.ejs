@@ -76,15 +76,7 @@
 						</ul>
 						<p><%= products.description %></p>
 						<div class="card_area d-flex justify-content-between align-items-center">
-							<!-- <div class="product_count">
-								<span class="inumber-decrement">
-									<i class="ti-minus" onclick="updateQuantity(-1,'<%= products.quantity %>')"></i>
-								</span>
-								<input class="input-number"  type="text" value="1" min="1" max="<%= products.quantity %>" id="quantityInput">
-								<span class="number-increment">
-									<i class="ti-plus" onclick="updateQuantity(1,'<%= products.quantity %>')"></i>
-								</span>
-							</div> -->
+							
 				
 						</div>
 						
@@ -96,9 +88,7 @@
 						</div>
 						
 						<div class="card_area d-flex align-items-center">
-							<!-- <a class="primary-btn" href="/userCart">Add to Cart</a> -->
 							<button class="primary-btn" onclick="addToCart('<%= products._id %>')">add to cart</button>
-							<a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
 							<a class="icon_btn" href="/addToWishlist?id=<%= products._id %>"><i class="lnr lnr lnr-heart"></i></a>
 							
 						</div>
@@ -113,31 +103,9 @@
 	<section class="product_description_area">
 		<div class="container">
 			<ul class="nav nav-tabs" id="myTab" role="tablist">
-				<!-- <li class="nav-item">
-					<a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Description</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
-					 aria-selected="false">Specification</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact"
-					 aria-selected="false">Comments</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link active" id="review-tab" data-toggle="tab" href="#review" role="tab" aria-controls="review"
-					 aria-selected="false">Reviews</a>
-				</li> -->
+				
 			</ul>
-			<!-- <div class="tab-content" id="myTabContent">
-				<div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
-					<p></p>
-				</div>
-				<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-					
-								
-				</div>
-			</div> -->
+			
 		</div>
 	</section>
 	<!--================End Product Description Area =================-->
