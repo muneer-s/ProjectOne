@@ -1,20 +1,11 @@
 <%-include("../adminLayout/adminHeader")    %>
 
-
-
-
-
-
-
 <section class="content-main">
     <div class="row">
         <div class="col-9">
             <div class="content-header">
                 <h2 class="content-title">edit Product</h2>
-                <!-- <div>
-                    <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
-                    <button class="btn btn-md rounded font-sm hover-up">Publich</button>
-                </div> -->
+                
             </div>
         </div>
         <div class="col-lg-6">
@@ -68,13 +59,6 @@
                                     <button class="delete-image" data-image-index="<%= i %>" onclick="dltImage(event, '<%= product.productImages[i] %>', '<%= product._id %>')">Delete</button>                                </div>
                             <% } %>
                         </div>
-
-
-
-
-
-
-
                         <!-- Add a container to display selected images -->
                         <div id="selectedImagesContainer" class="d-flex flex-wrap"></div>
                         <button  type="submit" class="btn btn-success text-white" id="addProductButton">submit</button>
@@ -82,9 +66,8 @@
                 </div>
             </div>
           </div>
-       ->
-                <!-- </div>
-            </div> -->
+       
+               
             <!-- card end// -->
         </div>
     </div>

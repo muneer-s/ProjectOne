@@ -9,9 +9,7 @@
             <h2 class="content-title card-title">Product Details</h2>
             <p> Edit ,List and Unlist a Product</p>
         </div>
-        <!-- <div class="col-lg-4 col-md-6 me-auto">
-            <input type="text" placeholder="Search..." class="form-control" id="filterInput" onkeyup="filterOrders()"/>
-        </div> -->
+       
         
         <div>
             <input type="text" id="searchInput" placeholder="Search by Name" class="form-control bg-white" onkeyup="searchProductName()" />
@@ -58,10 +56,7 @@
                                 </td>
                     
                                 <td><%= proDetails[i].name %></td>
-                                <td><%= proDetails[i].category.Name %></td>
-                                <!-- Find the category name based on the category ID -->
-        
-                                <!-- Other columns as needed -->
+                                <td><%= proDetails[i].category.Name %></td>     
                                 <td><%= proDetails[i].price %></td>
                                 <td><%= proDetails[i].status ? 'Active' : 'Inactive' %></td>
                                  
@@ -78,7 +73,6 @@
                                         
                                 <td>
                                     <form method="post" action="/admin/changeProductStatus/<%= proDetails[i]._id %>" style="display: inline-block;">
-                                        <!-- Add a class 'btn-update-status' to the button for easier selection -->
                                         <button type="button" class="btn btn-sm <%= proDetails[i].status ? 'btn-danger' : 'btn-success' %> btn-update-status" data-user-id="<%= proDetails[i]._id %>">
                                             <%= proDetails[i].status ? 'Unlist' : 'List' %>
                                         </button>

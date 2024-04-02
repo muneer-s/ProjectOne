@@ -126,7 +126,7 @@ const adminLoadHome = async (req, res) => {
       { $sort: { totalQuantitySold: -1 } },
       { $limit: 10 },
     ]);
-    res.render("./adminSide/AdminHome", {
+    res.render("./adminSide/adminHome", {
       topProduct,
       topCategory,
       orderCount,
@@ -289,7 +289,7 @@ const Adminlogout = async (req, res) => {
       console.log("Error destroying session: ", err);
     } else {
       console.log("Session destroyed");
-      res.redirect("/AdminHome");
+      res.redirect("/adminHome");
     }
   });
 };
@@ -386,7 +386,7 @@ const updateCategory = async (req, res) => {
       res.redirect(`/editCategory/${categoryId}`);
     }
   } catch (error) {
-    console.error("updateil aanu error", error);
+    console.error("error in update", error);
   }
 };
 

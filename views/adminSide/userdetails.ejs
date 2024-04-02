@@ -44,9 +44,7 @@
                             <td><%-adminSideUserData[i].mobile %></td>
                             <td><%-adminSideUserData[i].is_blocked %></td>
                         
-                            <!-- <td class="text-end">
-                                <a href="#" class="btn btn-sm btn-brand rounded font-sm mt-15">View</a>
-                            </td> -->
+                            
 
                             <td class="text-end">
                                 <% if (adminSideUserData[i].is_blocked) { %>
@@ -67,20 +65,7 @@
         <!-- card-body end// -->
     </div>
     <!-- card end// -->
-    <!-- <div class="pagination-area mt-15 mb-50">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-start">
-                <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                <li class="page-item"><a class="page-link" href="#">02</a></li>
-                <li class="page-item"><a class="page-link" href="#">03</a></li>
-                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                <li class="page-item"><a class="page-link" href="#">16</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
-                </li>
-            </ul>
-        </nav>
-    </div> -->
+    
 </section>
 
 <script>
@@ -136,7 +121,6 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                // alert('An error occurred. Please try again.');
                 location.reload()
             });
         }

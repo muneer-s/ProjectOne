@@ -83,10 +83,7 @@
                             <td><%= product.total %></td>
                             <td><span class="badge rounded-pill alert-success"><%= item.orderStatus %></span></td>
                             <td><%= item.createdAt.toLocaleDateString() %></td>
-                            <!-- <td class="text-end">
-                                <a href="/orderDetails/<%= item._id %>" class="btn btn-md rounded font-sm">Detail</a>
-                                
-                            </td> -->
+                            
                         </tr>
                         <% }) %>
                         <% }) %>
@@ -143,29 +140,7 @@
 
 
 
-<!-- <script>
-    function printPage() {
-        // Hide unnecessary elements
-        document.getElementById("searchInput").style.display = "none"; // Hide search input
-        document.querySelector(".content-header > div:last-child").style.display = "none"; // Hide "Download" button
-        document.querySelector(".pagination-area").style.display = "none"; // Hide pagination
-        document.getElementById("searchByName").style.display = "none"
-        document.getElementById("startDate&endDate").style.display = "none"
-        document.getElementById("checkId").style.display = "none";
-        document.getElementById("filterBy").style.display = "none";
-        // Print the page
-        window.print();
-    
-        // Show the hidden elements again
-        document.getElementById("searchInput").style.display = "block";
-        document.querySelector(".content-header > div:last-child").style.display = "block";
-        document.querySelector(".pagination-area").style.display = "block";
-        document.getElementById("searchByName").style.display = "block";
-        document.getElementById("startDate&endDate").style.display = "block"
-        document.getElementById("checkId").style.display = "block";
-        document.getElementById("filterBy").style.display = "none";
-    }
-    </script> -->
+
 
 
 
@@ -311,25 +286,7 @@
 
 
 
-    <!-- <script>
-        document.addEventListener("DOMContentLoaded", function () {
-    const startDateInput = document.getElementById("startDate");
-    const endDateInput = document.getElementById("endDate");
-
-    function updateURLWithDateRange() {
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-        const url = new URL(window.location.href);
-        url.searchParams.set("startDate", startDate);
-        url.searchParams.set("endDate", endDate);
-        window.location.href = url.toString();
-    }
-
-    startDateInput.addEventListener("change", updateURLWithDateRange);
-    endDateInput.addEventListener("change", updateURLWithDateRange);
-});
-
-    </script> -->
+    
     
 
     <script>
