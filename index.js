@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-mongoose.connect("mongodb://127.0.0.1:27017/user_management_system");
+mongoose.connect("mongodb+srv://muneerkoppam1107:vHCbKvYSeaoC2nIO@cluster0.kh0hmhx.mongodb.net/user_management_system");
 require('dotenv').config();
 
 const session = require('express-session');
