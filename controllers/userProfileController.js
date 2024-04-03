@@ -262,7 +262,11 @@ const downloadInvoice = async (req, res) => {
           );
           throw new Error("Template file does not exist");
         }
-        return await ejs.renderFile(templatePath, { orders, user });
+        const invoiceTemplate = fs.readFileSync(
+          templatePath,
+          "utf-8"
+        );
+        return ejs.renderFile(invoiceTemplate, { orders, user });
       } catch (err) {
         console.error("Error rendering EJS template:", err);
         res.status(500).send("Error rendering sales report");
