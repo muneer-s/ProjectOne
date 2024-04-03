@@ -115,7 +115,11 @@ const downloadSalesReport = async (req, res) => {
           );
           throw new Error("Template file does not exist");
         }
-        return ejs.render(templatePath, {
+        const salesTemplate = fs.readFileSync(
+          templatePath,
+          "utf-8"
+        );
+        return ejs.render(salesTemplate, {
           orderData,
           discountAmount,
           orderTotalAmt,
