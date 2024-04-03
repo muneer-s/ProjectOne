@@ -266,7 +266,7 @@ const downloadInvoice = async (req, res) => {
           templatePath,
           "utf-8"
         );
-        return ejs.renderFile(invoiceTemplate, { orders, user });
+        return ejs.render(invoiceTemplate, { orders, user });
       } catch (err) {
         console.error("Error rendering EJS template:", err);
         res.status(500).send("Error rendering sales report");
