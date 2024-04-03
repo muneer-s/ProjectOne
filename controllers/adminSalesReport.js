@@ -115,7 +115,7 @@ const downloadSalesReport = async (req, res) => {
           );
           throw new Error("Template file does not exist");
         }
-        return await ejs.renderFile(templatePath, {
+        return ejs.render(templatePath, {
           orderData,
           discountAmount,
           orderTotalAmt,
