@@ -129,12 +129,24 @@ const placeOrder = async (req, res) => {
         { _id: order._id },
         { $set: { orderStatus: "Order Placed" } }
       );
+      if (cartData && cartData.products) {
+        const cartItems = cartData.products;
+
+        cartItems.map(async (cartItem) => {
+          const product = await products.findById(cartItem.productId).exec();
+          if (product) {
+            product.quantity -= cartItem.quantity;
+            await product.save();
+          }
+        });
+      }
       req.session.oderData = order;
 
       cartData.products = [];
       await cartData.save();
       res.json({ walletSuccess: true });
     } else {
+      //razorpay
       var options = {
         amount: (originalAmount - (couponDiscount || 0)) * 100,
         currency: "INR",
