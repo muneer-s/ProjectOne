@@ -25,6 +25,7 @@
     "nodemailer": "^6.9.8",
     "order-id": "^2.1.2",
     "puppeteer": "^22.5.0",
+    "puppeteer-core": "^22.6.2",
     "razorpay": "^2.9.2",
     "session": "^0.1.0",
     "sharp": "^0.33.2",

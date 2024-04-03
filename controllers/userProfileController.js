@@ -13,7 +13,7 @@ const Coupon = require("../models/couponModel");
 const Wallet = require("../models/walletModel");
 const ejs = require("ejs");
 const path = require("path");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
 const fs = require("fs");
 
 //load user profile page
@@ -275,7 +275,10 @@ const downloadInvoice = async (req, res) => {
       return;
     }
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ 
+      headless: "new",
+      executablePath: '/snap/bin/chromium',
+    });
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
     await page.setContent(htmlContent);

@@ -2,7 +2,7 @@ const User = require("../models/userModel");
 const Order = require("../models/orderModel");
 const ejs = require("ejs");
 const path = require("path");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
 const fs = require("fs");
 
 const loadSalesReportPage = async (req, res) => {
@@ -132,7 +132,10 @@ const downloadSalesReport = async (req, res) => {
       return;
     }
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ 
+      headless: "new",
+      executablePath: '/snap/bin/chromium',
+    });
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
     await page.setContent(htmlContent);
