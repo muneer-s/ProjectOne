@@ -16,11 +16,12 @@
                                 <form method="post" action="/couponSave" >
                                     <div class="mb-4">
                                         <label for="coupon_code" class="form-label">Coupon Code</label>
-                                        <input type="text" placeholder="Type here" class="form-control" id="coupon_code" name="coupon_code"  title="Please enter a non-empty value." required />
+                                        <input type="text" placeholder="Type here" class="form-control" id="coupon_code" name="coupon_code" title="Please enter a non-empty value." required pattern=".{4,}" />
                                         <p style="color: rgb(239, 83, 83); text-align: center;">
-                                            <%= messages.error?messages.error:'' %>
+                                            <%= messages.error ? messages.error : '' %>
                                         </p>
                                     </div>
+                                    
                                     
                                     <div class="mb-4">
                                         <label class="form-label">Discount</label>
