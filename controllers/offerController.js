@@ -79,7 +79,7 @@ const deleteOffer = async (req, res) => {
     });
     if (productsWithOffer.length === 0) {
       console.log("Product with this offer ID not found");
-      return res.status(404).send("Product with this offer ID not found");
+      // return res.status(404).send("Product with this offer ID not found");
     }
 
     for (const product of productsWithOffer) {
