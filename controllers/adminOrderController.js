@@ -9,6 +9,8 @@ const flash = require("connect-flash");
 const orderid = require("order-id")("key");
 const Order = require("../models/orderModel");
 const Cart = require("../models/cartModel");
+const Wallet = require("../models/walletModel");
+
 
 const loadOrderList = async (req, res) => {
   try {
@@ -51,6 +53,20 @@ const updateOrderStatus = async (req, res) => {
     if (order.orderStatus === "Cancel" || order.orderStatus === "Return") {
       return res.status(400).json({ error: "Cannot change status further" });
     }
+    
+    let wallet = await Wallet.findOne({ user: order.userId });
+
+    if (!wallet) {
+      wallet = await Wallet.create({ user: order.userId });
+    }
+    wallet.transactions.push({
+      orderId: orderId,
+      type: "Credit",
+      amount: order.totalPrice,
+    });
+    wallet.balance += order.totalPrice;
+    await wallet.save();
+    
 
     const updatedOrder = await Order.findOneAndUpdate(
       { _id: orderId },
