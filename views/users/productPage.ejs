@@ -1,5 +1,4 @@
-
-<%-include("../layouts/header")    %>
+<%- include("../layouts/header") %>
 
 
 	<!-- Start Banner Area -->
@@ -23,26 +22,42 @@
 				<div class="sidebar-categories">
 					<div class="head">Categories</div>
 					<ul class="main-categories">
-						<% for(let i=0;i<catDetails.length;i++){ %>
-							<% if(catDetails[i].offerApplied == true){ %>
+
+						<% for (let i = 0; i < catDetails.length; i++) { %>
+						<li class="main-nav-list">
+							<a href="?category=<%= catDetails[i]._id %>" 
+								class="<%= catDetails[i]._id == categoryFilter ? 'text-danger fw-bold' : '' %>">
+								<%= catDetails[i].Name %>
+								<% if (catDetails[i].offerApplied) { %>
+									<span class="text-success">(offer)</span>
+								<% } %>
+								<span class="number"></span>
+							</a>
+						</li>
+					<% } %>
+						<!-- <% for(let i=0;i<catDetails.length;i++){ %>
+							<% if(catDetails[i].offerApplied==true){ %>
 								<li class="main-nav-list">
-									<a href="?category=<%= catDetails[i]._id %>" class="text-success" style="<% if(catDetails[i]._id == categoryFilter) { %>color: #ff0000; font-weight: bold;<% } %>">
+									<a href="?category=<%= catDetails[i]._id %>" class="text-success"
+										style="<% if(catDetails[i]._id == categoryFilter) { %>color: #ff0000; font-weight: bold;<% } %>">
 										<%= catDetails[i].Name %> ( offer )<span class="number"></span>
 									</a>
-								</li>
-								
+								</li> -->
 
-							<% } else { %>
-								<li class="main-nav-list">
-									<a href="?category=<%= catDetails[i]._id %>" style="<% if(catDetails[i]._id == categoryFilter) { %>color: #ff0000; font-weight: bold;<% } %>">
-										<%= catDetails[i].Name %><span class="number"></span>
-									</a>
-								</li>
-								
-							<% } %>
-						<% } %>
+
+								<!-- <% } else { %>
+									<li class="main-nav-list">
+										<a href="?category=<%= catDetails[i]._id %>"
+											style="<% if(catDetails[i]._id == categoryFilter) { %>color: #ff0000; font-weight: bold;<% } %>">
+											<%= catDetails[i].Name %>
+												<span class="number"></span>
+										</a>
+									</li>
+
+									<% } %>
+										<% } %> -->
 					</ul>
-					
+
 				</div>
 			</div>
 			<div class="col-xl-9 col-lg-8 col-md-7">
@@ -51,34 +66,41 @@
 					<div class="filter-bar d-flex flex-wrap align-items-center">
 						<div class="sorting">
 							<select onchange="location = this.value;">
-								<option value="?sort=low" <% if (sort == "low") { %> selected <% } %>>Low to High</option>
-								<option value="?sort=high" <% if (sort == "high") { %> selected <% } %>>High to Low</option>
+								<option value="?sort=low" <% if (sort=="low" ) { %> selected <% } %>>Low to High
+								</option>
+								<option value="?sort=high" <% if (sort=="high" ) { %> selected <% } %>>High to Low
+								</option>
 							</select>
-							
+
 						</div>
 						<!-- Other filter options -->
 					</div>
 					<div>
-						<input type="text" id="search_Input" placeholder="Search by Name" class="form-control bg-white" value="<%= searchQuery ? searchQuery : '' %>" onkeyup="searchProductName()" />
+						<input type="text" id="search_Input" placeholder="Search by Name" class="form-control bg-white"
+							value="<%= searchQuery ? searchQuery : '' %>" onkeyup="searchProductName()" />
 					</div>
 					<div class="sorting mr-auto">
 					</div>
 					<!-- Start Pagination -->
-					<div class="pagination-area" >
+					<div class="pagination-area">
 						<div class="pagination-wrapper">
-							<% if (currentPage > 1) { %>
+							<% if (currentPage> 1) { %>
 								<a href="?page=<%= currentPage - 1 %>&sort=<%=sort %>" class="prev page-numbers">
 									<i class="fa fa-angle-double-left" aria-hidden="true"></i>
 								</a>
-							<% } %>
-							<% for(let i = 1; i <= totalPages; i++) { %>
-								<a href="?page=<%= i %>&sort=<%=sort %>" class="page-numbers <% if (i === currentPage) { %>current<% } %>"><%= i %></a>
-							<% } %>
-							<% if (currentPage < totalPages) { %>
-								<a href="?page=<%= currentPage + 1 %>&sort=<%=sort %>" class="next page-numbers">
-									<i class="fa fa-angle-double-right" aria-hidden="true"></i>
-								</a>
-							<% } %>
+								<% } %>
+									<% for(let i=1; i <=totalPages; i++) { %>
+										<a href="?page=<%= i %>&sort=<%=sort %>"
+											class="page-numbers <% if (i === currentPage) { %>current<% } %>">
+											<%= i %>
+										</a>
+										<% } %>
+											<% if (currentPage < totalPages) { %>
+												<a href="?page=<%= currentPage + 1 %>&sort=<%=sort %>"
+													class="next page-numbers">
+													<i class="fa fa-angle-double-right" aria-hidden="true"></i>
+												</a>
+												<% } %>
 						</div>
 					</div>
 				</div>
@@ -89,61 +111,61 @@
 						<% for(let i=0; i < proDetails.length; i++) { %>
 							<!-- single product -->
 							<a href="/singleProductPage/<%= proDetails[i]._id %>">
-							<div class="col-lg-4 col-md-6">
-								<div class="single-product">
-									<img class="img-fluid" src="/assets/products/resized/<%= proDetails[i].productImages[0] %>" alt="/uploads/<%= proDetails[i].productImages[0] %>">
-									<div class="product-details">
-										<h6><%= proDetails[i].name %></h6>
-										
-										<div class="price">
-											<h6><%= proDetails[i].category.Name %></h6>
-										</div>
+								<div class="col-lg-4 col-md-6">
+									<div class="single-product">
+										<img class="img-fluid"
+											src="/assets/products/resized/<%= proDetails[i].productImages[0] %>"
+											alt="/uploads/<%= proDetails[i].productImages[0] %>">
+										<div class="product-details">
+											<h6>
+												<%= proDetails[i].name %>
+											</h6>
 
-										
-
-
-
-										<% if(proDetails[i].offerApplied == false){ %>
-											<% if(proDetails[i].categoryOffer){ %>
-												<div >
-													<h6 class="text-danger"><strike>₹ <%= proDetails[i].price %></strike></h6>
-												</div>
-												<div class="price">
-													<h6 class="text-success">₹ <%= proDetails[i].categoryOfferPrice  %> category  Offer applied</h6>
-												</div>
-												<% }else{ %>
 											<div class="price">
-												<h6>₹ <%= proDetails[i].price %></h6>
+												<h6>
+													<%= proDetails[i].category.Name %>
+												</h6>
 											</div>
-											<% } %>
 
-
-
-											<% }else{ %>
-												<div >
-													<h6 class="text-danger"><strike>₹ <%= proDetails[i].price %></strike></h6>
-												</div>
-												<div class="price">
-													<h6 class="text-success">₹ <%= proDetails[i].offerPrice  %>   Offer applied</h6>
-												</div>
-												<% } %>
-
-
-
-
-
-
-										<div class="prd-bottom m-0">		
-											<a href="/singleProductPage/<%= proDetails[i]._id %>" class="social-info">	
-											</a>
+											<% if(proDetails[i].offerApplied==false){ %>
+												<% if(proDetails[i].categoryOffer){ %>
+													<div>
+														<h6 class="text-danger"><strike>₹ <%= proDetails[i].price %>
+															</strike></h6>
+													</div>
+													<div class="price">
+														<h6 class="text-success">₹ <%= proDetails[i].categoryOfferPrice
+																%> category Offer applied</h6>
+													</div>
+													<% }else{ %>
+														<div class="price">
+															<h6>₹ <%= proDetails[i].price %>
+															</h6>
+														</div>
+														<% } %>
+															<% }else{ %>
+																<div>
+																	<h6 class="text-danger"><strike>₹ <%=
+																				proDetails[i].price %></strike></h6>
+																</div>
+																<div class="price">
+																	<h6 class="text-success">₹ <%=
+																			proDetails[i].offerPrice %> Offer applied
+																	</h6>
+																</div>
+																<% } %>
+																	<div class="prd-bottom m-0">
+																		<a href="/singleProductPage/<%= proDetails[i]._id %>"
+																			class="social-info">
+																		</a>
+																	</div>
 										</div>
 									</div>
 								</div>
-							</div>
-						</a>
-						<% } %>
+							</a>
+							<% } %>
 					</div>
-				</section>		
+				</section>
 			</div>
 		</div>
 	</div>
@@ -151,23 +173,16 @@
 	<!-- Start related-product Area -->
 	<section class="related-product-area section_gap">
 		<div class="container">
-			
-			
 		</div>
 	</section>
 
+	<%- include("../layouts/footer") %>
 
-
-    
-<%-include("../layouts/footer")    %>
-
-<script>
-	function searchProductName() {
-	 const searchInput = document.getElementById('search_Input').value;
-	 if (searchInput.length > 2) {
-		window.location.href = `/search?query=${encodeURIComponent(searchInput)}`;
-	 }
-	}
-	</script>
-	
-
+		<script>
+			function searchProductName() {
+				const searchInput = document.getElementById('search_Input').value;
+				if (searchInput.length > 2) {
+					window.location.href = `/search?query=${encodeURIComponent(searchInput)}`;
+				}
+			}
+		</script>

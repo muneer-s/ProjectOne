@@ -26,7 +26,7 @@ const saveOffer = async (req, res) => {
       description,
     } = req.body;
 
-    const isListed = req.body.is_listed === "on" ? true : false;
+    const isListed = is_listed === "on" ? true : false;
 
     const existingOffer = await Offer.findOne({ offerName: addOffer });
 
@@ -77,6 +77,7 @@ const deleteOffer = async (req, res) => {
     const productsWithOffer = await products.find({
       offer: new mongoose.Types.ObjectId(id),
     });
+    
     if (productsWithOffer.length === 0) {
       console.log("Product with this offer ID not found");
       // return res.status(404).send("Product with this offer ID not found");

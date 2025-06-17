@@ -1,16 +1,6 @@
 const express = require("express");
 const user_route = express();
-const nodemailer = require("nodemailer");
-const { isUserLogout } = require("../middleware/authUser");
-
-// Set up view engine and body parser
-const bodyparser = require("body-parser");
-user_route.use(bodyparser.json());
-user_route.use(bodyparser.urlencoded({ extended: true }));
-
-// Set up multer for file handling
-const multer = require("multer");
-const path = require("path");
+const { isUserLogout,isUserLogin } = require("../middleware/authUser");
 
 // user controllers
 const userController = require("../controllers/userController");
@@ -21,11 +11,9 @@ const orderController = require("../controllers/orderController");
 const wishlistController = require("../controllers/wishlistController");
 const userCouponController = require("../controllers/userCouponController");
 
-//user registration
 user_route.get("/register", isUserLogout, userController.loadRegister);
 user_route.post("/register", userController.insertUser);
 
-// OTP functionality
 user_route.get("/otp", isUserLogout, userController.otpload); //
 user_route.post("/otp", userController.verifyOtp);
 
@@ -61,7 +49,7 @@ user_route.post("/removeItem", userCartController.removeItem);
 
 //user profile
 
-user_route.get("/userprofile", userProfileController.userProfileLoad);
+user_route.get("/userprofile",isUserLogin, userProfileController.userProfileLoad);
 // Update user data route
 user_route.post("/updateProfile", userProfileController.updateProfile);
 //password change

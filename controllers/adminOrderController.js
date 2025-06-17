@@ -1,14 +1,14 @@
-const User = require("../models/userModel");
-const Category = require("../models/categories");
-const products = require("../models/addproductModel");
-const sharp = require("sharp");
-const path = require("path");
-const categories = require("../models/categories");
-const session = require("express-session");
-const flash = require("connect-flash");
-const orderid = require("order-id")("key");
+// const User = require("../models/userModel");
+// const Category = require("../models/categories");
+// const products = require("../models/addproductModel");
+// const sharp = require("sharp");
+// const path = require("path");
+// const categories = require("../models/categories");
+// const session = require("express-session");
+// const flash = require("connect-flash");
+// const orderid = require("order-id")("key");
 const Order = require("../models/orderModel");
-const Cart = require("../models/cartModel");
+// const Cart = require("../models/cartModel");
 const Wallet = require("../models/walletModel");
 
 

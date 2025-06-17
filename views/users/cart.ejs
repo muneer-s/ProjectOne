@@ -1,8 +1,4 @@
-<%-include("../layouts/header")    %>
-
-
-
-
+<%- include("../layouts/header") %>
     <!-- Start Banner Area -->
     <section class="banner-area organic-breadcrumb">
         <div class="container">
@@ -22,263 +18,274 @@
     <!--================Cart Area =================-->
 
     <div id="reloadDiv">
-    <section class="cart_area">
-      
-        <div class="container">
-            
-            <div class="cart_inner">
-                <div class="table-responsive">
-                    <table id="cartTable" class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Product</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Price</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Total</th>
-                                <th scope="col">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% if (cartDetails){%>
-                            <% cartDetails.products.forEach((cartItem,index) => { %>
-                            <tr>
-                                <td>
-                                    <div class="media">
-                                        <div class="d-flex">
-                                            <img src="/assets/products/resized/<%= cartItem.productId.productImages[0] %>" alt="<%= cartItem.productId.name %>" width="100" height="100">
-                                        </div>
-                                        
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="media-body">
-                                            <p><%= cartItem.productId.name %></p>   
-                                        </div>
-                                </td>
+        <section class="cart_area">
+
+            <div class="container">
+
+                <div class="cart_inner">
+                    <div class="table-responsive">
+                        <table id="cartTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (cartDetails){%>
+                                    <% cartDetails.products.forEach((cartItem,index)=> { %>
+                                        <tr>
+                                            <td>
+                                                <div class="media">
+                                                    <div class="d-flex">
+                                                        <img src="/assets/products/resized/<%= cartItem.productId.productImages[0] %>"
+                                                            alt="<%= cartItem.productId.name %>" width="100"
+                                                            height="100">
+                                                    </div>
+
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="media-body">
+                                                    <p>
+                                                        <%= cartItem.productId.name %>
+                                                    </p>
+                                                </div>
+                                            </td>
 
 
-                                <% if(cartItem.productId.offerApplied == false){ %>
-                                    <% if(cartItem.productId.categoryOfferApplied){ %>
-                                        <td>
-                                            <h5><%= cartItem.productId.categoryOfferPrice  %></h5>
-                                        </td>
-                                        <% }else{ %>
-                                    <td>
-                                        <h5><%= cartItem.productId.price %></h5>
-                                    </td>
-                                    <% } %>
+                                            <% if(cartItem.productId.offerApplied==false){ %>
+                                                <% if(cartItem.productId.categoryOfferApplied){ %>
+                                                    <td>
+                                                        <h5>
+                                                            <%= cartItem.productId.categoryOfferPrice %>
+                                                        </h5>
+                                                    </td>
+                                                    <% }else{ %>
+                                                        <td>
+                                                            <h5>
+                                                                <%= cartItem.productId.price %>
+                                                            </h5>
+                                                        </td>
+                                                        <% } %>
 
 
-                                    <% }else{ %>
-                                        <td>
-                                            <h5><%= cartItem.productId.offerPrice  %></h5>
-                                        </td>
-                                        <% } %>
-
-
-
-
-
-                                <td>
-                                    <div class="product_count">
-                                        <input type="text" name="qty" id="sst<%= index %>" maxlength="12" value="<%= cartItem.quantity %>" title="Quantity:"
-                                            class="input-text qty">
-                                            <%console.log(cartItem.productId)%>
-                                        <button onclick="increaseQuantity('<%= cartItem._id %>', '<%= index %>')" class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-                                        <button onclick="decreaseQuantity('<%= cartItem._id %>', '<%= index %>')" class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
-                                    </div>
-                                </td>
-
-
-                                <% if(cartItem.productId.offerApplied == false){ %>
-                                    <% if(cartItem.productId.categoryOfferApplied){ %>
-                                        <td>
-                                            <h5 id="totl<%= cartItem._id %>"><%=cartItem.productId.categoryOfferPrice*cartItem.quantity%></h5>
-                                        </td>
-                                        <% }else{ %>
-
-                                    <td>
-                                        <h5 id="totl<%= cartItem._id %>"><%=cartItem.productId.price*cartItem.quantity%></h5>
-                                    </td>
-                                    <% } %>
+                                                            <% }else{ %>
+                                                                <td>
+                                                                    <h5>
+                                                                        <%= cartItem.productId.offerPrice %>
+                                                                    </h5>
+                                                                </td>
+                                                                <% } %>
 
 
 
 
 
-                                    <% }else{ %>
-                                        <td>
-                                            <h5 id="totl<%= cartItem._id %>"><%=cartItem.productId.offerPrice*cartItem.quantity%></h5>
-                                        </td>
-                                        <% } %>
+                                                                    <td>
+                                                                        <div class="product_count">
+                                                                            <input type="text" name="qty"
+                                                                                id="sst<%= index %>" maxlength="12"
+                                                                                value="<%= cartItem.quantity %>"
+                                                                                title="Quantity:"
+                                                                                class="input-text qty">
+                                                                            <%console.log(cartItem.productId)%>
+                                                                                <button
+                                                                                    onclick="increaseQuantity('<%= cartItem._id %>', '<%= index %>')"
+                                                                                    class="increase items-count"
+                                                                                    type="button"><i
+                                                                                        class="lnr lnr-chevron-up"></i></button>
+                                                                                <button
+                                                                                    onclick="decreaseQuantity('<%= cartItem._id %>', '<%= index %>')"
+                                                                                    class="reduced items-count"
+                                                                                    type="button"><i
+                                                                                        class="lnr lnr-chevron-down"></i></button>
+                                                                        </div>
+                                                                    </td>
+
+
+                                                                    <% if(cartItem.productId.offerApplied==false){ %>
+                                                                        <% if(cartItem.productId.categoryOfferApplied){
+                                                                            %>
+                                                                            <td>
+                                                                                <h5 id="totl<%= cartItem._id %>">
+                                                                                    <%=cartItem.productId.categoryOfferPrice*cartItem.quantity%>
+                                                                                </h5>
+                                                                            </td>
+                                                                            <% }else{ %>
+
+                                                                                <td>
+                                                                                    <h5 id="totl<%= cartItem._id %>">
+                                                                                        <%=cartItem.productId.price*cartItem.quantity%>
+                                                                                    </h5>
+                                                                                </td>
+                                                                                <% } %>
 
 
 
 
 
+                                                                                    <% }else{ %>
+                                                                                        <td>
+                                                                                            <h5
+                                                                                                id="totl<%= cartItem._id %>">
+                                                                                                <%=cartItem.productId.offerPrice*cartItem.quantity%>
+                                                                                            </h5>
+                                                                                        </td>
+                                                                                        <% } %>
+                                                                                            <td> <!-- New column for remove button -->
+                                                                                                <button
+                                                                                                    onclick="removeItem('<%= cartItem._id %>')"
+                                                                                                    class="remove-item-btn btn btn-sm btn-danger"
+                                                                                                    type="button">Remove</button>
+                                                                                            </td>
+                                                                                            <% }) %>
+                                                                                                <%}else{%>
+                                                                                                    <h3
+                                                                                                        style="color: red;">
+                                                                                                        cart is empty
+                                                                                                    </h3>
+                                                                                                    <%}%>
+                                        </tr>
+                                        <tr class="bottom_button">
+                                            <td>
+                                                <!-- <a class="gray_btn" href="#">Update Cart</a> -->
+                                            </td>
+                                            <td>
 
-                                
+                                            </td>
+                                            <td>
 
-
-
-
-                                <td> <!-- New column for remove button -->
-                                    <button onclick="removeItem('<%= cartItem._id %>')" class="remove-item-btn btn btn-sm btn-danger" type="button" >Remove</button>
-                                </td>
-                                <% }) %>
-                            <%}else{%>
-                                <h3 style="color: red;">cart is empty</h3>
-                            <%}%>
-                            </tr>
-                            <tr class="bottom_button">
-                                <td>
-                                    <!-- <a class="gray_btn" href="#">Update Cart</a> -->
-                                </td>
-                                <td>
-
-                                </td>
-                                <td>
-
-                                </td>
-                                <td>
-                                    <h5>Subtotal</h5>
-                                </td>
-                                <td>
-                                    <!-- <div class="cupon_text d-flex align-items-center">
+                                            </td>
+                                            <td>
+                                                <h5>Subtotal</h5>
+                                            </td>
+                                            <td>
+                                                <!-- <div class="cupon_text d-flex align-items-center">
                                         <input type="text" placeholder="Coupon Code">
                                         <a class="primary-btn" href="#">Apply</a>
                                         <a class="gray_btn" href="#">Close Coupon</a>
-                                    </div> -->                           
-                                        <h5 id="subtotl">₹<%=subTotal %></h5>
-                                    
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
+                                    </div> -->
+                                                <h5 id="subtotl">₹<%=subTotal %>
+                                                </h5>
 
-                                </td>
-                                <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
 
-                                </td>
-                                
-                            </tr>
-                            
-                            <tr class="out_button_area">
-                                <td>
+                                            </td>
+                                            <td>
 
-                                </td>
-                                <td>
+                                            </td>
 
-                                </td>
-                                <td>
+                                        </tr>
 
-                                </td>
-                                <td>
-                                    <div class="checkout_btn_inner d-flex align-items-center">
-                                        <a class="gray_btn" href="/productPage">Continue Shopping</a>
-                                        <a class="primary-btn" href="/CheckOutPage">Proceed to checkout</a>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                        <tr class="out_button_area">
+                                            <td>
+
+                                            </td>
+                                            <td>
+                                            </td>
+                                            <td>
+
+                                            </td>
+                                            <td>
+                                                <div class="checkout_btn_inner d-flex align-items-center">
+                                                    <a class="gray_btn" href="/productPage">Continue Shopping</a>
+                                                    <a class="primary-btn" href="/CheckOutPage">Proceed to checkout</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
             </div>
-    
-    </div>
-    </section>
+        </section>
 
     </div>
-    <!--================End Cart Area =================-->
-    <script>
-        function increaseQuantity(id, index) {
-            const quantityInput = document.getElementById('sst' + index);
-            let quantity = parseInt(quantityInput.value, 10);
-            quantity++;
-            quantityInput.value = quantity;
-            submitQuantity(id, quantity);
-        }
-    
-        function decreaseQuantity(id, index) {
-            const quantityInput = document.getElementById('sst' + index);
-            let quantity = parseInt(quantityInput.value, 10);
-            if (quantity > 1) {
-                quantity--;
+    <%- include("../layouts/footer") %>
+        <!--================End Cart Area =================-->
+        <script>
+            function increaseQuantity(id, index) {
+                const quantityInput = document.getElementById('sst' + index);
+                let quantity = parseInt(quantityInput.value, 10);
+                quantity++;
                 quantityInput.value = quantity;
                 submitQuantity(id, quantity);
             }
-        }
 
-        function submitQuantity(id, quantity) {
-            const data = {
-                id: id,
-                quantity: quantity
-            };
-    // Send the data using AJAX
-            fetch('/submitQuantity', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-
-                if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-            })
-            .then(data => {
-            if (data.success) {
-                // location.reload();
-                $(`#totl${id}`).load(location.href + ` #totl${id}`);
-
-
-            // $('.cart_inner').load(location.href+'.cart_inner')
-            }
-            })
-            .then(data => {
-            
-                $('#subtotl').load(location.href + ' #subtotl');            
-            })
-            .catch(error => {
-                console.error('Error submitting quantity and ID:', error);
-            });
+            function decreaseQuantity(id, index) {
+                const quantityInput = document.getElementById('sst' + index);
+                let quantity = parseInt(quantityInput.value, 10);
+                if (quantity > 1) {
+                    quantity--;
+                    quantityInput.value = quantity;
+                    submitQuantity(id, quantity);
+                }
             }
 
+            function submitQuantity(id, quantity) {
+                const data = {
+                    id: id,
+                    quantity: quantity
+                };
+                // Send the data using AJAX
+                fetch('/submitQuantity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(response => {
+
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // location.reload();
+                            $(`#totl${id}`).load(location.href + ` #totl${id}`);
 
 
+                            // $('.cart_inner').load(location.href+'.cart_inner')
+                        }
+                    })
+                    .then(data => {
 
-
-    </script>
-
-
-<script>
-    function removeItem(itemId) {
-        fetch('/removeItem', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ itemId: itemId }),
-        })
-        .then(response => {
-            if (response.ok) {
-                location.reload(); 
-            } else {
-                console.error('Failed to remove item from cart');
+                        $('#subtotl').load(location.href + ' #subtotl');
+                    })
+                    .catch(error => {
+                        console.error('Error submitting quantity and ID:', error);
+                    });
             }
-        })
-        .catch(error => {
-            console.error('Error removing item from cart:', error);
-        });
-    }
-</script>
 
-
-
-
-
-<%-include("../layouts/footer")    %>
+            function removeItem(itemId) {
+                fetch('/removeItem', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ itemId: itemId }),
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload();
+                        } else {
+                            console.error('Failed to remove item from cart');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error removing item from cart:', error);
+                    });
+            }
+        </script>

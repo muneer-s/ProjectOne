@@ -6,47 +6,72 @@ const product = require("../models/addproductModel");
 const Category = require("../models/categories");
 const session = require("express-session");
 const toastr = require("toastr");
-const flash = require("connect-flash");
+// const flash = require("connect-flash");
 const validateMongodbId = require("../utils/validationMongodb");
 const Offer = require("../models/offerModel");
 
 //user registration
 const insertUser = async (req, res) => {
   try {
-    const spassword = await securePassword(req.body.password);
+    const { name, password, email, mobile, confirmpassword } = req.body;
 
-    const existingUser = await User.findOne({ email: req.body.email });
-
-    if (existingUser) {
-      return res.render("./users/registration", {
-        errorMessage: "Email address is already in use.",
-      });
+    if (!name || !email || !mobile || !password || !confirmpassword) {
+      return res.status(400).json({ message: "All fields are required" });
     }
 
+    if (password !== confirmpassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ message: "Email address is already in use" });
+    }
+
+    // if (existingUser) {
+    //   return res.render("./users/registration", {
+    //     errorMessage: "Email address is already in use.",
+    //   });
+    // }
+
+    const spassword = await securePassword(password);
+
     const user = new User({
-      name: req.body.name,
-      email: req.body.email,
-      mobile: req.body.mobile,
+      name,
+      email,
+      mobile,
       password: spassword,
       is_admin: 0,
     });
 
     const userData = await user.save();
     console.log(userData);
+
     req.session.user_email = userData.email;
     console.log(req.session.user_email);
 
     if (userData) {
       await OTPdb.deleteMany({});
-      await sendVerifyMail(req.body.name, req.body.email, userData._id);
-      res.redirect(`/otp?id=${userData._id}`);
-    } else {
-      return res.render("./users/registration", {
-        errorMessage: "Your registration has been failed!!",
+      await sendVerifyMail(name, email, userData._id);
+
+      return res.status(200).json({
+        message: "User registered successfully",
+        redirectUrl: `/otp?id=${userData._id}`, // send the redirect URL to the client
       });
+
+      // res.redirect(`/otp?id=${userData._id}`);
+    } else {
+      return res.status(500).json({ message: "User registration failed" });
+
+      // return res.render("./users/registration", {
+      //   errorMessage: "Your registration has been failed!!",
+      // });
     }
   } catch (error) {
-    console.log("Error", error.message);
+    console.error("Registration error:", error.message);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -152,10 +177,16 @@ const loginload = async (req, res) => {
     if (req.session.user_id) {
       res.redirect("/");
     } else {
-      res.render("./users/login");
+      // res.render("./users/login");
+      const isBlocked = req.query.blocked === "true"; // Read query param
+      res.render("./users/login", {
+        messages: req.flash(), // If you're using flash messages
+        blocked: isBlocked, // Pass to EJS
+      });
     }
   } catch (error) {
     console.log(error.message);
+    res.status(500).send("Server error");
   }
 };
 
@@ -181,7 +212,7 @@ const homeload = async (req, res) => {
   }
 };
 
-//user load to signup page
+// load the register page for user
 const loadRegister = async (req, res) => {
   try {
     res.render("./users/registration");
@@ -202,39 +233,45 @@ const otpload = (req, res) => {
 const resendOtp = async (req, res) => {
   try {
     await OTPdb.deleteMany({});
-
     const user_email = req.session.user_email;
-
     const userData = await User.findOne({ email: user_email });
-
     await sendVerifyMail(userData.name, userData.email, userData._id);
-
     res.redirect(`/otp?id=${userData._id}`);
   } catch (error) {
     console.log(error);
   }
 };
 
-//user login
+// user login all clear
 const userlogin = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log(1, email);
+    console.log(2, password);
 
     const emailRegex = /\S+@\S+\.\S+/;
 
     if (!emailRegex.test(email)) {
       console.log("error-Invalid email format ");
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid email format" });
     }
 
     if (!password) {
-      console.log("error-Password cannot be empty");
+      console.log("Password cannot be empty");
+      return res
+        .status(400)
+        .json({ success: false, message: "Password is required" });
     }
 
-    const existingUser = await User.findOne({ email: email });
+    const existingUser = await User.findOne({ email });
+    console.log(11, existingUser);
 
     if (!existingUser) {
-      req.flash("unferror", "User not found!!there is no such User");
-      return res.redirect("/login");
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found with this email" });
     }
 
     const isPasswordMatch = await bcrypt.compare(
@@ -242,20 +279,35 @@ const userlogin = async (req, res) => {
       existingUser.password
     );
 
-    if (isPasswordMatch) {
-      if (existingUser.is_blocked === true) {
-        req.flash("blkerror", "User is blocked cannot login ");
-        return res.redirect("/login");
-      } else {
-        req.session.user_id = existingUser._id;
-        return res.redirect("/");
-      }
-    } else {
-      req.flash("pwerror", "authentication failed   !!!!  Invalid password");
-      return res.redirect("/login");
+    if (!isPasswordMatch) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid password" });
     }
+    if (existingUser.is_blocked) {
+      return res
+        .status(403)
+        .json({ success: false, message: "User is blocked. Contact support." });
+    }
+
+    req.session.user_id = existingUser._id;
+    return res.status(200).json({ success: true });
+
+    // if (isPasswordMatch) {
+    //   if (existingUser.is_blocked === true) {
+    //     req.flash("blkerror", "User is blocked cannot login ");
+    //     return res.redirect("/login");
+    //   } else {
+    //     req.session.user_id = existingUser._id;
+    //     return res.redirect("/");
+    //   }
+    // } else {
+    //   req.flash("pwerror", "authentication failed   !!!!  Invalid password");
+    //   return res.redirect("/login");
+    // }
   } catch (error) {
     console.error(error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 

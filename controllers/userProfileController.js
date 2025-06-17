@@ -20,9 +20,10 @@ const fs = require("fs");
 const userProfileLoad = async (req, res) => {
   try {
     const user_id = req.session.user_id;
+
     if (user_id) {
       const user = await User.findOne({ _id: user_id });
-      const wallet = await Wallet.findOne({ user: user_id });
+      let wallet = await Wallet.findOne({ user: user_id });
 
       if (!wallet) {
         wallet = await Wallet.create({ user: user_id });
@@ -53,7 +54,15 @@ const updateProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    res.render("./users/userProfile", { user });
+    
+    let wallet = await Wallet.findOne({ user: userId });
+
+    if (!wallet) {
+      wallet = await Wallet.create({ user: userId});
+    }
+
+
+    res.render("./users/userProfile", { user,wallet });
   } catch (error) {
     console.error("Error updating user data:  ", error);
     return res.render("./users/500");
@@ -161,10 +170,20 @@ const deleteAddress = async (req, res) => {
 const loadCheckOutPage = async (req, res) => {
   try {
     const user_id = req.session.user_id;
+    console.log(11,user_id);
+    
     const Coupons = await Coupon.find({ status: true });
+    console.log(22,Coupons);
+    
     const totalUsingCoupon = req.session.newAmountUsingCoupon;
+    console.log(33,totalUsingCoupon);
+    
     const couponCode = req.session.couponCode;
+    console.log(44,couponCode);
+    
     const appliedCoupon = await Coupon.findOne({ Code: couponCode });
+    console.log(55,appliedCoupon);
+    
     const cartDetails = await Cart.findOne({ userId: user_id }).populate({
       path: "products.productId",
       model: "product",
@@ -262,10 +281,7 @@ const downloadInvoice = async (req, res) => {
           );
           throw new Error("Template file does not exist");
         }
-        const invoiceTemplate = fs.readFileSync(
-          templatePath,
-          "utf-8"
-        );
+        const invoiceTemplate = fs.readFileSync(templatePath, "utf-8");
         return ejs.render(invoiceTemplate, { orders, user });
       } catch (err) {
         console.error("Error rendering EJS template:", err);
@@ -279,9 +295,9 @@ const downloadInvoice = async (req, res) => {
       return;
     }
 
-    const browser = await puppeteer.launch({ 
+    const browser = await puppeteer.launch({
       headless: "new",
-      executablePath: '/snap/bin/chromium',
+      executablePath: "/snap/bin/chromium",
     });
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });

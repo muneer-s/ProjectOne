@@ -1,6 +1,4 @@
-<%-include("../layouts/header")    %>
-
-
+<%- include("../layouts/header") %>
     <!-- Start Banner Area -->
     <section class="banner-area organic-breadcrumb">
         <div class="container">
@@ -17,587 +15,577 @@
     </section>
     <!-- End Banner Area -->
 
+    <!--Website: wwww.codingdung.com-->
+    <!DOCTYPE html>
+    <html lang="en">
 
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CodingDung | Profile Template</title>
+        <link rel="stylesheet" href="/css/style.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
 
-
-<!--Website: wwww.codingdung.com-->
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodingDung | Profile Template</title>
-    <link rel="stylesheet" href="/css/style.css">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-<body>
-    <div class="container mb-4">
-        <div class="container light-style flex-grow-1 container-p-y">
-            <h4 class="font-weight-bold py-3 mb-4">Account settings</h4>
-            <div class="card overflow-hidden">
-                <div class="row no-gutters row-bordered row-border-light">
-                    <div class="col-md-3 pt-0">
-                        <div class="list-group list-group-flush account-settings-links">
-                            <a class="list-group-item list-group-item-action active" data-toggle="list"
-                                href="#account-general">General</a>
+    <body>
+        <div class="container mb-4">
+            <div class="container light-style flex-grow-1 container-p-y">
+                <h4 class="font-weight-bold py-3 mb-4">Account settings</h4>
+                <div class="card overflow-hidden">
+                    <div class="row no-gutters row-bordered row-border-light">
+                        <div class="col-md-3 pt-0">
+                            <div class="list-group list-group-flush account-settings-links">
+                                <a class="list-group-item list-group-item-action active" data-toggle="list"
+                                    href="#account-general">General</a>
                                 <a class="list-group-item list-group-item-action" data-toggle="list"
-                                href="#account-change-password">Change password</a>
+                                    href="#account-change-password">Change password</a>
                                 <a class="list-group-item list-group-item-action" data-toggle="list"
-                                href="#account-info">Add Address</a>
+                                    href="#account-info">Add Address</a>
                                 <a class="list-group-item list-group-item-action" data-toggle="list"
-                                href="#account-social-links">Address</a>
-                                <a class="list-group-item list-group-item-action" 
-                                href="/orderDetailsPage">My Orders</a>
+                                    href="#account-social-links">Address</a>
+                                <a class="list-group-item list-group-item-action" href="/orderDetailsPage">My Orders</a>
                                 <a class="list-group-item list-group-item-action" data-toggle="list"
                                     href="#Wallet">Wallet</a>
-                        </div>
-                    </div>
-
-
-                <!--load user profile page-->
-                <div class="col-md-9">
-                    <div class="tab-content">
-                        <div class="tab-pane fade active show" id="account-general">
-                            <hr class="border-light m-0">
-                            <form id="updateUserData">
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label class="form-label">Name</label>
-                                    <input type="text" class="form-control" name="name" value="<%= user.name %>" pattern="[A-Za-z]{4,}" title="Name must contain at least 4 letters without spaces.">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="form-label">E-mail</label>
-                                    <input type="text" class="form-control mb-1" id="emailInput" name="email" value="<%= user.email %>">
-                                    <div id="emailError" class="error-message"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Number</label>
-                                    <input type="text" class="form-control mb-1" id="numberInput" name="mobile" value="<%= user.mobile %>">
-                                    <div id="numberError" class="error-message"></div>
-                                </div> 
-                                <div class="text-right mt-3">
-                                    <button type="button" id="saveChangesBtn" class="btn btn-primary">Save changes</button>&nbsp;
-                                </div>                                 
-                            </div>
-                            </form>
-                        </div>
-                        <!--password change-->
-                        <div class="tab-pane fade" id="account-change-password">
-                            <div class="card-body pb-2">
-                                <div class="form-group">
-                                    <label class="form-label">Current password</label>
-                                    <input type="password" class="form-control" id="currentPassword">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">New password</label>
-                                    <input type="password" class="form-control" id="newPassword">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Repeat new password</label>
-                                    <input type="password" class="form-control" id="repeatNewPassword">
-                                    <small id="passwordMatchMessage" class="form-text text-danger" style="display:none;">Passwords do not match</small>
-                                </div>
-                                <div class="text-right mt-3">
-                                    <button type="button" class="btn btn-primary" onclick="changePassword()">Save changes</button>&nbsp;
-                                    <button type="button" class="btn btn-default">Cancel</button>
-                                </div>
                             </div>
                         </div>
-                        <!--add address-->
-                        <div class="tab-pane fade" id="account-info">
-                            <form id="addressForm" onsubmit="return validateForm()">
-                                <div class="card-body pb-2">
-                                    <div class="form-group">
-                                        <label class="form-label">Full Name</label>
-                                        <input type="text" class="form-control" value="" name="fullName" pattern="[A-Za-z ]+" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Phone</label>
-                                        <input type="text" class="form-control" value="" name="phone" pattern="[0-9]{10}" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Location</label>
-                                        <input type="text" class="form-control" value="" name="location" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">City</label>
-                                        <input type="text" class="form-control" value="" name="city" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">State</label>
-                                        <input type="text" class="form-control" value="" name="state" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Pin Code</label>
-                                        <input type="text" class="form-control" value="" name="pinCode" pattern="[0-9]{6}" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Address</label>
-                                        <textarea class="form-control" rows="5" name="address" required></textarea>
-                                    </div>
-                                    <div class="text-right mt-3">
-                                        <button type="submit" class="btn btn-primary">Add Address</button>
-                                    </div>
-                                </div>
-                            </form>
-                            <hr class="border-light m-0">
-                        </div>
 
-                        <!--address show-->
-                        <div class="tab-pane fade" id="account-social-links">
-                            <div class="card-body pb-2" style="display: flex; flex-wrap: wrap;">
-                                <% user.address.forEach(address => { %>
-                                <div class="card" style="width: 18rem; margin-right: 10px; margin-bottom: 10px;">
-                                    <div class="card-body" style="background-color: rgb(254, 203, 122);">
-                                        <h5 class="card-title"><%=address.fullName %></h5>
-                                        <h6 class="card-subtitle mb-2 text-body-secondary"><%=address.phone %></h6>
-                                        <h6 class="card-subtitle mb-2 text-body-secondary"><%=address.location %></h6>
-                                        <h6 class="card-subtitle mb-2 text-body-secondary"><%=address.city %></h6>
-                                        <h6 class="card-subtitle mb-2 text-body-secondary"><%=address.state %></h6>
-                                        <h6 class="card-subtitle mb-2 text-body-secondary"><%=address.pinCode %></h6>
-                                        <p class="card-text"><%=address.address %></p>      
-                                    </div>
-                                    <div class="btn-group" style="margin-top: 10px;">
-                                        <button id="editButton" class="btn btn-sm btn-success rounded mr-2" data-toggle="modal" data-target="#editModal" user_id="<%= user._id %>" data_id="<%= address._id %>">Edit</button>
-                                        <button class="delete-address-btn btn btn-sm btn-danger rounded" data-user-id="<%= user._id %>" data-address-id="<%= address._id %>">Delete</button>
-                                    </div>
-                                             
-                                </div>
-                                <% }) %>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="Wallet">
-                            <div class="card-body pb-2">
-                                <div class="form-group">
-                                    <label class="form-label">Current Wallet : </label>
-                                    <% if (wallet) { %>
-                                        <label for=""><%= wallet.balance %></label>
-                                    <% } else { %>
-                                        <label for="">Wallet not found</label>
-                                    <% } %>
-                                    
-                                </div>
-                                
-                            </div>
-                            <div class="container">
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Id</th>
-                                                <th scope="col">Type</th>
-                                                <th scope="col">Amount</th>
-                                                <th scope="col">Date</th>
 
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% wallet.transactions.reverse().forEach((item)=>{ %>
-                                            <tr>     
-                                                <td><%= item._id %></td> 
-                                                <td><%= item.type %></td>
-                                                <td><%= item.amount %></td>
-                                                <td><%= item.date %></td>
-                                            </tr>
-                                            <% }) %> 
-                                        </tbody>
-                                    </table>
-                                </div>        
+                        <!--load user profile page-->
+                        <div class="col-md-9">
+                            <div class="tab-content">
+                                <div class="tab-pane fade active show" id="account-general">
+                                    <hr class="border-light m-0">
+                                    <form id="updateUserData">
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label class="form-label">Name</label>
+                                                <input type="text" class="form-control" name="name"
+                                                    value="<%= user.name %>" pattern="[A-Za-z]{4,}"
+                                                    title="Name must contain at least 4 letters without spaces.">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="form-label">E-mail</label>
+                                                <input type="text" class="form-control mb-1" id="emailInput"
+                                                    name="email" value="<%= user.email %>">
+                                                <div id="emailError" class="error-message"></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Number</label>
+                                                <input type="text" class="form-control mb-1" id="numberInput"
+                                                    name="mobile" value="<%= user.mobile %>">
+                                                <div id="numberError" class="error-message"></div>
+                                            </div>
+                                            <div class="text-right mt-3">
+                                                <button type="button" id="saveChangesBtn" class="btn btn-primary">Save
+                                                    changes</button>&nbsp;
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!--password change-->
+                                <div class="tab-pane fade" id="account-change-password">
+                                    <div class="card-body pb-2">
+                                        <div class="form-group">
+                                            <label class="form-label">Current password</label>
+                                            <input type="password" class="form-control" id="currentPassword">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">New password</label>
+                                            <input type="password" class="form-control" id="newPassword">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Repeat new password</label>
+                                            <input type="password" class="form-control" id="repeatNewPassword">
+                                            <small id="passwordMatchMessage" class="form-text text-danger"
+                                                style="display:none;">Passwords do not match</small>
+                                        </div>
+                                        <div class="text-right mt-3">
+                                            <button type="button" class="btn btn-primary"
+                                                onclick="changePassword()">Save changes</button>&nbsp;
+                                            <button type="button" class="btn btn-default">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--add address-->
+                                <div class="tab-pane fade" id="account-info">
+                                    <form id="addressForm" onsubmit="return validateForm()">
+                                        <div class="card-body pb-2">
+                                            <div class="form-group">
+                                                <label class="form-label">Full Name</label>
+                                                <input type="text" class="form-control" value="" name="fullName"
+                                                    pattern="[A-Za-z ]+" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Phone</label>
+                                                <input type="text" class="form-control" value="" name="phone"
+                                                    pattern="[0-9]{10}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Location</label>
+                                                <input type="text" class="form-control" value="" name="location"
+                                                    required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">City</label>
+                                                <input type="text" class="form-control" value="" name="city" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">State</label>
+                                                <input type="text" class="form-control" value="" name="state" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Pin Code</label>
+                                                <input type="text" class="form-control" value="" name="pinCode"
+                                                    pattern="[0-9]{6}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Address</label>
+                                                <textarea class="form-control" rows="5" name="address"
+                                                    required></textarea>
+                                            </div>
+                                            <div class="text-right mt-3">
+                                                <button type="submit" class="btn btn-primary">Add Address</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <hr class="border-light m-0">
+                                </div>
+
+                                <!--address show-->
+                                <div class="tab-pane fade" id="account-social-links">
+                                    <div class="card-body pb-2" style="display: flex; flex-wrap: wrap;">
+                                        <% user.address.forEach(address=> { %>
+                                            <div class="card"
+                                                style="width: 18rem; margin-right: 10px; margin-bottom: 10px;">
+                                                <div class="card-body" style="background-color: rgb(254, 203, 122);">
+                                                    <h5 class="card-title">
+                                                        <%=address.fullName %>
+                                                    </h5>
+                                                    <h6 class="card-subtitle mb-2 text-body-secondary">
+                                                        <%=address.phone %>
+                                                    </h6>
+                                                    <h6 class="card-subtitle mb-2 text-body-secondary">
+                                                        <%=address.location %>
+                                                    </h6>
+                                                    <h6 class="card-subtitle mb-2 text-body-secondary">
+                                                        <%=address.city %>
+                                                    </h6>
+                                                    <h6 class="card-subtitle mb-2 text-body-secondary">
+                                                        <%=address.state %>
+                                                    </h6>
+                                                    <h6 class="card-subtitle mb-2 text-body-secondary">
+                                                        <%=address.pinCode %>
+                                                    </h6>
+                                                    <p class="card-text">
+                                                        <%=address.address %>
+                                                    </p>
+                                                </div>
+                                                <div class="btn-group" style="margin-top: 10px;">
+                                                    <button id="editButton" class="btn btn-sm btn-success rounded mr-2"
+                                                        data-toggle="modal" data-target="#editModal"
+                                                        user_id="<%= user._id %>"
+                                                        data_id="<%= address._id %>">Edit</button>
+                                                    <button class="delete-address-btn btn btn-sm btn-danger rounded"
+                                                        data-user-id="<%= user._id %>"
+                                                        data-address-id="<%= address._id %>">Delete</button>
+                                                </div>
+
+                                            </div>
+                                            <% }) %>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="Wallet">
+                                    <div class="card-body pb-2">
+                                        <div class="form-group">
+                                            <label class="form-label">Current Wallet : </label>
+                                            <% if (wallet) { %>
+                                                <label for="">
+                                                    <%= wallet.balance %>
+                                                </label>
+                                                <% } else { %>
+                                                    <label for="">Wallet not found</label>
+                                                    <% } %>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="container">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Id</th>
+                                                        <th scope="col">Type</th>
+                                                        <th scope="col">Amount</th>
+                                                        <th scope="col">Date</th>
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% wallet.transactions.reverse().forEach((item)=>{ %>
+                                                        <tr>
+                                                            <td>
+                                                                <%= item._id %>
+                                                            </td>
+                                                            <td>
+                                                                <%= item.type %>
+                                                            </td>
+                                                            <td>
+                                                                <%= item.amount %>
+                                                            </td>
+                                                            <td>
+                                                                <%= item.date %>
+                                                            </td>
+                                                        </tr>
+                                                        <% }) %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-    
-
-
-
-                                                 <!--edit adress-->
-
-
-      <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="editModalLabel">Edit Address</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-                <form id="editAddressForm">
-                    <div class="card-body pb-2">
-                        <div class="form-group">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" class="form-control" value="" name="fullName">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Phone</label>
-                            <input type="text" class="form-control" value="" name="phone">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Location</label>
-                            <input type="text" class="form-control" value="" name="location">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">City</label>
-                            <input type="text" class="form-control" value="" name="city">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">State</label>
-                            <input type="text" class="form-control" value="" name="state">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Pin Code</label>
-                            <input type="text" class="form-control" value="" name="pinCode">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Address</label>
-                            <textarea class="form-control" rows="5" name="address"></textarea>
-                        </div>
-                        
+        <!--edit address-->
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Edit Address</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                </form>
+                    <div class="modal-body">
+                        <form id="editAddressForm">
+                            <div class="card-body pb-2">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" value="" name="fullName">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone</label>
+                                    <input type="text" class="form-control" value="" name="phone">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-control" value="" name="location">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">City</label>
+                                    <input type="text" class="form-control" value="" name="city">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">State</label>
+                                    <input type="text" class="form-control" value="" name="state">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Pin Code</label>
+                                    <input type="text" class="form-control" value="" name="pinCode">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Address</label>
+                                    <textarea class="form-control" rows="5" name="address"></textarea>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button id="saveChangesButton" type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button id="saveChangesButton" type="button" class="btn btn-primary">Save changes</button>
-            </div>
-          </div>
         </div>
-      </div>
     </body>
+
     </html>
-    <%-include("../layouts/footer")    %>
+    <%- include("../layouts/footer") %>
+        <!-- Include jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+        <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script type="text/javascript"></script>
 
+        <!-- userprofile change-->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const saveChangesBtn = document.querySelector("#saveChangesBtn");
+                const nameInput = document.querySelector("#updateUserData input[name='name']");
 
-
-
-      
-
-
-
-
-
-
-
-
-    <!-- Include jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript"></script>
-    
-
-
-    
-  <!-- userprofile change-->
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const saveChangesBtn = document.querySelector("#saveChangesBtn");
-        const nameInput = document.querySelector("#updateUserData input[name='name']");
-
-        // Listen for input events on the name field to validate it
-    nameInput.addEventListener("input", function() {
-        if (this.validity.patternMismatch) {
-            // If the name does not match the pattern, show an error message
-            this.setCustomValidity("Name must contain at least 4 letters without spaces.");
-        } else {
-            // If the name is valid, clear any custom validity message
-            this.setCustomValidity("");
-        }
-    });
-        saveChangesBtn.addEventListener("click", function(event) {
-            if (!nameInput.validity.valid) {
-            // If the name is invalid, prevent the form from being submitted
-            event.preventDefault();
-            return;
-        }
-            const formData = {
-                name: nameInput.value,
-                email: document.querySelector("#updateUserData input[name='email']").value,
-                mobile: document.querySelector("#updateUserData input[name='mobile']").value
-            };
-            // Send AJAX request to backend
-            fetch('/updateProfile', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('User data updated successfully');
-                    window.location.href = '/userprofile';
-                } else {
-                    console.error('Failed to update user data');
-                }
-            })
-            .catch(error => {
-                console.error('Error updating user data:', error);
+                nameInput.addEventListener("input", function () {
+                    if (this.validity.patternMismatch) {
+                        this.setCustomValidity("Name must contain at least 4 letters without spaces.");
+                    } else {
+                        this.setCustomValidity("");
+                    }
+                });
+                saveChangesBtn.addEventListener("click", function (event) {
+                    if (!nameInput.validity.valid) {
+                        event.preventDefault();
+                        return;
+                    }
+                    const formData = {
+                        name: nameInput.value,
+                        email: document.querySelector("#updateUserData input[name='email']").value,
+                        mobile: document.querySelector("#updateUserData input[name='mobile']").value
+                    };
+                    // Send AJAX request to backend
+                    fetch('/updateProfile', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData),
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                console.log('User data updated successfully');
+                                window.location.href = '/userprofile';
+                            } else {
+                                console.error('Failed to update user data');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error updating user data:', error);
+                        });
+                });
             });
-        });
-    });
-</script>
+        </script>
 
+        <!-- password change -->
+        <script>
+            function changePassword() {
+                var currentPassword = document.getElementById("currentPassword").value;
+                var newPassword = document.getElementById("newPassword").value;
+                var repeatNewPassword = document.getElementById("repeatNewPassword").value;
+                var passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
+                if (!passwordRegex.test(newPassword)) {
+                    alert("New password must contain at least one uppercase letter, one special symbol, and be at least 8 characters long.");
+                    return;
+                }
+                if (newPassword !== repeatNewPassword) {
+                    document.getElementById("passwordMatchMessage").style.display = "block";
+                    return;
+                }
 
-<!-- password change -->
-<script>
-    function changePassword() {
-        var currentPassword = document.getElementById("currentPassword").value;
-        var newPassword = document.getElementById("newPassword").value;
-        var repeatNewPassword = document.getElementById("repeatNewPassword").value;
- // Define the regex for password validation
- var passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-// Validate the new password
-if (!passwordRegex.test(newPassword)) {
-    alert("New password must contain at least one uppercase letter, one special symbol, and be at least 8 characters long.");
-    return;
-}
-        // check newPassword matches repeatNewPassword
-        if (newPassword !== repeatNewPassword) {
-            document.getElementById("passwordMatchMessage").style.display = "block";
-            return;
-        }
-
-        // Make a request to server to check current password
-        fetch('/check-password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ currentPassword ,newPassword })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // if Password is correct, proceed to change it
-                fetch('/change-password', {
+                fetch('/check-password', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ newPassword })
+                    body: JSON.stringify({ currentPassword, newPassword })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("password changes ");
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // if Password is correct, proceed to change it
+                            fetch('/change-password', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ newPassword })
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log("password changes ");
+                                    window.location.href = '/userprofile';
+
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+
+                                });
+                        } else {
+                            alert("Current password is incorrect");
+                            window.location.href = '/userprofile';
+
+
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        </script>
+        <script>
+            function validateForm() {
+                var form = document.getElementById('addressForm');
+                var fullName = form.elements['fullName'].value;
+                var phone = form.elements['phone'].value;
+                var pinCode = form.elements['pinCode'].value;
+
+                if (!/^[A-Za-z ]+$/.test(fullName)) {
+                    alert('Please enter a valid full name.');
+                    return false;
+                }
+
+                if (!/^\d{10}$/.test(phone)) {
+                    alert('Phone number must contain exactly 10 digits.');
+                    return false;
+                }
+
+                if (!/^\d{6}$/.test(pinCode)) {
+                    alert('Pin code must contain exactly 6 digits.');
+                    return false;
+                }
+
+                return true;
+            }
+        </script>
+
+
+
+
+
+        <script>
+            document.getElementById('addressForm').addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const formData = new FormData(this);
+                const requestData = {};
+
+                formData.forEach((value, key) => {
+                    requestData[key] = value;
+                });
+
+                try {
+                    const response = await fetch('/addAddress', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+
+                    const data = await response.json();
+                    console.log(data);
                     window.location.href = '/userprofile';
 
-                })
-                .catch(error => {
+                    // Handle response accordingly (e.g., show a success message, redirect to another page)
+                } catch (error) {
                     console.error('Error:', error);
-                    
-                });
-            } else {
-                alert("Current password is incorrect");
-                window.location.href = '/userprofile';
-                
-                
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
-</script>
-
-
-<!-- Add adress -->
-
-
-<!--address validation-->
-
-
-<script>
-    function validateForm() {
-        var form = document.getElementById('addressForm');
-        var fullName = form.elements['fullName'].value;
-        var phone = form.elements['phone'].value;
-        var pinCode = form.elements['pinCode'].value;
-
-        if (!/^[A-Za-z ]+$/.test(fullName)) {
-            alert('Please enter a valid full name.');
-            return false;
-        }
-
-        if (!/^\d{10}$/.test(phone)) {
-            alert('Phone number must contain exactly 10 digits.');
-            return false;
-        }
-
-        if (!/^\d{6}$/.test(pinCode)) {
-            alert('Pin code must contain exactly 6 digits.');
-            return false;
-        }
-
-        return true;
-    }
-</script>
-
-
-
-
-
-<script>
-    document.getElementById('addressForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        
-        const formData = new FormData(this);
-        const requestData = {};
-        
-        formData.forEach((value, key) => {
-            requestData[key] = value;
-        });
-
-        try {
-            const response = await fetch('/addAddress', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData)
+                    alert(error.message)
+                }
             });
+        </script>
 
-            const data = await response.json();
-            console.log(data);
-            window.location.href = '/userprofile';
-
-            // Handle response accordingly (e.g., show a success message, redirect to another page)
-        } catch (error) {
-            console.error('Error:', error);
-            // Handle error accordingly (e.g., show an error message to the user)
-        }
-    });
-</script>
-
-
-<!--delete one adress-->
-<script>
-    $(document).ready(function() {
-        $('.delete-address-btn').click(function() {
-            const userId = $(this).data('user-id');
-            const addressId = $(this).data('address-id');
-            // Confirmation message
-            if (confirm('Are you sure you want to delete this address?')) {
-                // Store reference to $(this) in a variable to use inside success callback
-                var $this = $(this);
-                $.ajax({
-                    url: `/deleteAddress/${userId}/${addressId}`,
-                    type: 'DELETE',
-                    success: function(response) {
-                        console.log(response.message);
-                        // Optionally, you can remove the deleted address card from the DOM
-                        $this.closest('.card').remove();
-                        // Redirect to user profile or update the UI as needed
-                        window.location.href = '/userprofile';
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                        // Optionally, display an error message to the user
-                        alert('Error deleting address');
-                    }
-                });
-            } else {
-                // User cancelled the operation
-                console.log('Delete operation cancelled by user');
-            }
-        });
-    });
-    </script>
-
- 
-
-
-
-
-
-
-
-
-<!--edit address-->
-<script>
-    $(document).ready(function() {
-        $('.btn-success').click(function() {
-            var addressId = $(this).attr('data_id');
-            console.log(addressId);
-            var userId = $(this).attr('user_id');
-            console.log(userId);
-    
-            // Make an AJAX request to fetch the address data
-            $.ajax({
-    url: '/user/' + userId + '/address/' + addressId, // Adjust the URL to match your server's endpoint
-    type: 'GET',
-    success: function(addressData) {
-        // Populate the modal form fields with the address data
-        $('#editAddressForm input[name="fullName"]').val(addressData.fullName);
-        $('#editAddressForm input[name="phone"]').val(addressData.phone);
-        $('#editAddressForm input[name="location"]').val(addressData.location);
-        $('#editAddressForm input[name="city"]').val(addressData.city);
-        $('#editAddressForm input[name="state"]').val(addressData.state);
-        $('#editAddressForm input[name="pinCode"]').val(addressData.pinCode);
-        $('#editAddressForm textarea[name="address"]').val(addressData.address);
-
-        // Set the address ID in a hidden field in the form
-        $('#editAddressForm').append('<input type="hidden" name="addressId" value="' + addressId + '">');
-    },
-    error: function(error) {
-        console.error('Error fetching address data:', error);
-    }
-});
-
-        });
-    });
-    </script>
-
-    <!--edit address save-->
-    <script>
-        $(document).ready(function() {
-            $('#saveChangesButton').click(function() {
-                // Collect the form data
-                var formData = $('#editAddressForm').serializeArray().reduce(function(obj, item) {
-                    obj[item.name] = item.value;
-                    return obj;
-                }, {});
-        
-                // Get the user ID and address ID from the form
-                var userId = $('#editAddressForm input[name="userId"]').val(); // Assuming you have a hidden input for the user ID
-                var addressId = $('#editAddressForm input[name="addressId"]').val(); // Assuming you have a hidden input for the address ID
-        
-                // Send the updated data to the server
-                $.ajax({
-                    url:'/address/' + addressId,
-                    type: 'PUT',
-                    data: formData,
-                    success: function(response) {
-                        console.log('Address updated successfully:', response);
-                        // Optionally, close the modal and refresh the page or update the UI
-                        $('#editModal').modal('hide');
-
-
-                        window.location.reload()
-                    },
-                    error: function(error) {
-                        console.error('Error updating address:', error);
+        <!--delete one adress-->
+        <script>
+            $(document).ready(function () {
+                $('.delete-address-btn').click(function () {
+                    const userId = $(this).data('user-id');
+                    const addressId = $(this).data('address-id');
+                    // Confirmation message
+                    if (confirm('Are you sure you want to delete this address?')) {
+                        // Store reference to $(this) in a variable to use inside success callback
+                        var $this = $(this);
+                        $.ajax({
+                            url: `/deleteAddress/${userId}/${addressId}`,
+                            type: 'DELETE',
+                            success: function (response) {
+                                console.log(response.message);
+                                // Optionally, you can remove the deleted address card from the DOM
+                                $this.closest('.card').remove();
+                                // Redirect to user profile or update the UI as needed
+                                window.location.href = '/userprofile';
+                            },
+                            error: function (xhr, status, error) {
+                                console.error(xhr.responseText);
+                                // Optionally, display an error message to the user
+                                alert('Error deleting address');
+                            }
+                        });
+                    } else {
+                        // User cancelled the operation
+                        console.log('Delete operation cancelled by user');
                     }
                 });
             });
-        });
-    
+        </script>
+
+        <!--edit address-->
+        <script>
+            $(document).ready(function () {
+                $('.btn-success').click(function () {
+                    var addressId = $(this).attr('data_id');
+                    console.log(addressId);
+                    var userId = $(this).attr('user_id');
+                    console.log(userId);
+
+                    // Make an AJAX request to fetch the address data
+                    $.ajax({
+                        url: '/user/' + userId + '/address/' + addressId, // Adjust the URL to match your server's endpoint
+                        type: 'GET',
+                        success: function (addressData) {
+                            // Populate the modal form fields with the address data
+                            $('#editAddressForm input[name="fullName"]').val(addressData.fullName);
+                            $('#editAddressForm input[name="phone"]').val(addressData.phone);
+                            $('#editAddressForm input[name="location"]').val(addressData.location);
+                            $('#editAddressForm input[name="city"]').val(addressData.city);
+                            $('#editAddressForm input[name="state"]').val(addressData.state);
+                            $('#editAddressForm input[name="pinCode"]').val(addressData.pinCode);
+                            $('#editAddressForm textarea[name="address"]').val(addressData.address);
+
+                            // Set the address ID in a hidden field in the form
+                            $('#editAddressForm').append('<input type="hidden" name="addressId" value="' + addressId + '">');
+                        },
+                        error: function (error) {
+                            console.error('Error fetching address data:', error);
+                        }
+                    });
+
+                });
+            });
+        </script>
+
+        <!--edit address save-->
+        <script>
+            $(document).ready(function () {
+                $('#saveChangesButton').click(function () {
+                    // Collect the form data
+                    var formData = $('#editAddressForm').serializeArray().reduce(function (obj, item) {
+                        obj[item.name] = item.value;
+                        return obj;
+                    }, {});
+
+                    // Get the user ID and address ID from the form
+                    var userId = $('#editAddressForm input[name="userId"]').val(); // Assuming you have a hidden input for the user ID
+                    var addressId = $('#editAddressForm input[name="addressId"]').val(); // Assuming you have a hidden input for the address ID
+
+                    // Send the updated data to the server
+                    $.ajax({
+                        url: '/address/' + addressId,
+                        type: 'PUT',
+                        data: formData,
+                        success: function (response) {
+                            console.log('Address updated successfully:', response);
+                            // Optionally, close the modal and refresh the page or update the UI
+                            $('#editModal').modal('hide');
+
+
+                            window.location.reload()
+                        },
+                        error: function (error) {
+                            console.error('Error updating address:', error);
+                        }
+                    });
+                });
+            });
+
         </script>
         <!--validation user profile-->
         <script>
-            document.getElementById('saveChangesBtn').addEventListener('click', function() {
+            document.getElementById('saveChangesBtn').addEventListener('click', function () {
                 var emailInput = document.getElementById('emailInput');
                 var emailError = document.getElementById('emailError');
                 var emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
@@ -608,28 +596,26 @@ if (!passwordRegex.test(newPassword)) {
 
 
                 if (!emailPattern.test(emailInput.value)) {
-                 emailError.innerHTML = 'Please enter a valid Gmail address.';
+                    emailError.innerHTML = 'Please enter a valid Gmail address.';
                     emailInput.classList.add('is-invalid');
                 } else {
                     emailError.innerHTML = '';
                     emailInput.classList.remove('is-invalid');
-        // Submit the form or perform further actions
-        // document.getElementById('updateUserData').submit();
-        if (!numberPattern.test(numberInput.value)) {
-        numberError.innerHTML = 'Please enter a valid number.';
-        numberInput.classList.add('is-invalid');
-    } else {
-        numberError.innerHTML = '';
-        numberInput.classList.remove('is-invalid');
-    }
+                    // Submit the form or perform further actions
+                    // document.getElementById('updateUserData').submit();
+                    if (!numberPattern.test(numberInput.value)) {
+                        numberError.innerHTML = 'Please enter a valid number.';
+                        numberInput.classList.add('is-invalid');
+                    } else {
+                        numberError.innerHTML = '';
+                        numberInput.classList.remove('is-invalid');
+                    }
 
-    if (emailPattern.test(emailInput.value) && numberPattern.test(numberInput.value)) {
-        // Both email and number are valid, you can submit the form or perform further actions
-        // document.getElementById('updateUserData').submit();
-    }
-    }
-});
+                    if (emailPattern.test(emailInput.value) && numberPattern.test(numberInput.value)) {
+                        // Both email and number are valid, you can submit the form or perform further actions
+                        // document.getElementById('updateUserData').submit();
+                    }
+                }
+            });
 
         </script>
-
-    

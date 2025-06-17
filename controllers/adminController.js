@@ -37,21 +37,32 @@ const loadCategory = async (req, res) => {
 const addCategory = async (req, res) => {
   try {
     const { Name, Description } = req.body;
+    console.log(1, Name);
+    console.log(1, Description);
+    const is_list = req.body.is_list === "true" ? true : false;
+    console.log(is_list);
+
     const regex = new RegExp(`^${Name}$`, "i");
 
     const existingCategory = await Category.findOne({
       Name: { $regex: regex },
     });
+    console.log(3, existingCategory);
+
     if (existingCategory) {
       req.flash("error", "Category with the same name already exists.");
       return res.redirect("/addCategory");
     }
-    const catogory = new Category({
-      Name: req.body.Name,
-      Description: req.body.Description,
+    const category = new Category({
+      Name,
+      Description,
+      is_list
     });
+    console.log(4, category);
 
-    const categoryData = await catogory.save();
+    const categoryData = await category.save();
+    console.log(5, categoryData);
+
     res.redirect("/addCategory");
   } catch (error) {
     console.error(error.message);
@@ -298,6 +309,9 @@ const Adminlogout = async (req, res) => {
 const adminverify = (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log(email);
+    console.log(password);
+
     if (email === process.env.email && password === process.env.password) {
       req.session.email = email;
       res.redirect("/adminHome");
