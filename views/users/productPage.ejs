@@ -23,39 +23,18 @@
 					<div class="head">Categories</div>
 					<ul class="main-categories">
 
-						<% for (let i = 0; i < catDetails.length; i++) { %>
-						<li class="main-nav-list">
-							<a href="?category=<%= catDetails[i]._id %>" 
-								class="<%= catDetails[i]._id == categoryFilter ? 'text-danger fw-bold' : '' %>">
-								<%= catDetails[i].Name %>
-								<% if (catDetails[i].offerApplied) { %>
-									<span class="text-success">(offer)</span>
-								<% } %>
-								<span class="number"></span>
-							</a>
-						</li>
-					<% } %>
-						<!-- <% for(let i=0;i<catDetails.length;i++){ %>
-							<% if(catDetails[i].offerApplied==true){ %>
-								<li class="main-nav-list">
-									<a href="?category=<%= catDetails[i]._id %>" class="text-success"
-										style="<% if(catDetails[i]._id == categoryFilter) { %>color: #ff0000; font-weight: bold;<% } %>">
-										<%= catDetails[i].Name %> ( offer )<span class="number"></span>
-									</a>
-								</li> -->
-
-
-								<!-- <% } else { %>
-									<li class="main-nav-list">
-										<a href="?category=<%= catDetails[i]._id %>"
-											style="<% if(catDetails[i]._id == categoryFilter) { %>color: #ff0000; font-weight: bold;<% } %>">
-											<%= catDetails[i].Name %>
+						<% for (let i=0; i < catDetails.length; i++) { %>
+							<li class="main-nav-list">
+								<a href="?category=<%= catDetails[i]._id %>&sort=<%= sort %>&query=<%= searchQuery %>"
+									class="<%= catDetails[i]._id == categoryFilter ? 'text-danger fw-bold' : '' %>">
+									<%= catDetails[i].Name %>
+										<% if (catDetails[i].offerApplied) { %>
+											<span class="text-success">(offer)</span>
+											<% } %>
 												<span class="number"></span>
-										</a>
-									</li>
-
-									<% } %>
-										<% } %> -->
+								</a>
+							</li>
+							<% } %>
 					</ul>
 
 				</div>
@@ -66,9 +45,11 @@
 					<div class="filter-bar d-flex flex-wrap align-items-center">
 						<div class="sorting">
 							<select onchange="location = this.value;">
-								<option value="?sort=low" <% if (sort=="low" ) { %> selected <% } %>>Low to High
+								<option value="?sort=low&category=<%= categoryFilter %>&query=<%= searchQuery %>" <% if
+									(sort=="low" ) { %> selected <% } %>>Low to High
 								</option>
-								<option value="?sort=high" <% if (sort=="high" ) { %> selected <% } %>>High to Low
+								<option value="?sort=high&category=<%= categoryFilter %>&query=<%= searchQuery %>" <% if
+									(sort=="high" ) { %> selected <% } %>>High to Low
 								</option>
 							</select>
 
@@ -77,9 +58,12 @@
 					</div>
 					<div>
 						<input type="text" id="search_Input" placeholder="Search by Name" class="form-control bg-white"
-							value="<%= searchQuery ? searchQuery : '' %>" onkeyup="searchProductName()" />
+							value="<%= searchQuery ? searchQuery : '' %>" oninput="searchProductNameDebounced()" />
+
 					</div>
 					<div class="sorting mr-auto">
+						<button class="btn btn-outline-danger ml-3" onclick="resetFilters()">Reset Filters</button>
+
 					</div>
 					<!-- Start Pagination -->
 					<div class="pagination-area">
@@ -179,10 +163,32 @@
 	<%- include("../layouts/footer") %>
 
 		<script>
-			function searchProductName() {
-				const searchInput = document.getElementById('search_Input').value;
-				if (searchInput.length > 2) {
-					window.location.href = `/search?query=${encodeURIComponent(searchInput)}`;
-				}
+			let debounceTimer;
+
+			function searchProductNameDebounced() {
+				clearTimeout(debounceTimer);
+
+				debounceTimer = setTimeout(() => {
+					const searchInput = document.getElementById('search_Input').value.trim();
+					const urlParams = new URLSearchParams(window.location.search);
+
+					if (searchInput.length > 2) {
+						urlParams.set('query', searchInput);
+						urlParams.set('page', 1);
+						window.location.search = urlParams.toString();
+					} else if (searchInput.length === 0) {
+						urlParams.delete('query');
+						urlParams.set('page', 1);
+						window.location.search = urlParams.toString();
+					}
+					// Else (1–2 characters): Do nothing
+				}, 500); // 500ms delay
+			}
+		</script>
+
+
+		<script>
+			function resetFilters() {
+				window.location.search = ''; // Clear all query params
 			}
 		</script>

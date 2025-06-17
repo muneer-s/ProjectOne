@@ -99,11 +99,11 @@ admin_route.get(
 );
 
 //offer
-
 admin_route.get("/addoffer", isAdminLogin, adminOfferController.loadOfferPage);
 admin_route.post("/saveOffer", adminOfferController.saveOffer);
 admin_route.get("/viewOffer", isAdminLogin, adminOfferController.viewOffer);
 admin_route.get("/deleteOffer", isAdminLogin, adminOfferController.deleteOffer);
+
 //offer for products
 admin_route.get(
   "/loadOfferForProducts",

@@ -22,7 +22,7 @@
 			<div class="row s_product_inner">
 				<div class="col-lg-6">
 					<% if (products.productImages.length> 1) { %>
-						<div class="s_Product_carousel slick3">
+						<div class="s_Product_carousel owl-carousel slick3">
 							<% products.productImages.forEach(item=> { %>
 								<div class="wrap-pic-w">
 									<img class="img-fluid zoomable" src="/assets/products/resized/<%= item %>" alt="">
