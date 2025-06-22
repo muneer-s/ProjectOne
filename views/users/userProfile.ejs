@@ -62,6 +62,9 @@
                                                 <input type="text" class="form-control" name="name"
                                                     value="<%= user.name %>" pattern="[A-Za-z]{4,}"
                                                     title="Name must contain at least 4 letters without spaces.">
+                                                <!-- Ensure you add this below the name input -->
+                                                <div id="nameError" class="error-message"></div>
+
                                             </div>
 
                                             <div class="form-group">
@@ -109,40 +112,49 @@
                                 </div>
                                 <!--add address-->
                                 <div class="tab-pane fade" id="account-info">
-                                    <form id="addressForm" onsubmit="return validateForm()">
+                                    <form id="addressForm">
                                         <div class="card-body pb-2">
                                             <div class="form-group">
                                                 <label class="form-label">Full Name</label>
-                                                <input type="text" class="form-control" value="" name="fullName"
-                                                    pattern="[A-Za-z ]+" required>
+                                                <input type="text" class="form-control" value="" name="fullName">
+                                                <div class="error-message text-danger" id="fullNameError"></div>
+
                                             </div>
                                             <div class="form-group">
                                                 <label class="form-label">Phone</label>
-                                                <input type="text" class="form-control" value="" name="phone"
-                                                    pattern="[0-9]{10}" required>
+                                                <input type="text" class="form-control" value="" name="phone">
+                                                <div class="error-message text-danger" id="phoneError"></div>
+
                                             </div>
                                             <div class="form-group">
                                                 <label class="form-label">Location</label>
-                                                <input type="text" class="form-control" value="" name="location"
-                                                    required>
+                                                <input type="text" class="form-control" value="" name="location">
+                                                <div class="error-message text-danger" id="locationError"></div>
+
                                             </div>
                                             <div class="form-group">
                                                 <label class="form-label">City</label>
-                                                <input type="text" class="form-control" value="" name="city" required>
+                                                <input type="text" class="form-control" value="" name="city">
+                                                <div class="error-message text-danger" id="cityError"></div>
+
                                             </div>
                                             <div class="form-group">
                                                 <label class="form-label">State</label>
-                                                <input type="text" class="form-control" value="" name="state" required>
+                                                <input type="text" class="form-control" value="" name="state">
+                                                <div class="error-message text-danger" id="stateError"></div>
+
                                             </div>
                                             <div class="form-group">
                                                 <label class="form-label">Pin Code</label>
-                                                <input type="text" class="form-control" value="" name="pinCode"
-                                                    pattern="[0-9]{6}" required>
+                                                <input type="text" class="form-control" value="" name="pinCode">
+                                                <div class="error-message text-danger" id="pinCodeError"></div>
+
                                             </div>
                                             <div class="form-group">
                                                 <label class="form-label">Address</label>
-                                                <textarea class="form-control" rows="5" name="address"
-                                                    required></textarea>
+                                                <textarea class="form-control" rows="5" name="address"></textarea>
+                                                <div class="error-message text-danger" id="addressError"></div>
+
                                             </div>
                                             <div class="text-right mt-3">
                                                 <button type="submit" class="btn btn-primary">Add Address</button>
@@ -307,35 +319,58 @@
 
     </html>
     <%- include("../layouts/footer") %>
+
+
         <!-- Include jQuery library -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-        <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script type="text/javascript"></script>
 
         <!-- userprofile change-->
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const saveChangesBtn = document.querySelector("#saveChangesBtn");
-                const nameInput = document.querySelector("#updateUserData input[name='name']");
 
-                nameInput.addEventListener("input", function () {
-                    if (this.validity.patternMismatch) {
-                        this.setCustomValidity("Name must contain at least 4 letters without spaces.");
-                    } else {
-                        this.setCustomValidity("");
-                    }
-                });
+                const nameInput = document.querySelector("#updateUserData input[name='name']");
+                const emailInput = document.querySelector("#updateUserData input[name='email']");
+                const numberInput = document.querySelector("#updateUserData input[name='mobile']");
+
+                const nameError = document.getElementById("nameError") || document.createElement("div");
+                const emailError = document.getElementById("emailError");
+                const numberError = document.getElementById("numberError");
+
                 saveChangesBtn.addEventListener("click", function (event) {
-                    if (!nameInput.validity.valid) {
-                        event.preventDefault();
-                        return;
+                    // Reset error messages
+                    nameError.textContent = "";
+                    emailError.textContent = "";
+                    numberError.textContent = "";
+                    let hasError = false;
+
+                    // Validate name
+                    if (!/^([A-Za-z\s]{4,})$/.test(nameInput.value.trim())) {
+                        nameError.textContent = "Name must contain at least 4 characters.";
+                        hasError = true;
+                    }
+
+                    // Validate email
+                    if (!/^\S+@\S+\.\S+$/.test(emailInput.value)) {
+                        emailError.textContent = "Please enter a valid email address.";
+                        hasError = true;
+                    }
+
+                    // Validate mobile number
+                    if (!/^\d{10}$/.test(numberInput.value)) {
+                        numberError.textContent = "Mobile number must be 10 digits.";
+                        hasError = true;
+                    }
+
+                    if (hasError) {
+                        console.log("Validation failed");
+                        return; // Prevent submission
                     }
                     const formData = {
                         name: nameInput.value,
-                        email: document.querySelector("#updateUserData input[name='email']").value,
-                        mobile: document.querySelector("#updateUserData input[name='mobile']").value
+                        email: emailInput.value,
+                        mobile: numberInput.value
                     };
                     // Send AJAX request to backend
                     fetch('/updateProfile', {
@@ -346,12 +381,12 @@
                         body: JSON.stringify(formData),
                     })
                         .then(response => {
-                            if (response.ok) {
-                                console.log('User data updated successfully');
-                                window.location.href = '/userprofile';
-                            } else {
-                                console.error('Failed to update user data');
-                            }
+                            console.log("response", response);
+                            if (response.ok) return response.json();
+                            throw new Error("Failed to update user data");
+                        })
+                        .then(data => {
+                            window.location.href = '/userprofile';
                         })
                         .catch(error => {
                             console.error('Error updating user data:', error);
@@ -403,13 +438,10 @@
                                 })
                                 .catch(error => {
                                     console.error('Error:', error);
-
                                 });
                         } else {
                             alert("Current password is incorrect");
                             window.location.href = '/userprofile';
-
-
                         }
                     })
                     .catch(error => {
@@ -417,15 +449,21 @@
                     });
             }
         </script>
-        <script>
+        <!-- address validation -->
+        <!-- <script>
             function validateForm() {
                 var form = document.getElementById('addressForm');
                 var fullName = form.elements['fullName'].value;
                 var phone = form.elements['phone'].value;
+                var location = form.elements['location'].value;
+                var phone = form.elements['phone'].value;
+                var city = form.elements['city'].value;
+                var state = form.elements['state'].value;
+                var address = form.elements['address'].value;
                 var pinCode = form.elements['pinCode'].value;
 
                 if (!/^[A-Za-z ]+$/.test(fullName)) {
-                    alert('Please enter a valid full name.');
+                    alert('Please enter a valid Name.');
                     return false;
                 }
 
@@ -441,21 +479,59 @@
 
                 return true;
             }
-        </script>
-
-
-
-
-
+        </script> -->
+        <!-- add address -->
         <script>
             document.getElementById('addressForm').addEventListener('submit', async function (event) {
                 event.preventDefault();
 
-                const formData = new FormData(this);
-                const requestData = {};
+                const form = event.target;
+                const formData = new FormData(form);
+                const fields = ['fullName', 'phone', 'location', 'city', 'state', 'pinCode', 'address'];
+                const errors = {};
 
+                // Clear all previous errors
+                fields.forEach(field => {
+                    const errorDiv = document.getElementById(`${field}Error`);
+                    if (errorDiv) errorDiv.textContent = '';
+                });
+
+                // Validation
+                const fullName = formData.get('fullName').trim();
+                if (!/^[A-Za-z ]{4,}$/.test(fullName)) {
+                    errors.fullName = 'Full name must have at least 4 letters and only contain letters and spaces.';
+                }
+
+                const phone = formData.get('phone').trim();
+                if (!/^\d{10}$/.test(phone)) {
+                    errors.phone = 'Phone number must be exactly 10 digits.';
+                }
+
+                const pinCode = formData.get('pinCode').trim();
+                if (!/^\d{6}$/.test(pinCode)) {
+                    errors.pinCode = 'Pin code must be exactly 6 digits.';
+                }
+
+                // Simple required checks for other fields
+                ['location', 'city', 'state', 'address'].forEach(field => {
+                    if (!formData.get(field).trim()) {
+                        errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required.`;
+                    }
+                });
+
+                // If errors exist, show them and stop
+                if (Object.keys(errors).length > 0) {
+                    for (const key in errors) {
+                        const errorDiv = document.getElementById(`${key}Error`);
+                        if (errorDiv) errorDiv.textContent = errors[key];
+                    }
+                    return;
+                }
+
+                // All validations passed, send data
+                const requestData = {};
                 formData.forEach((value, key) => {
-                    requestData[key] = value;
+                    requestData[key] = value.trim();
                 });
 
                 try {
@@ -474,7 +550,7 @@
                     // Handle response accordingly (e.g., show a success message, redirect to another page)
                 } catch (error) {
                     console.error('Error:', error);
-                    alert(error.message)
+                    alert('Failed to add address. Please try again.');
                 }
             });
         </script>
@@ -571,8 +647,6 @@
                             console.log('Address updated successfully:', response);
                             // Optionally, close the modal and refresh the page or update the UI
                             $('#editModal').modal('hide');
-
-
                             window.location.reload()
                         },
                         error: function (error) {
@@ -580,42 +654,6 @@
                         }
                     });
                 });
-            });
-
-        </script>
-        <!--validation user profile-->
-        <script>
-            document.getElementById('saveChangesBtn').addEventListener('click', function () {
-                var emailInput = document.getElementById('emailInput');
-                var emailError = document.getElementById('emailError');
-                var emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-
-                var numberInput = document.getElementById('numberInput');
-                var numberError = document.getElementById('numberError');
-                var numberPattern = /^\d+$/;
-
-
-                if (!emailPattern.test(emailInput.value)) {
-                    emailError.innerHTML = 'Please enter a valid Gmail address.';
-                    emailInput.classList.add('is-invalid');
-                } else {
-                    emailError.innerHTML = '';
-                    emailInput.classList.remove('is-invalid');
-                    // Submit the form or perform further actions
-                    // document.getElementById('updateUserData').submit();
-                    if (!numberPattern.test(numberInput.value)) {
-                        numberError.innerHTML = 'Please enter a valid number.';
-                        numberInput.classList.add('is-invalid');
-                    } else {
-                        numberError.innerHTML = '';
-                        numberInput.classList.remove('is-invalid');
-                    }
-
-                    if (emailPattern.test(emailInput.value) && numberPattern.test(numberInput.value)) {
-                        // Both email and number are valid, you can submit the form or perform further actions
-                        // document.getElementById('updateUserData').submit();
-                    }
-                }
             });
 
         </script>

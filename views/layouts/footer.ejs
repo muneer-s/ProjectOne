@@ -43,43 +43,78 @@
         </div>
     </div>
 </footer>
+<!-- Load jQuery first -->
+<script src="/js/vendor/jquery-2.2.4.min.js"></script>
+
+<!-- Load nice-select and other plugin dependencies BEFORE main.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
+<script src="/js/jquery.magnific-popup.min.js"></script>
+<script src="/js/jquery.ajaxchimp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.4/jquery.sticky.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+
+
+<script src="/js/nouislider.min.js"></script>
+<script src="/js/gmaps.min.js"></script>
+
+<!-- Bootstrap dependencies -->
+<script src="/js/vendor/bootstrap.min.js"></script>
+
+<!-- Main.js MUST COME LAST -->
+<script src="/js/main.js"></script>
+
 </body>
+
 </html>
 
 <!-- Load jQuery FIRST -->
-<script src="/js/vendor/jquery-2.2.4.min.js"></script>
-
-<!-- Then Popper.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-
-<!-- Then Bootstrap -->
-<script src="/js/vendor/bootstrap.min.js"></script>
-
-<!-- Owl Carousel JS from CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
-
-<!-- Initialization AFTER Owl JS is loaded -->
-<script>
-  $(document).ready(function () {
-    $('.owl-carousel').owlCarousel({
-      items: 1,
-      loop: true,
-      margin: 10,
-      nav: true,
-      dots: true
-    });
-  });
-</script>
-
-<!-- jQuery plugins that live in /public/js/ -->
+<!-- <script src="/js/vendor/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
+<script src="/js/jquery.magnific-popup.min.js"></script>
 <script src="/js/jquery.ajaxchimp.min.js"></script>
-<script src="/js/jquery.nice-select.min.js"></script>
 <script src="/js/jquery.sticky.js"></script>
 <script src="/js/nouislider.min.js"></script>
-<script src="/js/jquery.magnific-popup.min.js"></script>
-<!-- <script async  defer  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script> -->
-
-<!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE&loading=async"></script> -->
-
 <script src="/js/gmaps.min.js"></script>
-<script src="/js/main.js"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="/js/vendor/bootstrap.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script> -->
+
+<!-- Your main JS (must come last after plugins) -->
+<!-- <script src="/js/main.js"></script> -->
+
+<!-- --------------------------------------- -->
+
+
+<!-- Then Popper.js -->
+
+<!-- Then Bootstrap -->
+<!-- <script src="/js/vendor/bootstrap.min.js"></script> -->
+
+<!-- Owl Carousel JS from CDN -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script> -->
+
+<!-- Initialization AFTER Owl JS is loaded -->
+<!-- <script>
+    $(document).ready(function () {
+        // Only run if owlCarousel plugin is loaded AND the element exists
+        if ($.fn.owlCarousel && $('.owl-carousel').length > 0) {
+            $('.owl-carousel').owlCarousel({
+                items: 1,
+                loop: true,
+                margin: 10,
+                nav: true,
+                dots: true
+            });
+        }
+    });
+</script> -->
+
+<!-- jQuery plugins that live in /public/js/ -->
+<!-- <script src="/js/jquery.ajaxchimp.min.js"></script>
+<script src="/js/jquery.sticky.js"></script>
+<script src="/js/nouislider.min.js"></script>
+<script src="/js/gmaps.min.js"></script> -->

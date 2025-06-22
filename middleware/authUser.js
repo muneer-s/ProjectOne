@@ -7,6 +7,8 @@ const isUserLogin = async (req, res, next) => {
       console.log("middle warinn      :  ",userData)
 
       if (userData && userData.is_blocked == false) {
+          console.log("✅ User is authenticated and not blocked");
+
         next();
       } else {
         // User is blocked — destroy session and redirect

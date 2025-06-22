@@ -178,7 +178,7 @@ const loginload = async (req, res) => {
       res.redirect("/");
     } else {
       // res.render("./users/login");
-      const isBlocked = req.query.blocked === "true"; // Read query param
+      const isBlocked = req.query.is_blocked === "true"; // Read query param
       res.render("./users/login", {
         messages: req.flash(), // If you're using flash messages
         blocked: isBlocked, // Pass to EJS

@@ -41,63 +41,69 @@ user_route.get("/filter", userController.filter);
 user_route.get("/search", userController.search);
 
 //cart
-user_route.get("/Cart", userCartController.loadCart);
-user_route.post("/addToCart", userCartController.addToCart);
-user_route.post("/change-product-quantity", userCartController.quantityUpdate);
-user_route.post("/submitQuantity", userCartController.submitQuantity);
-user_route.post("/removeItem", userCartController.removeItem);
+user_route.get("/Cart",isUserLogin, userCartController.loadCart);
+user_route.post("/addToCart",isUserLogin, userCartController.addToCart);
+user_route.post("/change-product-quantity",isUserLogin, userCartController.quantityUpdate);
+user_route.post("/submitQuantity",isUserLogin, userCartController.submitQuantity);
+user_route.post("/removeItem",isUserLogin, userCartController.removeItem);
 
 //user profile
 
 user_route.get("/userprofile",isUserLogin, userProfileController.userProfileLoad);
 // Update user data route
-user_route.post("/updateProfile", userProfileController.updateProfile);
-//password change
-user_route.post("/check-password", userProfileController.checkPassword);
-user_route.post("/change-password", userProfileController.changePassword);
+// user_route.post("/updateProfile",isUserLogin, userProfileController.updateProfile);
 
-user_route.post("/addAddress", userProfileController.addAddress);
+user_route.post("/updateProfile", isUserLogin, (req, res, next) => {
+  console.log("✔ Router received POST /updateProfile");
+  next(); // ensure the controller runs after this
+}, userProfileController.updateProfile);
+
+//password change
+user_route.post("/check-password",isUserLogin, userProfileController.checkPassword);
+user_route.post("/change-password",isUserLogin, userProfileController.changePassword);
+
+user_route.post("/addAddress", isUserLogin,userProfileController.addAddress);
 //delete address form user profile
 user_route.delete(
-  "/deleteAddress/:userId/:addressId",
+  "/deleteAddress/:userId/:addressId",isUserLogin,
   userProfileController.deleteAddress
 );
 //load view item page in my orders
-user_route.get("/viewItems/:id", userProfileController.loadViewItems);
+user_route.get("/viewItems/:id", isUserLogin, userProfileController.loadViewItems);
 //edit address
-user_route.get("/user/:userId/address/:id", userProfileController.editAddress);
-user_route.put("/address/:id", userProfileController.saveEditAddress);
+user_route.get("/user/:userId/address/:id",isUserLogin, userProfileController.editAddress);
+user_route.put("/address/:id",isUserLogin, userProfileController.saveEditAddress);
 //download invoice
-user_route.get("/download-invoice/:id", userProfileController.downloadInvoice);
+user_route.get("/download-invoice/:id",isUserLogin, userProfileController.downloadInvoice);
 
 //checkout page load
-user_route.get("/CheckOutPage", userProfileController.loadCheckOutPage);
+user_route.get("/CheckOutPage",isUserLogin, userProfileController.loadCheckOutPage);
 
 //order
-user_route.get("/order", orderController.loadOrder);
-user_route.post("/placeOrder", orderController.placeOrder);
-user_route.post("/verifyPayment", orderController.verifyPayment);
-user_route.post("/failedOrders", orderController.failedOrders);
-user_route.post("/retryPayment", orderController.retryPayment);
-user_route.post("/retry-callback", orderController.retryCallback);
-user_route.post("/removeCoupon", orderController.removeCoupon);
+user_route.get("/order",isUserLogin, orderController.loadOrder);
+user_route.post("/placeOrder",isUserLogin, orderController.placeOrder);
+user_route.post("/verifyPayment",isUserLogin, orderController.verifyPayment);
+user_route.post("/failedOrders",isUserLogin, orderController.failedOrders);
+user_route.post("/retryPayment", isUserLogin,orderController.retryPayment);
+user_route.post("/retry-callback", isUserLogin,orderController.retryCallback);
+user_route.post("/removeCoupon", isUserLogin,orderController.removeCoupon);
 
 //userprofule order details page
-user_route.get("/orderDetailsPage", orderController.orderDetailsPage);
+user_route.get("/orderDetailsPage",isUserLogin, orderController.orderDetailsPage);
 //update status
 user_route.post(
-  "/updateOrderStatus/:orderId",
+  "/updateOrderStatus/:orderId",isUserLogin,
   orderController.userupdatestatus
 );
 
 //wishlist
-user_route.get("/wishlist", wishlistController.loadWishlist);
+user_route.get("/wishlist",isUserLogin, wishlistController.loadWishlist);
 // Add to wishlist
-user_route.get("/addToWishlist", wishlistController.addToWishlist);
+user_route.get("/addToWishlist",isUserLogin, wishlistController.addToWishlist);
 //delete from wishlist
-user_route.get("/deleteWishlist", wishlistController.deleteProductFromWishlist);
+user_route.get("/deleteWishlist",isUserLogin, wishlistController.deleteProductFromWishlist);
 
 //coupon
-user_route.post("/applyCoupon", userCouponController.applyCoupon);
+user_route.post("/applyCoupon",isUserLogin, userCouponController.applyCoupon);
 
 module.exports = user_route;

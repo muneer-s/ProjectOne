@@ -33,8 +33,8 @@ const userProfileLoad = async (req, res) => {
       res.redirect("/login");
     }
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Internal Server Error");
+    console.error("Error in user rpofile controller  user profile load: ", err);
+    return res.status(500).send("Internal Server Error");
   }
 };
 
@@ -42,6 +42,7 @@ const userProfileLoad = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const { name, email, mobile } = req.body;
+
 
     const userId = req.session.user_id;
 
@@ -54,58 +55,72 @@ const updateProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    
+
     let wallet = await Wallet.findOne({ user: userId });
 
     if (!wallet) {
-      wallet = await Wallet.create({ user: userId});
+      wallet = await Wallet.create({ user: userId });
     }
+    res.status(200).json({ message: "Profile updated successfully" });
 
-
-    res.render("./users/userProfile", { user,wallet });
+    // res.render("./users/userProfile", { user, wallet });
   } catch (error) {
     console.error("Error updating user data:  ", error);
-    return res.render("./users/500");
+    res.status(500).render("users/500");
   }
 };
 
 //check current password is correct
 const checkPassword = async (req, res) => {
-  const { currentPassword } = req.body;
+  try {
+    const { currentPassword } = req.body;
 
-  const userId = req.session.user_id;
+    const userId = req.session.user_id;
 
-  if (!userId) {
-    return res.status(404).json({ success: false, message: "User not found" });
-  }
+    if (!userId) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
 
-  const existingUser = await User.findOne({ _id: userId });
+    const existingUser = await User.findOne({ _id: userId });
 
-  const isPasswordMatch = await bcrypt.compare(
-    currentPassword,
-    existingUser.password
-  );
+    const isPasswordMatch = await bcrypt.compare(
+      currentPassword,
+      existingUser.password
+    );
 
-  if (isPasswordMatch) {
-    return res.json({ success: true });
-  } else {
-    return res.json({ success: false });
+    if (isPasswordMatch) {
+      return res.json({ success: true });
+    } else {
+      return res.json({ success: false });
+    }
+  } catch (error) {
+    console.log("error in userprofile chechpasswordc:", error);
+    res.status(500).render("users/500");
   }
 };
 
 //change the current password
 const changePassword = async (req, res) => {
-  const { newPassword } = req.body;
-  const userId = req.session.user_id;
-  const user = await User.findOne({ _id: userId });
+  try {
+    const { newPassword } = req.body;
+    const userId = req.session.user_id;
+    const user = await User.findOne({ _id: userId });
 
-  if (!userId) {
-    return res.status(404).json({ success: false, message: "User not found" });
+    if (!userId) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+    return res.json({ success: true });
+  } catch (error) {
+    console.log("error in user profile changepassword: ", error);
+    res.status(500).render("users/500");
   }
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
-  user.password = hashedPassword;
-  await user.save();
-  return res.json({ success: true });
 };
 
 //add address in user profile
@@ -136,7 +151,7 @@ const addAddress = async (req, res) => {
     res.status(200).json({ message: "Address added successfully", user });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).render("users/500");
   }
 };
 
@@ -162,7 +177,7 @@ const deleteAddress = async (req, res) => {
     return res.status(200).json({ message: "Address deleted successfully" });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).render("users/500");
   }
 };
 
@@ -170,25 +185,21 @@ const deleteAddress = async (req, res) => {
 const loadCheckOutPage = async (req, res) => {
   try {
     const user_id = req.session.user_id;
-    console.log(11,user_id);
-    
+
     const Coupons = await Coupon.find({ status: true });
-    console.log(22,Coupons);
-    
-    const totalUsingCoupon = req.session.newAmountUsingCoupon;
-    console.log(33,totalUsingCoupon);
-    
+
     const couponCode = req.session.couponCode;
-    console.log(44,couponCode);
-    
+
     const appliedCoupon = await Coupon.findOne({ Code: couponCode });
-    console.log(55,appliedCoupon);
-    
+    // console.log(55, appliedCoupon);
+
     const cartDetails = await Cart.findOne({ userId: user_id }).populate({
       path: "products.productId",
       model: "product",
       select: "name",
     });
+
+    // console.log(6, cartDetails);
 
     let originalAmount = 0;
 
@@ -197,38 +208,36 @@ const loadCheckOutPage = async (req, res) => {
         originalAmount += cartItem.total;
       });
     }
+    // console.log(7, originalAmount);
+
+    let discount = appliedCoupon ? appliedCoupon.Discount : 0;
+    let finalAmount = originalAmount - discount;
+
     let wallet = await Wallet.findOne({ user: user_id });
     if (!wallet) {
       wallet = await Wallet.create({ user: user_id });
     }
+    // console.log(8, wallet);
 
     if (cartDetails) {
       const user = await User.findOne({ _id: user_id });
-      res.render(
-        "./users/checkOut",
-        {
-          user,
-          cartDetails,
-          subTotal: originalAmount,
-          Coupons,
-          totalUsingCoupon: totalUsingCoupon,
-          couponCode,
-          wallet,
-          appliedCoupon,
-        },
-        (err, html) => {
-          if (err) {
-            console.log(err);
-          }
-          delete req.session.newAmountUsingCoupon;
-          res.status(500).send(html);
-        }
-      );
+      res.render("./users/checkOut", {
+        user,
+        cartDetails,
+        subTotal: originalAmount,
+        Coupons,
+        totalUsingCoupon: finalAmount,
+        couponCode,
+        wallet,
+        appliedCoupon,
+      });
+      delete req.session.newAmountUsingCoupon;
     } else {
-      res.render("./users/login");
+      res.redirect("/login");
     }
   } catch (error) {
-    console.log(error.message);
+    console.error("Checkout Load Error:", error.message);
+    res.status(500).render("users/500");
   }
 };
 
@@ -251,6 +260,7 @@ const loadViewItems = async (req, res) => {
     }
   } catch (error) {
     console.log(error.message);
+    res.status(500).render("users/500");
   }
 };
 
@@ -313,7 +323,7 @@ const downloadInvoice = async (req, res) => {
     await browser.close();
   } catch (error) {
     console.error("Error generating sales report:", error);
-    res.status(500).send("Error generating sales report");
+    res.status(500).render("users/500");
   }
 };
 
@@ -330,7 +340,7 @@ const editAddress = async (req, res) => {
     }
     res.json(address);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).render("users/500");
   }
 };
 
@@ -357,7 +367,7 @@ const saveEditAddress = async (req, res) => {
     res.json({ message: "Address updated successfully" });
   } catch (error) {
     console.error("Server error:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).render("users/500");
   }
 };
 

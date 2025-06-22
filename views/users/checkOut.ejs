@@ -59,32 +59,43 @@
         <div class="row">
           <div class="col-lg-8">
             <h3>Add Address Details</h3>
-            <form id="addressForm" onsubmit="return validateForm()">
+            <form id="addressForm">
               <div class="card-body pb-2">
+
                 <div class="form-group">
                   <label class="form-label">Full Name</label>
-                  <input type="text" class="form-control" value="" name="fullName" pattern="[A-Za-z ]+" required />
+                  <input type="text" class="form-control" value="" name="fullName" />
+                  <small id="fullNameError" class="text-danger"></small>
                 </div>
+
                 <div class="form-group">
                   <label class="form-label">Phone</label>
-                  <input type="text" class="form-control" value="" name="phone" pattern="[0-9]{10}" required />
+                  <input type="text" class="form-control" value="" name="phone" />
+                  <small id="phoneError" class="text-danger"></small>
+
                 </div>
+
                 <div class="form-group">
                   <label class="form-label">Location</label>
                   <input type="text" class="form-control" value="" name="location" required />
                 </div>
+
                 <div class="form-group">
                   <label class="form-label">City</label>
                   <input type="text" class="form-control" value="" name="city" required />
                 </div>
+
                 <div class="form-group">
                   <label class="form-label">State</label>
                   <input type="text" class="form-control" value="" name="state" required />
                 </div>
                 <div class="form-group">
                   <label class="form-label">Pin Code</label>
-                  <input type="text" class="form-control" value="" name="pinCode" pattern="[0-9]{6}" required />
+                  <input type="text" class="form-control" value="" name="pinCode" />
+                  <small id="pinCodeError" class="text-danger"></small>
+
                 </div>
+
                 <div class="form-group">
                   <label class="form-label">Address</label>
                   <textarea class="form-control" rows="5" name="address" required></textarea>
@@ -257,7 +268,6 @@
 
 
     <!-- modal for Display -->
-
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         var allCouponsBtn = document.getElementById("allCouponsBtn");
@@ -281,7 +291,7 @@
       });
     </script>
 
-
+    <!-- apply coupon -->
     <script>
       const couponButton = document.getElementById("couponButton")
 
@@ -329,95 +339,106 @@
           })
       })
     </script>
-    <!--address form validate-->
 
+    <!--address form validate-->
     <script>
       function validateForm() {
         var form = document.getElementById("addressForm");
         var fullName = form.elements["fullName"].value;
         var phone = form.elements["phone"].value;
+        var location = form.elements["location"].value;
+        var city = form.elements["city"].value;
+        var state = form.elements["state"].value;
         var pinCode = form.elements["pinCode"].value;
+        var address = form.elements["address"].value;
 
-        if (!/^[A-Za-z ]+$/.test(fullName)) {
-          alert("Please enter a valid full name.");
-          return false;
+        let isValid = true;
+
+        // Clear previous errors
+        document.getElementById("fullNameError").textContent = "";
+        document.getElementById("phoneError").textContent = "";
+        document.getElementById("pinCodeError").textContent = "";
+
+        // Validate Full Name
+        if (!fullName || !/^[A-Za-z ]+$/.test(fullName)) {
+          console.log(11111111);
+
+          document.getElementById("fullNameError").textContent = "Please enter a valid full name.";
+          isValid = false;
         }
 
+        // Validate Phone
         if (!/^\d{10}$/.test(phone)) {
-          alert("Phone number must contain exactly 10 digits.");
-          return false;
+          document.getElementById("phoneError").textContent = "Phone number must contain exactly 10 digits.";
+          isValid = false;
         }
 
         if (!/^\d{6}$/.test(pinCode)) {
-          alert("Pin code must contain exactly 6 digits.");
-          return false;
+          document.getElementById("pinCodeError").textContent = "Pin code must contain exactly 6 digits.";
+          isValid = false;
         }
 
-        return true;
+        return isValid;
       }
     </script>
 
-
-
-
     <!-- add address -->
     <script>
-      document
-        .getElementById("addressForm")
-        .addEventListener("submit", async function (event) {
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("addressForm");
+        if (!form) return;
+
+        form.addEventListener("submit", async function (event) {
           event.preventDefault();
 
-          const formData = new FormData(this);
-          const requestData = {};
+          // Validation logic here...
+          if (!validateForm()) return;
 
-          formData.forEach((value, key) => {
-            requestData[key] = value;
-          });
+          const formData = new FormData(form);
+          const requestData = {};
+          formData.forEach((value, key) => requestData[key] = value);
 
           try {
             const response = await fetch("/addAddress", {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify(requestData),
             });
 
             const data = await response.json();
-            console.log(data);
             window.location.href = "/CheckOutPage";
           } catch (error) {
             console.error("Error:", error);
           }
         });
+      });
+
     </script>
-
-
-
 
     <!--payment method-->
     <script>
       async function order(event) {
         event.preventDefault();
-        const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked').value;
-        const paymentMethod = document.querySelector('input[name="selector"]:checked').value;
-        // const totalAmount = document.querySelector('input[name="subTotal"]:checked').value
-        const totalAmount = document.getElementsByClassName('subTotal')[0].value;
 
-        if (!selectedAddressId || !paymentMethod) {
-          Swal.fire("Please select an address and payment method.");
+        const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
+        const paymentMethod = document.querySelector('input[name="selector"]:checked');
+
+        if (!selectedAddress || !paymentMethod) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Missing Information',
+            text: 'Please select both an address and a payment method before proceeding.',
+          });
           return;
         }
 
+        const selectedAddressId = selectedAddress.value;
+        const paymentMethodValue = paymentMethod.value;
+        const totalAmount = document.getElementsByClassName('subTotal')[0].value;
 
-
-        console.log(selectedAddressId);
-        console.log(paymentMethod);
-        console.log(totalAmount);
-
-        var dataToSend = {
+        const dataToSend = {
           selectedAddressId: selectedAddressId,
-          paymentMethod: paymentMethod,
+          paymentMethod: paymentMethodValue,
           totalAmount: totalAmount
         };
 
@@ -439,8 +460,8 @@
                 window.location.href = "/order";
               }, 2000);
             }
-            else if (response.success == false) {
-              razorpayPayment(response.razorpayOrder, dataToSend);
+            else if (response.razorpay) {
+              razorpayPayment(response.razorpayOrder, dataToSend, response.key);
             }
           },
           error: function (error) {
@@ -451,10 +472,10 @@
 
 
 
-      function razorpayPayment(order, dataToSend) {
+      function razorpayPayment(order, dataToSend, key) {
         var options = {
-          key: "rzp_test_hJV1rnkg9P9IlZ",
-          amount: "30000",
+          key: key,
+          amount: order.amount,
           currency: "INR",
           name: "Acme Corp",
           description: "Test Transaction",
@@ -505,14 +526,20 @@
           },
           success: (response) => {
             if (response.status) {
-              console.log("statud vomr as tyr");
-              window.location.href = "/order";
+              console.log("status comes as true");
+              window.location.href = "/order";  // ✅ This redirects
             } else {
-              console.log("its else case");
+              console.log("it's else case");
+              Swal.fire("Payment verification failed", "", "error");
             }
           },
+          error: (error) => {
+            console.error("Verification error:", error);
+            Swal.fire("Server error", "Could not verify payment", "error");
+          }
         });
       }
+
 
 
     </script>
@@ -532,53 +559,53 @@
     </script>
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 
     <!--remove coupon -->
     <script>
-      document.getElementById("removeCouponBtn").addEventListener("click", function (event) {
-        event.preventDefault()
-        Swal.fire({
-          title: 'Are you sure?',
-          text: 'This action cannot be undone!',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Yes, remove the coupon',
-          cancelButtonText: 'Cancel'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // If user confirms, proceed with coupon removal
-            fetch('/removeCoupon', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            })
-              .then(response => {
-                response.json()
-                console.log('lamlmalmalmlaml');
-                window.location.reload()
-              })
-              .then(data => {
-                console.log('lololol');
-                window.location.reload()
-                if (data.success) {
-                  // window.location.href= window.location.href
-                  // $('#refreshId').load(location.href + ' #refreshId');
-                } else {
-                  alert('Failed to remove the coupon.');
-                }
-              })
-              .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while removing the coupon.');
-              });
-          }
+      const removeBtn = document.getElementById("removeCouponBtn");
+      if (removeBtn) {
+        removeBtn.addEventListener("click", function (event) {
+          event.preventDefault()
+          Swal.fire({
+            title: 'Are you sure?',
+            text: 'This action cannot be undone!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, remove the coupon',
+            cancelButtonText: 'Cancel'
+          }).
+            then((result) => {
+              if (result.isConfirmed) {
+                fetch('/removeCoupon', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                })
+
+                  .then(response => response.json())
+                  .then(data => {
+                    if (data.success) {
+                      Swal.fire('Coupon removed!', '', 'success').then(() => {
+                        window.location.reload();
+                      });
+                    } else {
+                      Swal.fire('Failed to remove the coupon.', '', 'error');
+                    }
+                  })
+                  .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('An error occurred while removing the coupon.', '', 'error');
+                  });
+              }
+
+            });
         });
-      });
+      }
 
 
     </script>

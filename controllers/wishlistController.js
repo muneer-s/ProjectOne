@@ -2,8 +2,6 @@ const User = require("../models/userModel");
 const products = require("../models/addproductModel");
 const path = require("path");
 const session = require("express-session");
-const Cart = require("../models/cartModel");
-const mongoose = require("mongoose");
 const wishlist = require("../models/wishlistModel");
 
 //load wishlist page
@@ -15,16 +13,18 @@ const loadWishlist = async (req, res) => {
       const user = await User.findOne({ _id: userData._id });
 
       const wishlistData = await wishlist
-        .findOne({userId:userId})
+        .findOne({ userId: userId })
         .populate({ path: "products.productId", model: "product" })
         .populate("userId");
 
       res.render("./users/wishlist", { user, wishlistData });
     } else {
-      res.render("./users/login");
+      res.render("./users/login", { blocked: false, messages: req.flash() });
     }
   } catch (error) {
     console.log("wishlist catch error founded " + error.message);
+    res.status(500).json({ error: "Internal server error" });
+
   }
 };
 
@@ -56,7 +56,7 @@ const addToWishlist = async (req, res) => {
 
     res.redirect(`/singleProductPage/${queryId}`);
   } catch (error) {
-    console.error("Error adding product to wishlist:", error);
+    console.log("Error adding product to wishlist:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -67,15 +67,14 @@ const deleteProductFromWishlist = async (req, res) => {
   const query = req.query.id;
 
   try {
-    const deleteWishlist = await wishlist.updateOne(
+    await wishlist.updateOne(
       { userId: userId },
       { $pull: { products: { productId: query } } }
     );
 
     res.redirect("/wishlist");
   } catch (error) {
-    console.error("Error deleting wishlist item:", error);
-
+    console.log("Error deleting wishlist item:", error);
     res.status(500).send("Error deleting wishlist item");
   }
 };
