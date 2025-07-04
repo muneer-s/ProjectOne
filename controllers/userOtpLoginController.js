@@ -4,7 +4,7 @@ const OTPdb = require("../models/otpmodel");
 const nodemailer = require("nodemailer");
 const session = require("express-session");
 const flash = require("connect-flash");
-
+const STATUS_CODES = require("../utils/statusCodes");
 //otp page load
 const otpload = (req, res) => {
   const { email } = req.query;
@@ -30,9 +30,7 @@ const otpLogin = async (req, res) => {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
-
       secure: false,
-
       requireTLS: true,
       auth: {
         user: "muni0209s@gmail.com",
@@ -67,7 +65,9 @@ const otpLogin = async (req, res) => {
     res.json({ message: "success" });
   } catch (error) {
     console.log(error);
-    res.status(500).send("Internal Server Error");
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send("Internal Server Error");
   }
 };
 
@@ -89,8 +89,7 @@ const otpLoginLoad = async (req, res) => {
 
       const dbOtpHash = existingOtpData.hashedOTP;
 
-      const isOtpMatch = await bcrypt.compare(enteredOtp.toString(), dbOtpHash);
-      console.log("newhased ", enteredOtp, "oldHashed ", isOtpMatch);
+      const isOtpMatch = bcrypt.compare(enteredOtp.toString(), dbOtpHash);
 
       const existingUser = await User.findOne({ email: id });
 
@@ -104,7 +103,9 @@ const otpLoginLoad = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, error: "Internal Server Error" });
   }
 };
 

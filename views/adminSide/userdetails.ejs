@@ -1,152 +1,230 @@
+<%- include("../adminLayout/adminHeader") %>
 
-<%-include("../adminLayout/adminHeader")    %>
-
-
-
-
-<section class="content-main">
-    <div class="content-header">
-        <div>
-            <h2 class="content-title card-title">Users list</h2>
-        </div> 
-    </div>
-    <div class="card mb-4">
-        <header class="card-header">
-            <div class="row gx-3">
-                <div class="col-lg-4 col-md-6 me-auto">
-                    <input type="text" id="userNameSearchInput" placeholder="Search by Name..." class="form-control" />
-                </div>
-            </div>
-        </header>
-        <!-- card-header end// -->
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Sl no</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Phone</th>
-                            <th scope="col">Status</th>
-                            <th scope="col" class="text-end">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-  
-
-                    <% for(var i=0;i<adminSideUserData.length;i++){ %>
-                        <tr>
-                            <td><%-i+1 %></td>
-                            <td><b><%-adminSideUserData[i].name %></b></td>
-                            <td><%-adminSideUserData[i].email %></td>
-                            <td><%-adminSideUserData[i].mobile %></td>
-                            <td><%-adminSideUserData[i].is_blocked %></td>
-                        
-                            
-
-                            <td class="text-end">
-                                <% if (adminSideUserData[i].is_blocked) { %>
-                                    <a href="" data-user-id="<%- adminSideUserData[i]._id %>" id="unblock" class="btn btn-md btn-unblock rounded font-sm btn-unblock">Unblock</a>
-                                <% } else { %>
-                                    <a href="" data-user-id="<%- adminSideUserData[i]._id %>" id="block" class="btn btn-md btn-block rounded font-sm btn-block">Block</a>
-                                <% } %>
-                            </td>
-                    </tr>
-                     
-                        <% } %>
-      
-                    </tbody>
-                </table>
-                <!-- table-responsive.// -->
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Users list</h2>
             </div>
         </div>
-        <!-- card-body end// -->
-    </div>
-    <!-- card end// -->
-    
-</section>
+        <div class="card mb-4">
+            <header class="card-header">
+                <div class="row gx-3">
+                    <div class="col-lg-4 col-md-6 me-auto">
+                        <input type="text" id="userNameSearchInput" placeholder="Search by Name..."
+                            class="form-control" />
+                    </div>
+                </div>
+            </header>
+            <!-- card-header end// -->
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Sl no</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Status</th>
+                                <th scope="col" class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('loaded');
 
-        const blockButtons = document.querySelectorAll('.btn-block');
-        const unblockButtons = document.querySelectorAll('.btn-unblock');
 
-        blockButtons.forEach(function(button) {
-            button.addEventListener('click', function() {
-                console.log('block clicked');
-                handleButtonClick(button, true);
+                            <% for(var i=0;i<adminSideUserData.length;i++){ %>
+                                <tr>
+                                    <td><%-i+1 %></td>
+                                    <td><b><%-adminSideUserData[i].name %></b></td>
+                                    <td><%-adminSideUserData[i].email %></td>
+                                    <td><%-adminSideUserData[i].mobile %></td>
+                                    <td><%-adminSideUserData[i].is_blocked %></td>
+
+                                    <td class="text-end">
+                                        <% if (adminSideUserData[i].is_blocked) { %>
+
+                                            <!-- <button type="button" data-user-id="<%- adminSideUserData[i]._id %>"
+                                                id="unblock" class="btn btn-unblock">Unblock</button> -->
+
+
+
+                                            <button type="button" data-user-id="<%- adminSideUserData[i]._id %>"
+                                                class="btn btn-success btn-unblock">Unblock</button>
+
+
+
+                                            <% } else { %>
+
+                                                <!-- <button type="button" data-user-id="<%- adminSideUserData[i]._id %>"
+                                                    id="block" class="btn btn-block">Block</button> -->
+                                                <button type="button" data-user-id="<%- adminSideUserData[i]._id %>"
+                                                    class="btn btn-danger btn-block">Block</button>
+
+                                                <% } %>
+                                    </td>
+                                </tr>
+
+                                <% } %>
+
+                        </tbody>
+                    </table>
+                    <!-- table-responsive.// -->
+                </div>
+            </div>
+            <!-- card-body end// -->
+        </div>
+        <!-- card end// -->
+
+    </section>
+    <%- include("../adminLayout/adminFooter") %>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const table = document.querySelector('table');
+
+                table.addEventListener('click', function (event) {
+                    const target = event.target;
+
+                    if (target.classList.contains('btn-block') || target.classList.contains('btn-unblock')) {
+                        event.preventDefault();
+
+                        const isBlocked = target.classList.contains('btn-block');
+                        const userId = target.getAttribute('data-user-id');
+
+                        fetch(isBlocked ? '/blockUserStatus' : '/unblockUserStatus', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ userId }),
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    const row = target.closest('tr');
+                                    const statusCell = row.querySelector('td:nth-child(5)');
+
+                                    //  Update status cell
+                                    statusCell.textContent = isBlocked ? 'true' : 'false';
+
+                                    //  Update button label, class, and event handler
+                                    target.textContent = isBlocked ? 'Unblock' : 'Block';
+                                    target.classList.toggle('btn-block');
+                                    target.classList.toggle('btn-unblock');
+
+                                    //  Toggle Bootstrap color
+                                    target.classList.toggle('btn-danger');
+                                    target.classList.toggle('btn-success');
+                                } else {
+                                    alert('Failed to update user status.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('Something went wrong.');
+                            });
+                    }
+                });
             });
-        });
+        </script>
 
-        unblockButtons.forEach(function(button) {
-            button.addEventListener('click', function() {
-                console.log('unblock clicked');
-                handleButtonClick(button, false);
-            });
-        });
+        <!-- 
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
 
-        function handleButtonClick(button, isBlocked) {
-            console.log(isBlocked);
-            const userId = button.getAttribute('data-user-id');
-            console.log(userId);
+                const blockButtons = document.querySelectorAll('.btn-block');
+                const unblockButtons = document.querySelectorAll('.btn-unblock');
 
-            fetch(isBlocked ? '/blockUserStatus' : '/unblockUserStatus', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    userId: userId,
-                    isBlocked: isBlocked,
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data) {
-                    // Toggle button class for styling
-                    button.classList.toggle('btn-unmuted');
-                    button.classList.toggle('btn-block');
-                    const action = isBlocked ? 'blocked' : 'unblocked';
-                    console.log(`User ${action} successfully!`);
-                    alert(`User ${action} successfully!`);
-                } else {
-                    const action = isBlocked ? 'block' : 'unblock';
-                    console.log(`Failed to ${action} user. Please try again.`);
-                    alert(`Failed to ${action} user. Please try again.`);
+                blockButtons.forEach(function (button) {
+                    button.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        console.log('block clicked');
+                        handleButtonClick(button, true);
+                    });
+                });
+
+                unblockButtons.forEach(function (button) {
+                    button.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        console.log('unblock clicked');
+                        handleButtonClick(button, false);
+                    });
+                });
+
+                function handleButtonClick(button, isBlocked) {
+                    const userId = button.getAttribute('data-user-id');
+
+                    fetch(isBlocked ? '/blockUserStatus' : '/unblockUserStatus', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            userId: userId,
+                            isBlocked: isBlocked,
+                        }),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(111, data)
+                            if (data.success) {
+
+                                // ✅ Update button and status cell in the same row
+                                const row = button.closest('tr');
+
+                                // Update the status cell
+                                const statusCell = row.querySelector('td:nth-child(5)');
+                                statusCell.textContent = isBlocked ? 'false' : 'true'; // Since you're toggling
+
+                                // Update the button
+                                button.textContent = isBlocked ? 'Block' : 'Unblock';
+                                button.classList.remove(isBlocked ? 'btn-block' : 'btn-unblock');
+                                button.classList.add(isBlocked ? 'btn-unblock' : 'btn-block');
+
+                                // Update the click handler by cloning the button and replacing it
+                                const newButton = button.cloneNode(true);
+                                newButton.addEventListener('click', function () {
+                                    handleButtonClick(newButton, !isBlocked); // Toggle next state
+                                });
+                                button.replaceWith(newButton);
+
+                                // Toggle button class for styling
+                                // button.classList.toggle('btn-unmuted');
+                                // button.classList.toggle('btn-block');
+                                // const action = isBlocked ? 'blocked' : 'unblocked';
+                                // console.log(`User ${action} successfully!`);
+                                // alert(`User ${action} successfully!`);
+
+                            } else {
+                                alert('Failed to update status. Please try again.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error occurred. Please try again.');
+                        });
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                location.reload()
             });
-        }
-    });
-</script>
+        </script> -->
 
-<!--search by name-->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const userNameSearchInput = document.getElementById('userNameSearchInput');
-        const tableRows = document.querySelectorAll('.table tbody tr');
+        <!--search by name-->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const userNameSearchInput = document.getElementById('userNameSearchInput');
+                const tableRows = document.querySelectorAll('.table tbody tr');
 
-        userNameSearchInput.addEventListener('keyup', function () {
-            const searchText = userNameSearchInput.value.trim().toLowerCase();
+                userNameSearchInput.addEventListener('keyup', function () {
+                    const searchText = userNameSearchInput.value.trim().toLowerCase();
 
-            tableRows.forEach(function (row) {
-                const userName = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase(); // Assuming name is the second column
+                    tableRows.forEach(function (row) {
+                        const userName = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase(); // Assuming name is the second column
 
-                if (userName.includes(searchText) || searchText === '') {
-                    row.style.display = 'table-row';
-                } else {
-                    row.style.display = 'none';
-                }
+                        if (userName.includes(searchText) || searchText === '') {
+                            row.style.display = 'table-row';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
             });
-        });
-    });
-</script>
-<%-include("../adminLayout/adminFooter")    %>
-
+        </script>

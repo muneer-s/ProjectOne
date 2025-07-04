@@ -5,36 +5,32 @@ const nodemailer = require("nodemailer");
 const product = require("../models/addproductModel");
 const Category = require("../models/categories");
 const session = require("express-session");
-const toastr = require("toastr");
-// const flash = require("connect-flash");
-const validateMongodbId = require("../utils/validationMongodb");
-const Offer = require("../models/offerModel");
-
+const STATUS_CODES = require("../utils/statusCodes");
 //user registration
+
 const insertUser = async (req, res) => {
   try {
     const { name, password, email, mobile, confirmpassword } = req.body;
 
     if (!name || !email || !mobile || !password || !confirmpassword) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ success: false, message: "All fields are required" });
     }
 
     if (password !== confirmpassword) {
-      return res.status(400).json({ message: "Passwords do not match" });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ success: false, message: "Passwords do not match" });
     }
 
     const existingUser = await User.findOne({ email });
+
     if (existingUser) {
       return res
-        .status(400)
-        .json({ message: "Email address is already in use" });
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ success: false, message: "Email address is already in use" });
     }
-
-    // if (existingUser) {
-    //   return res.render("./users/registration", {
-    //     errorMessage: "Email address is already in use.",
-    //   });
-    // }
 
     const spassword = await securePassword(password);
 
@@ -47,31 +43,28 @@ const insertUser = async (req, res) => {
     });
 
     const userData = await user.save();
-    console.log(userData);
 
     req.session.user_email = userData.email;
-    console.log(req.session.user_email);
 
     if (userData) {
       await OTPdb.deleteMany({});
       await sendVerifyMail(name, email, userData._id);
 
-      return res.status(200).json({
+      return res.status(STATUS_CODES.CREATED).json({
+        success: true,
         message: "User registered successfully",
-        redirectUrl: `/otp?id=${userData._id}`, // send the redirect URL to the client
+        redirectUrl: `/otp?id=${userData._id}`,
       });
-
-      // res.redirect(`/otp?id=${userData._id}`);
     } else {
-      return res.status(500).json({ message: "User registration failed" });
-
-      // return res.render("./users/registration", {
-      //   errorMessage: "Your registration has been failed!!",
-      // });
+      return res
+        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+        .json({ success: false, message: "User registration failed" });
     }
   } catch (error) {
-    console.error("Registration error:", error.message);
-    return res.status(500).json({ message: "Internal Server Error" });
+    console.error("Registration error:", error);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -81,12 +74,13 @@ const securePassword = async (password) => {
     const passwordHash = await bcrypt.hash(password, 10);
     return passwordHash;
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
+    throw new Error("Error while securing the password");
   }
 };
 
 //for send  mail (otp)  to verify
-const sendVerifyMail = async (name, email, user_id) => {
+const sendVerifyMail = async (email, user_id) => {
   try {
     const generateOTP = () => {
       return Math.floor(10000 + Math.random() * 90000);
@@ -129,6 +123,9 @@ const sendVerifyMail = async (name, email, user_id) => {
     });
   } catch (error) {
     console.log(error.message);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "Error while sending mail" });
   }
 };
 
@@ -137,18 +134,17 @@ const verifyOtp = async (req, res) => {
   try {
     const id = req.query.id;
     const existingOtpData = await OTPdb.findOne({ user_id: id });
+
     if (!existingOtpData) {
-      res.status(404).json({ error: "User ID not found" });
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ success: false, message: "User ID not found" });
     } else {
       const { a, b, c, d, e } = req.body;
-
       const enteredOtp = a + b + c + d + e;
 
       const dbOtpHash = existingOtpData.hashedOTP;
-
-      const isOtpMatch = await bcrypt.compare(enteredOtp.toString(), dbOtpHash);
-
-      console.log("newhased", enteredOtp, "oldHashed", dbOtpHash);
+      const isOtpMatch = bcrypt.compare(enteredOtp.toString(), dbOtpHash);
 
       if (isOtpMatch) {
         const updateInfo = await User.updateOne(
@@ -167,7 +163,9 @@ const verifyOtp = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -177,16 +175,18 @@ const loginload = async (req, res) => {
     if (req.session.user_id) {
       res.redirect("/");
     } else {
-      // res.render("./users/login");
-      const isBlocked = req.query.is_blocked === "true"; // Read query param
+      const isBlocked = req.query.is_blocked === "true";
       res.render("./users/login", {
-        messages: req.flash(), // If you're using flash messages
+        messages: req.flash(),
         blocked: isBlocked, // Pass to EJS
       });
     }
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send("Server error");
+    console.log(error);
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Internal server error while loginload",
+    });
   }
 };
 
@@ -208,7 +208,11 @@ const homeload = async (req, res) => {
 
     res.render("./users/home", { user: userData, Products: products });
   } catch (error) {
-    console.log(error.message + "error from user home page");
+    console.log(error);
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Internal server error while homeload",
+    });
   }
 };
 
@@ -239,6 +243,10 @@ const resendOtp = async (req, res) => {
     res.redirect(`/otp?id=${userData._id}`);
   } catch (error) {
     console.log(error);
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Internal server error while resendotp",
+    });
   }
 };
 
@@ -246,31 +254,25 @@ const resendOtp = async (req, res) => {
 const userlogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(1, email);
-    console.log(2, password);
-
     const emailRegex = /\S+@\S+\.\S+/;
 
     if (!emailRegex.test(email)) {
-      console.log("error-Invalid email format ");
       return res
-        .status(400)
+        .status(STATUS_CODES.BAD_REQUEST)
         .json({ success: false, message: "Invalid email format" });
     }
 
     if (!password) {
-      console.log("Password cannot be empty");
       return res
-        .status(400)
+        .status(STATUS_CODES.BAD_REQUEST)
         .json({ success: false, message: "Password is required" });
     }
 
     const existingUser = await User.findOne({ email });
-    console.log(11, existingUser);
 
     if (!existingUser) {
       return res
-        .status(404)
+        .status(STATUS_CODES.NOT_FOUND)
         .json({ success: false, message: "User not found with this email" });
     }
 
@@ -281,33 +283,22 @@ const userlogin = async (req, res) => {
 
     if (!isPasswordMatch) {
       return res
-        .status(401)
+        .status(STATUS_CODES.UNAUTHORIZED)
         .json({ success: false, message: "Invalid password" });
     }
     if (existingUser.is_blocked) {
       return res
-        .status(403)
+        .status(STATUS_CODES.FORBIDDEN)
         .json({ success: false, message: "User is blocked. Contact support." });
     }
 
     req.session.user_id = existingUser._id;
-    return res.status(200).json({ success: true });
-
-    // if (isPasswordMatch) {
-    //   if (existingUser.is_blocked === true) {
-    //     req.flash("blkerror", "User is blocked cannot login ");
-    //     return res.redirect("/login");
-    //   } else {
-    //     req.session.user_id = existingUser._id;
-    //     return res.redirect("/");
-    //   }
-    // } else {
-    //   req.flash("pwerror", "authentication failed   !!!!  Invalid password");
-    //   return res.redirect("/login");
-    // }
+    return res.status(STATUS_CODES.OK).json({ success: true });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: "Server error" });
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "Server error while userlogin" });
   }
 };
 
@@ -367,7 +358,13 @@ const loadProductPage = async (req, res) => {
       searchQuery: searchQuery,
     });
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({
+        success: false,
+        message: "internal server errror while loadproductpage",
+      });
   }
 };
 
@@ -384,25 +381,26 @@ const loadSingleProductPage = async (req, res) => {
 
     res.render("./users/singleProduct", { products, user: userData });
   } catch (error) {
-    res.status(404).render("users/404");
+    res.status(STATUS_CODES.NOT_FOUND).render("users/404");
   }
 };
 
-//  user logout
+// user logout
 const logOut = async (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.log("Error destroying session: ", err);
-    } else {
-      console.log("Session destroyed");
-      res.redirect("/");
-    }
-  });
+  try {
+    delete req.session.user_id;
+    res.redirect("/");
+  } catch (err) {
+    console.log("Logout error:", err);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "internal server error while logout" });
+  }
 };
 
 // filter
 const filter = async (req, res) => {
-  const category = await req.query.az;
+  await req.query.az;
 };
 
 const search = async (req, res) => {
@@ -410,7 +408,7 @@ const search = async (req, res) => {
     await loadProductPage(req, res);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Server Error");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send("Server Error");
   }
 };
 

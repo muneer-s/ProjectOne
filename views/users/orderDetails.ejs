@@ -1,322 +1,334 @@
-<%- include("../layouts/header")    %>
-<link href="/assets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+<%- include("../layouts/header") %>
+  <link href="/assets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
 
-<!-- Start Banner Area -->
-<section class="banner-area organic-breadcrumb">
+  <!-- Start Banner Area -->
+  <section class="banner-area organic-breadcrumb">
     <div class="container">
-        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
-            <div class="col-first">
-                <h1>Orders</h1>
-                <nav class="d-flex align-items-center">
-                    <a href="">Home<span class="lnr lnr-arrow-right"></span></a>
-                    <a href="">Orders</a>
-                </nav>
-            </div>
+      <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+        <div class="col-first">
+          <h1>Orders</h1>
+          <nav class="d-flex align-items-center">
+            <a href="">Home<span class="lnr lnr-arrow-right"></span></a>
+            <a href="">Orders</a>
+          </nav>
         </div>
+      </div>
     </div>
-</section>
-<!-- End Banner Area -->
+  </section>
+  <!-- End Banner Area -->
 
-<!--================Order Details Area =================-->
-<section class="order_details section_gap">
+  <!--================Order Details Area =================-->
+  <section class="order_details section_gap">
     <div class="container">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>#ID</th>
-                        <th scope="col">Total</th>
-                        <th scope="col">Order Status</th>
-                        <th scope="col">Date</th>
-                        <th scope="col" class="text-end">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% orderdetails.reverse().forEach((item)=>{ %>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>#ID</th>
+              <th scope="col">Total</th>
+              <th scope="col">Order Status</th>
+              <th scope="col">Date</th>
+              <th scope="col" class="text-end">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% orderdetails.reverse().forEach((item)=>{ %>
 
-                    <tr>            
-                        <input type="hidden" class="orderIdInput" value="<%= item._id %>">
+              <tr>
+                <input type="hidden" class="orderIdInput" value="<%= item._id %>">
 
-                        <td><%= item._id %></td>
-                        <td><%= item.totalPrice %></td>
+                <td>
+                  <%= item._id %>
+                </td>
+                <td>
+                  <%= item.totalPrice %>
+                </td>
 
-                        <td><span class="badge rounded-pill alert-warning"><%= item.orderStatus %></span></td>
-                        <td><%= item.createdAt.toLocaleDateString() %></td>
-                        <td class="text-end">
+                <td><span class="badge rounded-pill alert-warning">
+                    <%= item.orderStatus %>
+                  </span></td>
+                <td>
+                  <%= item.createdAt.toLocaleDateString() %>
+                </td>
+                <td class="text-end">
 
-                            <a href="/viewItems/<%= item._id %>" class="btn btn-md rounded font-sm">Detail</a>
-                        
-                        </td>
-                        <td>
-                            <% if (item.orderStatus === "Order Placed") { %>
-                                <button class="btn btn-md rounded font-sm cancel-btn">Cancel</button>
-                            <% } else if(item.orderStatus === "Delivered" ){%>
-                                <button class="btn btn-md rounded font-sm return-btn">Return</button>
-                            <% }else if(item.orderStatus === "Pending"){ %>
-                                <button class="btn btn-md rounded font-sm retry-btn">Retry Payment</button>
-                                <% } %>
-                        </td>
-                        
-                    </tr>
-                   <% }) %>
-                    
-                </tbody>
-            </table>
-        </div>        
-        
+                  <a href="/viewItems/<%= item._id %>" class="btn btn-md rounded font-sm">Detail</a>
+
+                </td>
+                <td>
+                  <% if (item.orderStatus==="Order Placed" ) { %>
+                    <button class="btn btn-md rounded font-sm cancel-btn">Cancel</button>
+                    <% } else if(item.orderStatus==="Delivered" ){%>
+                      <button class="btn btn-md rounded font-sm return-btn">Return</button>
+                      <% }else if(item.orderStatus==="Pending" ){ %>
+                        <button class="btn btn-md rounded font-sm retry-btn">Retry Payment</button>
+                        <% } %>
+                </td>
+
+              </tr>
+              <% }) %>
+
+          </tbody>
+        </table>
+      </div>
+
     </div>
-</section>
-<%- include("../layouts/footer")    %>
+  </section>
+  <%- include("../layouts/footer") %>
 
-<!--================End Order Details Area =================--><script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
-<script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
-<script src="/assets/js/vendors/select2.min.js"></script>
-<script src="/assets/js/vendors/perfect-scrollbar.js"></script>
-<script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
-<script src="/assets/js/vendors/chart.js"></script>
-<!-- Main Script -->
-<script src="/assets/js/main.js?v=1.1" type="text/javascript"></script>
-<script src="/assets/js/custom-chart.js" type="text/javascript"></script>
-<!--razor pay retry-->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <!--================End Order Details Area =================-->
+    <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/vendors/select2.min.js"></script>
+    <script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <script src="/assets/js/vendors/chart.js"></script>
+    <!-- Main Script -->
+    <script src="/assets/js/main.js?v=1.1" type="text/javascript"></script>
+    <script src="/assets/js/custom-chart.js" type="text/javascript"></script>
+    <!--razor pay retry-->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.retry-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const orderId = this.closest('tr').querySelector('.orderIdInput').value;
-                retryPayment(orderId);
-            });
+          button.addEventListener('click', function () {
+            const orderId = this.closest('tr').querySelector('.orderIdInput').value;
+            retryPayment(orderId);
+          });
         });
-    });
+      });
 
-    function retryPayment(orderId) {
+      function retryPayment(orderId) {
         fetch(`/retryPayment`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ orderId: orderId })
-        }).then(response=>response.json())
-        .then(data => {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ orderId: orderId })
+        }).then(response => response.json())
+          .then(data => {
             console.log(data);
             if (data.success) {
-                var options = {
-      key: "rzp_test_hJV1rnkg9P9IlZ", 
-      amount: data.razorpayOrder.amount, 
-      currency: "INR",
-      name: "Acme Corp",
-      description: "Test Transaction",
-      image: "https://example.com/your_logo",
-      order_id: data.razorpayOrder.id, 
-      handler: function (response) {
-        // alert(response.razorpay_payment_id);
-        // alert(response.razorpay_order_id);
-        // alert(response.razorpay_signature)
-        
-        paymentRetry(response, orderId);
-      },
-      prefill: {
-        name: "Gaurav Kumar",
-        email: "gaurav.kumar@example.com",
-        contact: "9000090000",
-      },
-      notes: {
-        address: "Razorpay Corporate Office",
-      },
-      theme: {
-        color: "#F9D9BE",
-      },
-    };
-    var rzp1 = new Razorpay(options);
-
-    
-   
-    rzp1.open();
-                console.log(data);
-                console.log('Payment retry initiated successfully');
+              var options = {
+                key: data.key,
+                amount: data.razorpayOrder.amount,
+                currency: "INR",
+                name: "Acme Corp",
+                description: "Test Transaction",
+                image: "https://example.com/your_logo",
+                order_id: data.razorpayOrder.id,
+                handler: function (response) {
+                  paymentRetry(response, orderId);
+                },
+                prefill: {
+                  name: "Gaurav Kumar",
+                  email: "gaurav.kumar@example.com",
+                  contact: "9000090000",
+                },
+                notes: {
+                  address: "Razorpay Corporate Office",
+                },
+                theme: {
+                  color: "#F9D9BE",
+                },
+              };
+              var rzp1 = new Razorpay(options);
+              rzp1.open();
+              console.log(data);
+              console.log('Payment retry initiated successfully');
             } else {
-                console.error('Failed to initiate payment retry');
+              console.error('Failed to initiate payment retry');
             }
-        })
-        .catch(error => {
+          })
+          .catch(error => {
             console.error('Error:', error);
+          });
+      }
+
+
+
+      function paymentRetry(response, order) {
+        console.log("verifyPayment called");
+        $.ajax({
+          url: "/retry-callback", //verifyPayment
+          method: "POST",
+          data: {
+            response,
+            order,
+          },
+          success: (response) => {
+             if (response.status) {
+              console.log("status comes as true");
+              window.location.href = "/order";  // ✅ This redirects
+            } else {
+              console.log("it's else case");
+              Swal.fire("Payment verification failed", "", "error");
+            }
+          },
+           error: (error) => {
+            console.error("Verification error:", error);
+            Swal.fire("Server error", "Could not verify payment", "error");
+          }
         });
-    }
+      }
 
-
-
-    function paymentRetry(response, order) {
-    console.log("verifyPayment called");
-    $.ajax({
-      url: "/retry-callback",
-      method: "POST",
-      data: {
-        response,
-        order,
-      },
-      success: (response) => {
-        if (response.status) {
-          console.log("statud vomr as tyr");
-          window.location.href = "/order";
-        } else {
-          console.log("its else case");
-        }
-      },
-    });
-  }
-
-</script>
+    </script>
 
 
 
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.cancel-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                updateOrderStatus(this.closest('tr').querySelector('.orderIdInput').value, 'Cancel');
-            });
+          button.addEventListener('click', function () {
+            updateOrderStatus(this.closest('tr').querySelector('.orderIdInput').value, 'Cancel');
+          });
         });
 
         document.querySelectorAll('.return-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                updateOrderStatus(this.closest('tr').querySelector('.orderIdInput').value, 'Return');
-            });
+          button.addEventListener('click', function () {
+            updateOrderStatus(this.closest('tr').querySelector('.orderIdInput').value, 'Return');
+          });
         });
-    });
+      });
 
-    function updateOrderStatus(orderId, status) {
+      function updateOrderStatus(orderId, status) {
         fetch(`/updateOrderStatus/${orderId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status: status })
+        })
+          .then(response => {
+            if (response.ok) {
+              console.log('Status updated successfully');
+              window.location.reload();
+            } else {
+              console.error('Failed to update status');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      }
+    </script>
+
+
+
+    <script>
+      async function order(event) {
+        event.preventDefault();
+        const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked').value;
+        const paymentMethod = document.querySelector('input[name="selector"]:checked').value;
+        // const totalAmount = document.querySelector('input[name="subTotal"]:checked').value
+        const totalAmount = document.getElementsByClassName('subTotal')[0].value;
+
+        console.log(selectedAddressId);
+        console.log(paymentMethod);
+        console.log(totalAmount);
+
+        var dataToSend = {
+          selectedAddressId: selectedAddressId,
+          paymentMethod: paymentMethod,
+          totalAmount: totalAmount
+        };
+
+        $.ajax({
+          url: "/placeOrder",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify(dataToSend),
+          success: function (response) {
+            if (response.codSuccess == true || response.walletSuccess === true) {
+              Swal.fire({
+                title: "",
+                text: "Order placed successfully",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 2000, // Set the delay in milliseconds
+              });
+              setTimeout(() => {
+                window.location.href = "/order";
+              }, 2000);
+            }
+            else if (response.razorpay) {
+              razorpayPayment(response.razorpayOrder, dataToSend, response.key);
+
+            }
+          },
+          error: function (error) {
+            console.error("Fetch Error:", error);
+          },
+        });
+      }
+
+
+
+      function razorpayPayment(order, dataToSend, key) {
+        var options = {
+          key: key,
+          amount: order.amount,
+          currency: "INR",
+          name: "Acme Corp",
+          description: "Test Transaction",
+          image: "https://example.com/your_logo",
+          order_id: order.id,
+          handler: function (response) {
+
+            verifyPayment(response, order);
+          },
+          prefill: {
+            name: "Gaurav Kumar",
+            email: "gaurav.kumar@example.com",
+            contact: "9000090000",
+          },
+          notes: {
+            address: "Razorpay Corporate Office",
+          },
+          theme: {
+            color: "#F9D9BE",
+          },
+        };
+        var rzp1 = new Razorpay(options);
+
+
+        rzp1.on('payment.failed', function (response) {
+          alert("payment failed ")
+          fetch('/failedOrders', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+              'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ status: status })
+            body: JSON.stringify({ dataToSend })
+          })
         })
-        .then(response => {
-            if (response.ok) {
-                console.log('Status updated successfully');
-                window.location.reload();
-            } else {
-                console.error('Failed to update status');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
-</script>
+        rzp1.open();
+      }
 
-
-
-<script>
-    async function order(event) {
-      event.preventDefault();
-      const selectedAddressId = document.querySelector(  'input[name="selectedAddress"]:checked').value;
-      const paymentMethod = document.querySelector('input[name="selector"]:checked').value;
-      // const totalAmount = document.querySelector('input[name="subTotal"]:checked').value
-      const totalAmount = document.getElementsByClassName('subTotal')[0].value;
-
-      console.log(selectedAddressId);
-      console.log(paymentMethod);
-      console.log(totalAmount);
-  
-      var dataToSend = {
-        selectedAddressId: selectedAddressId,
-        paymentMethod: paymentMethod,
-        totalAmount: totalAmount
-      };
-  
-      $.ajax({
-        url: "/placeOrder",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify(dataToSend),
-        success: function (response) {
-          if (response.codSuccess == true || response.walletSuccess === true) {
-            Swal.fire({
-              title: "",
-              text: "Order placed successfully",
-              icon: "success",
-              showConfirmButton: false,
-              timer: 2000, // Set the delay in milliseconds
-            });
-            setTimeout(() => {
-              window.location.href = "/order";
-            }, 2000);
-          }
-          else if (response.success == false) {
-            razorpayPayment(response.razorpayOrder,dataToSend);
-          }
-        },
-        error: function (error) {
-          console.error("Fetch Error:", error);
-        },
-      });
-    }
-  
-    
-  
-    function razorpayPayment(order,dataToSend) {
-      var options = {
-        key: "rzp_test_hJV1rnkg9P9IlZ", 
-        amount: "30000", 
-        currency: "INR",
-        name: "Acme Corp",
-        description: "Test Transaction",
-        image: "https://example.com/your_logo",
-        order_id: order.id, 
-        handler: function (response) {
-          // alert(response.razorpay_payment_id);
-          // alert(response.razorpay_order_id);
-          // alert(response.razorpay_signature)
-          verifyPayment(response, order);
-        },
-        prefill: {
-          name: "Gaurav Kumar",
-          email: "gaurav.kumar@example.com",
-          contact: "9000090000",
-        },
-        notes: {
-          address: "Razorpay Corporate Office",
-        },
-        theme: {
-          color: "#F9D9BE",
-        },
-      };
-      var rzp1 = new Razorpay(options);
-  
-      
-      rzp1.on('payment.failed',function(response){
-        alert("payment failed ")
-        fetch('/failedOrders',{
-          method:'POST',
-          headers:{
-            'Content-Type':'application/json'
+      function verifyPayment(response, order) {
+        console.log("verifyPayment called");
+        $.ajax({
+          url: "/verifyPayment",
+          method: "post",
+          data: {
+            response,
+            order,
           },
-          body:JSON.stringify({dataToSend})
-        })
-      })
-      rzp1.open();
-    }
-  
-    function verifyPayment(response, order) {
-      console.log("verifyPayment called");
-      $.ajax({
-        url: "/verifyPayment",
-        method: "post",
-        data: {
-          response,
-          order,
-        },
-        success: (response) => {
-          if (response.status) {
-            alert("order placed")
-          } else {
-            console.log("its else case");
+          success: (response) => {
+            if (response.status) {
+              console.log("status comes as true");
+              window.location.href = "/order";  // ✅ This redirects
+            } else {
+              console.log("it's else case");
+              Swal.fire("Payment verification failed", "", "error");
+            }
+          },
+          error: (error) => {
+            console.error("Verification error:", error);
+            Swal.fire("Server error", "Could not verify payment", "error");
           }
-        },
-      });
-    }
-  </script>
+        });
+      }
+    </script>

@@ -1,24 +1,15 @@
 const User = require("../models/userModel");
 const products = require("../models/addproductModel");
-const sharp = require("sharp");
-const path = require("path");
 const session = require("express-session");
-const flash = require("connect-flash");
 const Cart = require("../models/cartModel");
 const orderid = require("order-id")("key");
 const Order = require("../models/orderModel");
 const Razorpay = require("razorpay");
-const { Promise } = require("mongoose");
 const { success } = require("toastr");
 const Coupon = require("../models/couponModel");
 const Wallet = require("../models/walletModel");
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
 require("dotenv").config();
 const crypto = require("crypto");
-
-
 
 var instance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -57,28 +48,14 @@ const placeOrder = async (req, res) => {
     const paymentIntent = req.body.paymentMethod;
     const userId = req.session.user_id;
 
-    console.log(1, couponDiscount);
-    console.log(2, couponCode);
-    console.log(3, totalWithCoupon);
-
-    console.log(4, addressId);
-    console.log(5, paymentIntent);
-    console.log(6, userId);
-
     let cartData = await Cart.findOne({ userId: userId });
     const user = await User.findOne(
       { _id: userId },
       { address: { $elemMatch: { _id: addressId } } }
     );
 
-    console.log(7, cartData);
-    console.log(8, user);
-
     const address = user.address[0];
     const orderId = orderid.generate();
-
-    console.log(9, address);
-    console.log(10, orderId);
 
     let originalAmount = 0;
     if (cartData) {
@@ -86,8 +63,6 @@ const placeOrder = async (req, res) => {
         originalAmount = originalAmount + cartItem.total;
       });
     }
-
-    console.log(11, originalAmount);
 
     if (couponCode) {
       await Coupon.findOneAndUpdate(
@@ -104,14 +79,12 @@ const placeOrder = async (req, res) => {
       address: address,
       userId: userId,
     });
-    console.log(12, order);
 
     await order.save();
     req.session.order_id = order._id;
 
     const paymentMethod = req.body.paymentMethod;
 
-    console.log(13, paymentMethod);
 
     if (paymentMethod == "Cash on delivery") {
       console.log("payment cod aanuttooo");
@@ -259,8 +232,13 @@ const retryPayment = async (req, res) => {
     };
     req.session.oderData = order;
 
-    const ordeer = await instance.orders.create(options);
-    res.json({ success: true, razorpayOrder: ordeer });
+    const razorpayOrder = await instance.orders.create(options);
+    res.json({
+      success: true,
+      razorpay: true,
+      razorpayOrder,
+      key: process.env.RAZORPAY_KEY_ID,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Server error" });
@@ -274,20 +252,30 @@ const retryCallback = async (req, res) => {
     const response = req.body.response;
     const bodyOrder = req.body.order;
     const order = await Order.findOne({ _id: bodyOrder });
+    const secret = process.env.RAZORPAY_KEY_SECRET;
+    console.log(1,userId)
+    console.log(2,cart)
+    console.log(3,response)
+    console.log(4,bodyOrder)
+    console.log(5,order)
+    console.log(6,secret)
 
-    var crypto = require("crypto");
-    let hmac = crypto.createHmac("sha256", "Bcd9iqDRBd0iWJlO6C5GlsfD");
+     const hmac = crypto
+      .createHmac("sha256", secret)
+      .update(response.razorpay_order_id + "|" + response.razorpay_payment_id)
+      .digest("hex");
 
-    hmac.update(
-      response.razorpay_order_id + "|" + response.razorpay_payment_id
-    );
-    hmac = hmac.digest("hex");
+        console.log(7,hmac)
+    console.log(8,response.razorpay_signature)
+
 
     if (hmac == response.razorpay_signature) {
+      console.log(9999)
       order.orderStatus = "Order Placed";
       await order.save();
       res.json({ status: true });
     }
+
   } catch (error) {
     console.log("verify err ", error.message);
   }
@@ -365,14 +353,6 @@ const verifyPayment = async (req, res) => {
       .update(response.razorpay_order_id + "|" + response.razorpay_payment_id)
       .digest("hex");
 
-    // var crypto = require("crypto");
-    // let hmac = crypto.createHmac("sha256", "Bcd9iqDRBd0iWJlO6C5GlsfD");
-
-    // hmac.update(
-    //   response.razorpay_order_id + "|" + response.razorpay_payment_id
-    // );
-    // hmac = hmac.digest("hex");
-
     if (hmac == response.razorpay_signature) {
       await Order.updateOne(
         { _id: bodyOrder.receipt },
@@ -398,12 +378,10 @@ const verifyPayment = async (req, res) => {
     }
   } catch (error) {
     console.log("verify err ", error.message);
-    res
-      .status(500)
-      .json({
-        status: false,
-        message: "Server error during payment verification.",
-      });
+    res.status(500).json({
+      status: false,
+      message: "Server error during payment verification.",
+    });
   }
 };
 

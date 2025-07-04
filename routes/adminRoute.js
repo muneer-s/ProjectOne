@@ -13,26 +13,28 @@ const adminCouponController = require("../controllers/adminCouponController");
 const adminOfferController = require("../controllers/offerController");
 const adminSalesReportController = require("../controllers/adminSalesReport");
 
-// Admin home
-admin_route.get("/adminHome", isAdminLogin, adminController.adminLoadHome);
-// chart
-admin_route.post("/admin/chartData", adminController.getDetailsChart);
-
 // Admin login
 admin_route.get("/adminLogin", isAdminLogout, adminController.adminloadlogin);
 admin_route.post("/adminLogin", adminController.adminverify);
+
+// admin logout
 admin_route.get("/adminLogout", adminController.Adminlogout);
+
+// Admin home load
+admin_route.get("/adminHome", isAdminLogin, adminController.adminLoadHome);
+// chart
+admin_route.post("/admin/chartData",isAdminLogin, adminController.getDetailsChart);
 
 // Category management
 admin_route.get("/addCategory", isAdminLogin, adminController.loadCategory);
-admin_route.post("/addCategory", adminController.addCategory);
+admin_route.post("/addCategory",isAdminLogin, adminController.addCategory);
 // Category editing and deletion
 admin_route.get(
   "/editCategory/:id",
   isAdminLogin,
   adminController.editCategory
 );
-admin_route.post("/updateCategory/:id", adminController.updateCategory);
+admin_route.post("/updateCategory/:id",isAdminLogin, adminController.updateCategory);
 admin_route.get(
   "/deleteCategory/:id",
   isAdminLogin,
@@ -43,6 +45,7 @@ admin_route.get(
 admin_route.get("/addProduct", isAdminLogin, adminController.adminAddProduct);
 admin_route.post(
   "/addproduct",
+  isAdminLogin,
   upload.array("product_images", 4),
   adminController.addProduct
 );
@@ -58,21 +61,24 @@ admin_route.get(
 );
 admin_route.post(
   "/postEditProduct",
+  isAdminLogin,
   upload.array("product_images", 4),
   adminController.postEditProduct
 );
-admin_route.post("/deleteProductImage", adminController.deleteProductImage);
+admin_route.post("/deleteProductImage", isAdminLogin,adminController.deleteProductImage);
 
 //updating the product status
 admin_route.put(
   "/updateStatus/:productId",
+  isAdminLogin,
   adminController.updateProductStatus
 );
 
 // User management
 admin_route.get("/userDetails", isAdminLogin, adminController.userDetails);
-admin_route.post("/blockUserStatus", adminController.blockuser);
-admin_route.post("/unblockUserStatus", adminController.unBlockuser);
+
+admin_route.post("/blockUserStatus",isAdminLogin, adminController.blockuser);
+admin_route.post("/unblockUserStatus",isAdminLogin, adminController.unBlockuser);
 
 //order management
 admin_route.get("/orderList", isAdminLogin, adminOrderController.loadOrderList);
@@ -84,13 +90,14 @@ admin_route.get(
 //status change
 admin_route.post(
   "/adminUpdateOrderStatus/:orderId",
+  isAdminLogin,
   adminOrderController.updateOrderStatus
 );
 
 //loadcoupon page
 admin_route.get("/Coupon", isAdminLogin, adminCouponController.loadCouponPage);
 // save coupon
-admin_route.post("/couponSave", adminCouponController.saveCoupon);
+admin_route.post("/couponSave", isAdminLogin,adminCouponController.saveCoupon);
 admin_route.get("/couponList", isAdminLogin, adminCouponController.viewCoupon);
 admin_route.get(
   "/deleteCoupon",
@@ -100,7 +107,7 @@ admin_route.get(
 
 //offer
 admin_route.get("/addoffer", isAdminLogin, adminOfferController.loadOfferPage);
-admin_route.post("/saveOffer", adminOfferController.saveOffer);
+admin_route.post("/saveOffer",isAdminLogin, adminOfferController.saveOffer);
 admin_route.get("/viewOffer", isAdminLogin, adminOfferController.viewOffer);
 admin_route.get("/deleteOffer", isAdminLogin, adminOfferController.deleteOffer);
 
@@ -119,16 +126,19 @@ admin_route.get(
 );
 admin_route.post(
   "/applyOfferForCategory",
+  isAdminLogin,
   adminController.applyOfferForCategory
 );
 //delete offer from product
 admin_route.delete(
   "/deleteOfferFromProduct",
+  isAdminLogin,
   adminController.deleteOfferFromProduct
 );
 //delete offer from category
 admin_route.delete(
   "/deleteOffer/:categoryId",
+  isAdminLogin,
   adminController.deleteOfferFromCategory
 );
 
@@ -140,6 +150,7 @@ admin_route.get(
 );
 admin_route.get(
   "/download-salesreport",
+  isAdminLogin,
   adminSalesReportController.downloadSalesReport
 );
 

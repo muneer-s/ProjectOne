@@ -1,11 +1,6 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
-const OTPdb = require("../models/otpmodel");
-const nodemailer = require("nodemailer");
-const product = require("../models/addproductModel");
-const Category = require("../models/categories");
 const session = require("express-session");
-const toast = require("toastr");
 const flash = require("connect-flash");
 const Cart = require("../models/cartModel");
 const Order = require("../models/orderModel");
@@ -15,6 +10,7 @@ const ejs = require("ejs");
 const path = require("path");
 const puppeteer = require("puppeteer-core");
 const fs = require("fs");
+const { STATUS_CODES } = require("http");
 
 //load user profile page
 const userProfileLoad = async (req, res) => {

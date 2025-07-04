@@ -130,7 +130,21 @@
 						body: JSON.stringify({ productId, quantity }),
 					});
 
+					console.log(1, response)
+
 					const data = await response.json();
+
+					if (response.status === 401 || response.status === 403) {
+						// User not logged in or blocked
+						Swal.fire({
+							icon: 'warning',
+							title: 'Access denied',
+							text: data.message || 'Please login to continue',
+						}).then(() => {
+							window.location.href = '/login'; // Redirect to login
+						});
+						return;
+					}
 
 					if (data.success) {
 						// Show success SweetAlert
@@ -154,6 +168,11 @@
 					}
 				} catch (error) {
 					console.error('Error adding product to cart:', error);
+					Swal.fire({
+						icon: 'error',
+						title: 'Unexpected Error',
+						text: 'Please try again later.',
+					});
 				}
 			}
 

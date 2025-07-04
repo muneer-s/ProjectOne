@@ -85,6 +85,7 @@ user_route.post("/placeOrder",isUserLogin, orderController.placeOrder);
 user_route.post("/verifyPayment",isUserLogin, orderController.verifyPayment);
 user_route.post("/failedOrders",isUserLogin, orderController.failedOrders);
 user_route.post("/retryPayment", isUserLogin,orderController.retryPayment);
+// user_route.post("/retry-callback", isUserLogin,orderController.verifyPayment);
 user_route.post("/retry-callback", isUserLogin,orderController.retryCallback);
 user_route.post("/removeCoupon", isUserLogin,orderController.removeCoupon);
 

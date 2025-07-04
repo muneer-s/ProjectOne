@@ -56,7 +56,7 @@ const addCategory = async (req, res) => {
     const category = new Category({
       Name,
       Description,
-      is_list
+      is_list,
     });
     console.log(4, category);
 
@@ -293,27 +293,24 @@ const adminloadlogin = async (req, res) => {
   }
 };
 
-//user logout
+// admin logout
 const Adminlogout = async (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.log("Error destroying session: ", err);
-    } else {
-      console.log("Session destroyed");
-      res.redirect("/adminHome");
-    }
-  });
+  try {
+    delete req.session.adminEmail;
+    res.redirect("/adminLogin");
+  } catch (err) {
+    console.log("Admin Logout error:", err);
+    res.redirect("/adminHome");
+  }
 };
 
 //verify admin login
 const adminverify = (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(email);
-    console.log(password);
 
     if (email === process.env.email && password === process.env.password) {
-      req.session.email = email;
+      req.session.adminEmail = email;
       res.redirect("/adminHome");
     } else {
       req.flash("error", "Invalid credentials");
@@ -337,26 +334,37 @@ const userDetails = async (req, res) => {
 
 const blockuser = async (req, res) => {
   try {
-    const id = req.body.userId;
+    const userId = req.body.userId;
+    console.log("Blocking user:", userId); // ✅ Correct
 
-    await User.updateOne({ _id: id }, { $set: { is_blocked: true } });
+    // let a = await User.updateOne({ _id: id }, { $set: { is_blocked: true } });
+    const result = await User.findByIdAndUpdate(userId, { is_blocked: true });
 
-    res.redirect("/userDetails");
+    console.log("Updated user:", result);
+
+    res.json({ success: true });
+    // res.redirect("/userDetails");
   } catch (error) {
-    console.log(error);
+    console.error("Error in blockuser:", error.message);
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
 //  unblocking a user
 const unBlockuser = async (req, res) => {
   try {
-    const id = req.body.userId;
+    const userId = req.body.userId;
+    console.log("Unblocking user:", userId); // ✅ Correct
+    // await User.updateOne({ _id: id }, { $set: { is_blocked: false } });
+    const result = await User.findByIdAndUpdate(userId, { is_blocked: false });
+    console.log("Updated user:", result);
 
-    await User.updateOne({ _id: id }, { $set: { is_blocked: false } });
+    res.json({ success: true });
 
-    res.redirect("/userDetails");
+    // res.redirect("/userDetails");
   } catch (error) {
-    console.log(error);
+    console.error("Error in unBlockuser:", error.message);
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 

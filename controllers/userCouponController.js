@@ -2,8 +2,8 @@ const User = require("../models/userModel");
 const products = require("../models/addproductModel");
 const session = require("express-session");
 const Cart = require("../models/cartModel");
-const mongoose = require("mongoose");
 const Coupon = require("../models/couponModel");
+const STATUS_CODES = require("../utils/statusCodes");
 
 //apply coupon
 const applyCoupon = async (req, res) => {
@@ -44,22 +44,21 @@ const applyCoupon = async (req, res) => {
     let newAmountUsingCoupon = originalAmount - DiscountAmount;
     req.session.newAmountUsingCoupon = newAmountUsingCoupon;
 
-    if (couponfind) {
-      if (couponfind.status == false) {
-        return res.json({ success: false, message: "Coupon is not active." });
-      } else {
-        req.session.couponCode = couponfind.Code;
-        return res
-          .status(200)
-          .json({ success: true, message: "Coupon applied successfully." });
-      }
+    if (!couponfind) {
+      throw new Error("Coupon not found");
+    }
+
+    if (couponfind.status == false) {
+      return res.json({ success: false, message: "Coupon is not active." });
     } else {
-      console.log("Coupon not found.");
-      return res.json({ success: false, message: "Coupon not found." });
+      req.session.couponCode = couponfind.Code;
+      return res
+        .status(STATUS_CODES.OK)
+        .json({ success: true, message: "Coupon applied successfully." });
     }
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({
+    console.log(error);
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "An error occurred while applying the coupon.",
     });
