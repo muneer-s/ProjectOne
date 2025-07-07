@@ -1,11 +1,12 @@
-<%-include("../adminLayout/adminHeader") %>
+<%- include("../adminLayout/adminHeader") %>
+
+
     <section class="content-main">
         <div class="content-header">
             <div>
                 <h2 class="content-title card-title">Categories</h2>
                 <p>Add, edit or delete a category</p>
             </div>
-
         </div>
         <div class="card">
             <div class="card-body">
@@ -17,9 +18,6 @@
                                 <input type="text" placeholder="Type here" class="form-control" id="product_name"
                                     name="Name" required />
                             </div>
-
-
-
                             <div class="mb-4">
                                 <label class="form-label">Description</label>
                                 <textarea placeholder="Type here" class="form-control" name="Description"
@@ -31,10 +29,6 @@
                                     <input type="checkbox" name="is_list" value="true">
                                 </label>
                             </div>
-
-
-
-
                             <div class="d-grid">
                                 <button class="btn btn-primary">Create category</button>
                                 <p style="color: rgb(239, 83, 83); text-align: center;">
@@ -58,10 +52,7 @@
                                 </thead>
                                 <tbody>
                                     <% catDetails.forEach(category=> { %>
-
                                         <tr>
-
-
                                             <td>
                                                 <%=category.Name%>
                                             </td>
@@ -77,9 +68,6 @@
                                                         <h5 class="text-danger">UnListed</h5>
                                                     </td>
                                                     <% } %>
-
-
-
                                                         <% if(category.offer){%>
                                                             <td>
                                                                 <%= category.offer.offerName %>
@@ -87,10 +75,6 @@
                                                             <% }else{ %>
                                                                 <td style="color: red;">No Offers</td>
                                                                 <% } %>
-
-
-
-
                                                                     <td class="text-end">
                                                                         <div class="dropdown">
                                                                             <a href="#" data-bs-toggle="dropdown"
@@ -107,10 +91,7 @@
                                                                                     onclick="return confirm('Are you sure you want to delete this category?')">Delete</a>
                                                                             </div>
                                                                         </div>
-                                                                        <!-- dropdown //end -->
                                                                     </td>
-
-
                                                                     <% if(category.is_list==true){ %>
 
                                                                         <% if(category.offer){ %>
@@ -129,47 +110,68 @@
                                                                                                 Unlisted</h5>
                                                                                         </td>
                                                                                         <% } %>
-
-
                                         </tr>
                                         <%})%>
-
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <!-- .col// -->
                 </div>
-                <!-- .row // -->
             </div>
-            <!-- card body .// -->
         </div>
-        <!-- card .// -->
     </section>
 
 
-    <%-include("../adminLayout/adminFooter") %>
+    <%- include("../adminLayout/adminFooter") %>
 
         <script>
             $(document).ready(function () {
                 $('.delete-offer-btn').click(function (e) {
                     e.preventDefault();
                     const categoryId = $(this).data('category-id');
-                    const confirmDelete = confirm("Are you sure you want to delete this offer?");
-                    if (confirmDelete) {
-                        $.ajax({
-                            url: '/deleteOffer/' + categoryId,
-                            type: 'DELETE',
-                            success: function (response) {
-                                alert(response.message);
-                                window.location.reload()
-                            },
-                            error: function (error) {
-                                alert('Error deleting offer');
-                            }
-                        });
-                    }
+
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "This action cannot be undone!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Yes, Remove it!',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                        
+                            fetch('/deleteOffer/' + categoryId, {
+                                method: 'DELETE'
+                            })
+                                .then(async response => {
+                                    const data = await response.json();
+
+                                    if (data.success === false) {
+                                        throw new Error(data.message || 'Failed to Remove offer');
+                                    }
+
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Removed!',
+                                        text: data.message
+                                    }).then(() => {
+                                        window.location.reload();
+                                    });
+                                })
+                                .catch(error => {
+                                    Swal.fire(
+                                        'Error!',
+                                        error.message || 'Something went wrong while removing.',
+                                        'error'
+                                    );
+                                });
+                        }
+                    });
                 });
             });
         </script>
+
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

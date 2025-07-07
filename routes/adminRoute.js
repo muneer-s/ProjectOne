@@ -28,7 +28,8 @@ admin_route.post("/admin/chartData",isAdminLogin, adminController.getDetailsChar
 // Category management
 admin_route.get("/addCategory", isAdminLogin, adminController.loadCategory);
 admin_route.post("/addCategory",isAdminLogin, adminController.addCategory);
-// Category editing and deletion
+
+// Category editing
 admin_route.get(
   "/editCategory/:id",
   isAdminLogin,

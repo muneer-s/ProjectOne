@@ -1,45 +1,40 @@
-// const User = require("../models/userModel");
-// const Category = require("../models/categories");
-// const products = require("../models/addproductModel");
-// const sharp = require("sharp");
-// const path = require("path");
-// const categories = require("../models/categories");
-// const session = require("express-session");
-// const flash = require("connect-flash");
-// const orderid = require("order-id")("key");
+const { success } = require("toastr");
 const Order = require("../models/orderModel");
-// const Cart = require("../models/cartModel");
 const Wallet = require("../models/walletModel");
-
+const STATUS_CODES = require("../utils/statusCodes");
 
 const loadOrderList = async (req, res) => {
   try {
-    if (req.session.email) {
-      const orders = await Order.find({})
-        .populate("products.productId")
-        .populate("address")
-        .populate("userId");
+    const orders = await Order.find({})
+      .populate("products.productId")
+      .populate("address")
+      .populate("userId");
 
-      res.render("./adminSide/orderList", { orders });
-    }
+    return res
+      .status(STATUS_CODES.OK)
+      .render("./adminSide/orderList", { orders });
   } catch (error) {
     console.log(error.message);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
 const loadOrderDetails = async (req, res) => {
   try {
-    if (req.session.email) {
-      const orderId = req.params.orderId;
-      const orders = await Order.find({ _id: orderId })
-        .populate("products.productId")
-        .populate("address")
-        .populate("userId");
+    const orderId = req.params.orderId;
+    const orders = await Order.find({ _id: orderId })
+      .populate("products.productId")
+      .populate("address")
+      .populate("userId");
 
-      res.render("./adminSide/adminOrderDetails", { orders });
-    }
+    res.render("./adminSide/adminOrderDetails", { orders });
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -48,12 +43,14 @@ const updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
     const orderId = req.params.orderId;
-
     const order = await Order.findOne({ _id: orderId });
+
     if (order.orderStatus === "Cancel" || order.orderStatus === "Return") {
-      return res.status(400).json({ error: "Cannot change status further" });
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ success: false, error: "Cannot change status further" });
     }
-    
+
     let wallet = await Wallet.findOne({ user: order.userId });
 
     if (!wallet) {
@@ -66,7 +63,6 @@ const updateOrderStatus = async (req, res) => {
     });
     wallet.balance += order.totalPrice;
     await wallet.save();
-    
 
     const updatedOrder = await Order.findOneAndUpdate(
       { _id: orderId },
@@ -74,12 +70,18 @@ const updateOrderStatus = async (req, res) => {
       { new: true }
     );
 
-    res
-      .status(200)
-      .json({ message: "Status updated successfully", order: updatedOrder });
+    return res
+      .status(STATUS_CODES.OK)
+      .json({
+        success: true,
+        message: "Status updated successfully",
+        order: updatedOrder,
+      });
   } catch (error) {
     console.error("Error updating order status:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, error: "Internal Server Error" });
   }
 };
 

@@ -1,317 +1,303 @@
-<%-include("../adminLayout/adminHeader")    %>
+<%- include("../adminLayout/adminHeader") %>
 
 
 
-<section class="content-main">
-    <div class="content-header">
-        <div>
-            <h2 class="content-title card-title">Sales Report</h2>
-            <p></p>
-        </div>
-        <div>
-            <input type="text" id="searchInput" placeholder="Search order ID" class="form-control bg-white" onkeyup="searchOrders()" />
-        </div>
-        <div>
-            <a href="" class="btn btn-primary" onclick="downloadSalesReport(event)"><i class="text-muted material-icons md-post_add" ></i>Download</a>
-
-        </div>
-    </div>
-    <div class="card mb-4">
-        <header class="card-header">
-            <div class="row gx-3">
-                <div id="searchByName" class="col-lg-3 col-md-6 me-auto">
-                    <input type="text" placeholder="Search by Name..." class="form-control" id="filterInput" onkeyup="filterOrders()"/>
-                </div>
-
-               
-                <div id="startDate&endDate" class="col-lg-3 col-md-6 me-auto" >
-                    <label for="startDate">Start Date:</label>
-                    <input type="date" id="startDate" class="form-control">
-                    <label for="endDate">End Date:</label>
-                    <input type="date" id="endDate" class="form-control">
-                </div>
-                <div id="checkId" class="col-lg-3 col-md-6 me-auto">
-                    <button id="checkButton" class="btn btn-info btn-sm">check</button>
-                </div>
-
-
-
-                <div id="filterBy" class="col-lg-3 col-6 col-md-3">
-                    <p>Filter By</p>
-                    <select class="form-select">
-                        <option <%= (filter === 'all')?'selected':'' %> >all</option>
-                        <option <%= (filter === 'daily')?'selected':'' %> >Daily</option>
-                        <option <%= (filter === 'weekly')?'selected':'' %> >Weekly</option>
-                        <option <%= (filter === 'monthly')?'selected':'' %> >Monthly</option>
-                    </select>
-                </div>
-                
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Sales Report</h2>
+                <p></p>
             </div>
-        </header>
-        <!-- card-header end// -->
-        <div class="card-body">
-            <div class="table-responsive">
-                <h2>Summary</h2>
-    <p>Total Sale Amount: <%= orderTotalAmt %></p>
-    <p>Total sales: <%= orderData.length %></p>
-    <p>Discount Amount: <%= discountAmount %></p>
-                <table class="table table-hover" id="orderTable">
-                    <thead>
-                        <tr>
-                            <th>#ID</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Address</th>
-                            <th scope="col">Product Name</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-                        <% orders.reverse().forEach((item)=>{ %>
-                            <% item.products.forEach(product => { %>
-                             
-                            
-                        <tr>
-                            <td><%= item.orderId %></td>
-                            <td><b><%= item.userId.name %></b></td>
-                            <td><b><%= item.address.address %></b></td>
-                            <td><b><%= product.productId.name %></b></td>
-                            <td><b><%= product.quantity %></b></td>
-                            <td><%= product.total %></td>
-                            <td><span class="badge rounded-pill alert-success"><%= item.orderStatus %></span></td>
-                            <td><%= item.createdAt.toLocaleDateString() %></td>
-                            
-                        </tr>
-                        <% }) %>
-                        <% }) %>
-                        
-                        
-                        
-                    </tbody>
-                </table>
+            <div>
+                <input type="text" id="searchInput" placeholder="Search order ID" class="form-control bg-white"
+                    onkeyup="searchOrders()" />
             </div>
-            <!-- table-responsive //end -->
+            <div>
+                <a href="" class="btn btn-primary" onclick="downloadSalesReport(event)"><i
+                        class="text-muted material-icons md-post_add"></i>Download</a>
+
+            </div>
         </div>
-        <!-- card-body end// -->
-    </div>
-    <!-- card end// -->
-    <div class="pagination-area mt-15 mb-50">
-        <nav aria-label="Page navigation example">
-            <ul id="pagination" class="pagination justify-content-start">
-                
-                <li class="page-item">
-                    <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</section>
+        <div class="card mb-4">
+            <header class="card-header">
+                <div class="row gx-3">
+                    <div id="searchByName" class="col-lg-3 col-md-6 me-auto">
+                        <input type="text" placeholder="Search by Name..." class="form-control" id="filterInput"
+                            onkeyup="filterOrders()" />
+                    </div>
 
 
-<!--pdf download-->
-
-<script>
-
-    function downloadSalesReport(event) {
-        event.preventDefault()
-        fetch('/download-salesreport')
-          .then(response => response.blob())
-          .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = 'sales.pdf';
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-          })
-          .catch(error => console.error('Error downloading orders:', error));
-    }
-    
-    </script>
+                    <div id="startDate&endDate" class="col-lg-3 col-md-6 me-auto">
+                        <label for="startDate">Start Date:</label>
+                        <input type="date" id="startDate" class="form-control">
+                        <label for="endDate">End Date:</label>
+                        <input type="date" id="endDate" class="form-control">
+                    </div>
+                    <div id="checkId" class="col-lg-3 col-md-6 me-auto">
+                        <button id="checkButton" class="btn btn-info btn-sm">check</button>
+                    </div>
 
 
 
+                    <div id="filterBy" class="col-lg-3 col-6 col-md-3">
+                        <p>Filter By</p>
+                        <select class="form-select">
+                            <option <%=(filter==='all' )?'selected':'' %> >all</option>
+                            <option <%=(filter==='daily' )?'selected':'' %> >Daily</option>
+                            <option <%=(filter==='weekly' )?'selected':'' %> >Weekly</option>
+                            <option <%=(filter==='monthly' )?'selected':'' %> >Monthly</option>
+                        </select>
+                    </div>
+
+                </div>
+            </header>
+            <!-- card-header end// -->
+            <div class="card-body">
+                <div class="table-responsive">
+                    <h2>Summary</h2>
+                    <p>Total Sale Amount: <%= orderTotalAmt %>
+                    </p>
+                    <p>Total sales: <%= orderData.length %>
+                    </p>
+                    <p>Discount Amount: <%= discountAmount %>
+                    </p>
+                    <table class="table table-hover" id="orderTable">
+                        <thead>
+                            <tr>
+                                <th>#ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Address</th>
+                                <th scope="col">Product Name</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <% orders.reverse().forEach((item)=>{ %>
+                                <% item.products.forEach(product=> { %>
+
+
+                                    <tr>
+                                        <td>
+                                            <%= item.orderId %>
+                                        </td>
+                                        <td><b>
+                                                <%= item.userId.name %>
+                                            </b></td>
+                                        <td><b>
+                                                <%= item.address.address %>
+                                            </b></td>
+                                        <td><b>
+                                                <%= product.productId.name %>
+                                            </b></td>
+                                        <td><b>
+                                                <%= product.quantity %>
+                                            </b></td>
+                                        <td>
+                                            <%= product.total %>
+                                        </td>
+                                        <td><span class="badge rounded-pill alert-success">
+                                                <%= item.orderStatus %>
+                                            </span></td>
+                                        <td>
+                                            <%= item.createdAt.toLocaleDateString() %>
+                                        </td>
+
+                                    </tr>
+                                    <% }) %>
+                                        <% }) %>
 
 
 
+                        </tbody>
+                    </table>
+                </div>
+                <!-- table-responsive //end -->
+            </div>
+            <!-- card-body end// -->
+        </div>
+        <!-- card end// -->
+        <div class="pagination-area mt-15 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul id="pagination" class="pagination justify-content-start">
 
+                    <li class="page-item">
+                        <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </section>
 
+    <%- include("../adminLayout/adminFooter") %>
+        <!--pdf download-->
 
+        <script>
 
-
-<!-- pagination -->
-
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const tableRows = document.querySelectorAll(".table tbody tr");
-    const itemsPerPage = 10; // Number of items per page
-    const totalPages = Math.ceil(tableRows.length / itemsPerPage);
-
-    function showPage(page) {
-        const startIndex = (page - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-
-        tableRows.forEach((row, index) => {
-            if (index >= startIndex && index < endIndex) {
-                row.style.display = "table-row";
-            } else {
-                row.style.display = "none";
+            function downloadSalesReport(event) {
+                event.preventDefault()
+                fetch('/download-salesreport')
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = 'sales.pdf';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    })
+                    .catch(error => console.error('Error downloading orders:', error));
             }
-        });
-    }
 
-    function createPaginationButtons() {
-        const pagination = document.getElementById("pagination");
+        </script>
+        <!-- pagination -->
 
-        for (let i = 1; i <= totalPages; i++) {
-            const li = document.createElement("li");
-            li.classList.add("page-item");
-            if (i === 1) {
-                li.classList.add("active");
-            }
-            const link = document.createElement("a");
-            link.classList.add("page-link");
-            link.href = "#";
-            link.textContent = i;
-            link.addEventListener("click", function (event) {
-                event.preventDefault();
-                document.querySelectorAll(".pagination .page-item").forEach((item) => {
-                    item.classList.remove("active");
-                });
-                li.classList.add("active");
-                showPage(i);
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const tableRows = document.querySelectorAll(".table tbody tr");
+                const itemsPerPage = 10; // Number of items per page
+                const totalPages = Math.ceil(tableRows.length / itemsPerPage);
+
+                function showPage(page) {
+                    const startIndex = (page - 1) * itemsPerPage;
+                    const endIndex = startIndex + itemsPerPage;
+
+                    tableRows.forEach((row, index) => {
+                        if (index >= startIndex && index < endIndex) {
+                            row.style.display = "table-row";
+                        } else {
+                            row.style.display = "none";
+                        }
+                    });
+                }
+
+                function createPaginationButtons() {
+                    const pagination = document.getElementById("pagination");
+
+                    for (let i = 1; i <= totalPages; i++) {
+                        const li = document.createElement("li");
+                        li.classList.add("page-item");
+                        if (i === 1) {
+                            li.classList.add("active");
+                        }
+                        const link = document.createElement("a");
+                        link.classList.add("page-link");
+                        link.href = "#";
+                        link.textContent = i;
+                        link.addEventListener("click", function (event) {
+                            event.preventDefault();
+                            document.querySelectorAll(".pagination .page-item").forEach((item) => {
+                                item.classList.remove("active");
+                            });
+                            li.classList.add("active");
+                            showPage(i);
+                        });
+                        li.appendChild(link);
+                        pagination.appendChild(li);
+                    }
+                }
+
+                createPaginationButtons();
+                showPage(1);
             });
-            li.appendChild(link);
-            pagination.appendChild(li);
-        }
-    }
 
-    createPaginationButtons();
-    showPage(1);
-});
-
-</script>
+        </script>
 
 
-<!-- searching -->
+        <!-- searching -->
 
-<script>
-    function searchOrders() {
-        var input, filter, table, tr, td, i, txtValue;
-        input = document.getElementById("searchInput");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("orderTable");
-        tr = table.getElementsByTagName("tr");
-        for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[0]; // Change index to match the column you want to search
-            if (td) {
-                txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
+        <script>
+            function searchOrders() {
+                var input, filter, table, tr, td, i, txtValue;
+                input = document.getElementById("searchInput");
+                filter = input.value.toUpperCase();
+                table = document.getElementById("orderTable");
+                tr = table.getElementsByTagName("tr");
+                for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName("td")[0]; // Change index to match the column you want to search
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
                 }
             }
-        }
-    }
 
-    function filterOrders() {
-        var input, filter, table, tr, td, i, txtValue;
-        input = document.getElementById("filterInput");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("orderTable");
-        tr = table.getElementsByTagName("tr");
-        for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[1]; // Change index to match the column you want to search
-            if (td) {
-                txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
+            function filterOrders() {
+                var input, filter, table, tr, td, i, txtValue;
+                input = document.getElementById("filterInput");
+                filter = input.value.toUpperCase();
+                table = document.getElementById("orderTable");
+                tr = table.getElementsByTagName("tr");
+                for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName("td")[1]; // Change index to match the column you want to search
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
                 }
             }
-        }
-    }
-</script>
-
-
-<!--filter daily ,weekly,monthly-->
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const filterSelect = document.querySelector(".form-select");
-        filterSelect.addEventListener("change", function () {
-            const filter = this.value.toLowerCase();
-            const url = new URL(window.location.href);
-            url.searchParams.set("filter", filter);
-            window.location.href = url.toString();
-        });
-    });
-    </script>
-
-
-    
-
-
-
-
-
-
-
-
-    <!--strt date edn date -->
-
-    <script>
-        document.getElementById('checkButton').addEventListener('click', function() {
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            if (startDate && endDate) {
-                // Redirect to the same page with the dates as query parameters
-                window.location.href = `/SalesReport?startDate=${startDate}&endDate=${endDate}`;
-            } else {
-                alert('Please select both start and end dates.');
-            }
-        });
         </script>
-        
 
 
+        <!--filter daily ,weekly,monthly-->
 
-
-    
-    
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Function to get query parameters from the URL
-            function getQueryParam(param) {
-                const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get(param);
-            }
-        
-            // Get startDate and endDate from the URL
-            const startDate = getQueryParam('startDate');
-            const endDate = getQueryParam('endDate');
-        
-            // Check if startDate and endDate are present and populate the input fields
-            if (startDate) {
-                document.getElementById('startDate').value = startDate;
-            }
-            if (endDate) {
-                document.getElementById('endDate').value = endDate;
-            }
-        });
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const filterSelect = document.querySelector(".form-select");
+                filterSelect.addEventListener("change", function () {
+                    const filter = this.value.toLowerCase();
+                    const url = new URL(window.location.href);
+                    url.searchParams.set("filter", filter);
+                    window.location.href = url.toString();
+                });
+            });
         </script>
-        
+        <!--strt date edn date -->
 
+        <script>
+            document.getElementById('checkButton').addEventListener('click', function () {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                if (startDate && endDate) {
+                    // Redirect to the same page with the dates as query parameters
+                    window.location.href = `/SalesReport?startDate=${startDate}&endDate=${endDate}`;
+                } else {
+                    alert('Please select both start and end dates.');
+                }
+            });
+        </script>
 
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Function to get query parameters from the URL
+                function getQueryParam(param) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    return urlParams.get(param);
+                }
 
-            <%-include("../adminLayout/adminFooter")    %>
+                // Get startDate and endDate from the URL
+                const startDate = getQueryParam('startDate');
+                const endDate = getQueryParam('endDate');
+
+                // Check if startDate and endDate are present and populate the input fields
+                if (startDate) {
+                    document.getElementById('startDate').value = startDate;
+                }
+                if (endDate) {
+                    document.getElementById('endDate').value = endDate;
+                }
+            });
+        </script>

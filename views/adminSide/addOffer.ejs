@@ -1,56 +1,129 @@
-<%-include("../adminLayout/adminHeader")%>
+<%- include("../adminLayout/adminHeader")%>
 
-<section class="content-main">
-    <div class="row">
-        <div class="col-9">
-            <div class="content-header">
-                <h2 class="content-title">Add New Offer</h2>
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h4>Offer Details</h4>
-                </div>
-                <div class="card-body">
-                    <form method="post" action="/saveOffer">
-                        <div class="mb-4">
-                            <label for="offerName" class="form-label">Offer</label>
-                            <input type="text" placeholder="Type here" class="form-control" id="addOffer" name="addOffer" title="Please enter a non-empty value." required />
-                            <p style="color: rgb(239, 83, 83); text-align: center;">
-                                <%= messages.error?messages.error:'' %>
-                            </p>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="startingDate" class="form-label">Starting Date</label>
-                            <input type="date" placeholder="Type here" class="form-control" id="startingDate" name="startingDate" title="Please enter a non-empty value." required min="<%= new Date().toISOString().split('T')[0] %>" />
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="expiryDate" class="form-label">Expiry Date</label>
-                            <input type="date" placeholder="Type here" class="form-control" id="expiryDate" name="expiryDate" title="Please enter a non-empty value." required min="<%= new Date().toISOString().split('T')[0] %>" />
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="percentage" class="form-label">Percentage</label>
-                            <input type="text" placeholder="Type here" class="form-control" id="percentage" name="percentage" title="Please enter a number between 1 and 100." pattern="^[1-9][0-9]?$|^100$" required />
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="is_listed" class="form-label">Is Listed</label>
-                            <input type="checkbox" id="is_listed" name="is_listed" checked>
-                        </div>
-                        <div class="mb-4">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea placeholder="Type here" class="form-control" id="description" name="description"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-success text-white" id="addOfferButton">Submit</button>
-                    </form>
+    <section class="content-main">
+        <div class="row">
+            <div class="col-9">
+                <div class="content-header">
+                    <h2 class="content-title">Add New Offer</h2>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Offer Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="/saveOffer">
+                            <!-- Offer Name -->
+                            <div class="mb-4">
+                                <label for="addOffer" class="form-label">Offer</label>
+                                <input type="text" class="form-control" id="addOffer" name="addOffer" />
+                                <span class="text-danger" id="offer_error"></span>
+                            </div>
 
-<%-include("../adminLayout/adminFooter")%>
+                            <!-- Starting Date -->
+                            <div class="mb-4">
+                                <label for="startingDate" class="form-label">Starting Date</label>
+                                <input type="date" class="form-control" id="startingDate" name="startingDate"
+                                    min="<%= new Date().toISOString().split('T')[0] %>" />
+                                <span class="text-danger" id="start_error"></span>
+                            </div>
+
+                            <!-- Expiry Date -->
+                            <div class="mb-4">
+                                <label for="expiryDate" class="form-label">Expiry Date</label>
+                                <input type="date" class="form-control" id="expiryDate" name="expiryDate"
+                                    min="<%= new Date().toISOString().split('T')[0] %>" />
+                                <span class="text-danger" id="expiry_error"></span>
+                            </div>
+
+                            <!-- Percentage -->
+                            <div class="mb-4">
+                                <label for="percentage" class="form-label">Percentage</label>
+                                <input type="text" class="form-control" id="percentage" name="percentage"
+                                    inputmode="numeric" />
+                                <span class="text-danger" id="percentage_error"></span>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="is_listed" class="form-label">Is Listed</label>
+                                <input type="checkbox" id="is_listed" name="is_listed" checked>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-4">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-success text-white" id="addOfferButton">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include("../adminLayout/adminFooter")%>
+
+        <% if (typeof duplicate !=='undefined' && duplicate) { %>
+            <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Duplicate Offer',
+                    text: 'An offer with the same name already exists.',
+                });
+            </script>
+            <% } %>
+
+
+                <script>
+                    document.getElementById('addOfferButton').addEventListener('click', function (e) {
+                        let isValid = true;
+
+                        const offer = document.getElementById('addOffer').value.trim();
+                        const startDate = document.getElementById('startingDate').value.trim();
+                        const expiryDate = document.getElementById('expiryDate').value.trim();
+                        const percentage = document.getElementById('percentage').value.trim();
+
+
+
+                        document.getElementById('offer_error').innerText = '';
+                        document.getElementById('start_error').innerText = '';
+                        document.getElementById('expiry_error').innerText = '';
+                        document.getElementById('percentage_error').innerText = '';
+
+                        if (!offer) {
+                            document.getElementById('offer_error').innerText = 'Offer name is required';
+                            isValid = false;
+                        }
+
+                        if (!startDate) {
+                            document.getElementById('start_error').innerText = 'Start date is required';
+                            isValid = false;
+                        }
+
+                        if (!expiryDate) {
+                            document.getElementById('expiry_error').innerText = 'Expiry date is required';
+                            isValid = false;
+                        }
+
+                        if (startDate && expiryDate && new Date(expiryDate) <= new Date(startDate)) {
+                            document.getElementById('expiry_error').innerText = 'Expiry date must be after start date';
+                            isValid = false;
+                        }
+
+                        if (!percentage) {
+                            document.getElementById('percentage_error').innerText = 'Percentage is required';
+                            isValid = false;
+                        } else if (isNaN(percentage) || Number(percentage) <= 0 || Number(percentage) > 100) {
+                            document.getElementById('percentage_error').innerText = 'Percentage must be a number between 1 and 100';
+                            isValid = false;
+                        }
+
+                        if (!isValid) {
+                            e.preventDefault();
+                        }
+                    });
+
+                </script>

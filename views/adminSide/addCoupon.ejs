@@ -1,57 +1,136 @@
-<%-include("../adminLayout/adminHeader")    %>
+<%- include("../adminLayout/adminHeader") %>
 
-            <section class="content-main">
-                <div class="row">
-                    <div class="col-9">
-                        <div class="content-header">
-                            <h2 class="content-title">Add New Coupon</h2>
-                        </div>
+    <section class="content-main">
+        <div class="row">
+            <div class="col-9">
+                <div class="content-header">
+                    <h2 class="content-title">Add New Coupon</h2>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Basic</h4>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h4>Basic</h4>
+                    <div class="card-body">
+                        <form method="post" action="/couponSave">
+
+                            <!-- Coupon Code -->
+                            <div class="mb-4">
+                                <label for="coupon_code" class="form-label">Coupon Code</label>
+                                <input type="text" class="form-control" id="coupon_code" name="coupon_code" />
+                                <span class="text-danger" id="coupon_code_error"></span>
                             </div>
-                            <div class="card-body">
-                                <form method="post" action="/couponSave" >
-                                    <div class="mb-4">
-                                        <label for="coupon_code" class="form-label">Coupon Code</label>
-                                        <input type="text" placeholder="Type here" class="form-control" id="coupon_code" name="coupon_code" title="Please enter a non-empty value." required pattern=".{4,}" />
-                                        <p style="color: rgb(239, 83, 83); text-align: center;">
-                                            <%= messages.error ? messages.error : '' %>
-                                        </p>
-                                    </div>
-                                    
-                                    
-                                    <div class="mb-4">
-                                        <label class="form-label">Discount</label>
-                                        <input type="text" placeholder="Type here" class="form-control" id="Discount" name="Discount" title="Please enter numbers" pattern="[0-9]+" required />
-                                    </div>
-                                    
-                                    
-                                    <div class="mb-4">
-                                        <label class="form-label">Min Price</label>
-                                        <input type="text" placeholder="Type here" class="form-control" id="Max_Price" name="Max_Price"  title="Please enter a non-empty value and  numbers only" pattern="[0-9]+" required />
-                                    
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="form-label">Exp Date</label>
-                                        <input type="date" placeholder="Type here" class="form-control" id="Exp_Date" name="Exp_Date" title="Please enter a non-empty value." required min="<%= getTomorrowDate() %>" />
-                                    </div>
-                                                          
-                                    <button type="submit" class="btn btn-success text-white" id="addCouponButton">Submit</button>
-                                </form>
+
+
+                            <!-- Discount -->
+                            <div class="mb-4">
+                                <label class="form-label">Discount</label>
+                                <input type="text" class="form-control" id="Discount" name="Discount" />
+                                <span class="text-danger" id="discount_error"></span>
                             </div>
-                        </div>
-                      </div>
-                   
+
+                            <!-- Min Price -->
+                            <div class="mb-4">
+                                <label class="form-label">Min Price</label>
+                                <input type="text" class="form-control" id="Max_Price" name="Max_Price" />
+                                <span class="text-danger" id="min_price_error"></span>
+                            </div>
+
+                            <!-- Expiry Date -->
+                            <div class="mb-4">
+                                <label class="form-label">Exp Date</label>
+                                <input type="date" class="form-control" id="Exp_Date" name="Exp_Date"
+                                    min="<%= getTomorrowDate() %>" />
+                                <span class="text-danger" id="exp_date_error"></span>
+                            </div>
+
+                            <button type="submit" class="btn btn-success text-white"
+                                id="addCouponButton">Submit</button>
+                        </form>
                     </div>
                 </div>
-            </section>
-           
+            </div>
+
+        </div>
+        </div>
+    </section>
 
 
-            <%-include("../adminLayout/adminFooter")    %>
 
+    <%- include("../adminLayout/adminFooter") %>
 
-           
+    <script>
+    document.getElementById('addCouponButton').addEventListener('click', function (e) {
+        let isValid = true;
+
+        // Get field values
+        const couponCode = document.getElementById('coupon_code').value.trim();
+        const discount = document.getElementById('Discount').value.trim();
+        const minPrice = document.getElementById('Max_Price').value.trim();
+        const expDate = document.getElementById('Exp_Date').value.trim();
+
+        // Clear previous errors
+        document.getElementById('coupon_code_error').innerText = '';
+        document.getElementById('discount_error').innerText = '';
+        document.getElementById('min_price_error').innerText = '';
+        document.getElementById('exp_date_error').innerText = '';
+
+        // 1. Coupon code validation
+        if (!couponCode) {
+            document.getElementById('coupon_code_error').innerText = 'Coupon code is required';
+            isValid = false;
+        }
+
+        // 2. Discount validation
+        if (!discount) {
+            document.getElementById('discount_error').innerText = 'Discount is required';
+            isValid = false;
+        } else if (isNaN(discount) || Number(discount) <= 0) {
+            document.getElementById('discount_error').innerText = 'Discount must be a number greater than 0';
+            isValid = false;
+        }
+
+        // 3. Min price validation
+        if (!minPrice) {
+            document.getElementById('min_price_error').innerText = 'Minimum price is required';
+            isValid = false;
+        } else if (isNaN(minPrice) || Number(minPrice) <= 0) {
+            document.getElementById('min_price_error').innerText = 'Minimum price must be a number greater than 0';
+            isValid = false;
+        }
+
+        // 4. Expiry date validation
+        if (!expDate) {
+            document.getElementById('exp_date_error').innerText = 'Expiry date is required';
+            isValid = false;
+        }
+
+        // If any validation failed, prevent form submission
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+</script>
+<!-- SweetAlert2 CDN -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+
+<script>
+    
+    const params = new URLSearchParams(window.location.search);
+    const error = params.get("error");
+
+   if (error) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops!',
+        text: decodeURIComponent(error),
+    }).then(() => {
+        // remove query param from URL
+        const url = new URL(window.location);
+        url.searchParams.delete('error');
+        window.history.replaceState({}, document.title, url.toString());
+    });
+}
+
+</script>

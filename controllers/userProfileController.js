@@ -10,7 +10,8 @@ const ejs = require("ejs");
 const path = require("path");
 const puppeteer = require("puppeteer-core");
 const fs = require("fs");
-const { STATUS_CODES } = require("http");
+const STATUS_CODES = require("../utils/statusCodes");
+
 
 //load user profile page
 const userProfileLoad = async (req, res) => {
@@ -30,7 +31,7 @@ const userProfileLoad = async (req, res) => {
     }
   } catch (err) {
     console.error("Error in user rpofile controller  user profile load: ", err);
-    return res.status(500).send("Internal Server Error");
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send("Internal Server Error");
   }
 };
 
@@ -38,8 +39,6 @@ const userProfileLoad = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const { name, email, mobile } = req.body;
-
-
     const userId = req.session.user_id;
 
     const user = await User.findByIdAndUpdate(
@@ -49,7 +48,7 @@ const updateProfile = async (req, res) => {
     );
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ error: "User not found" });
     }
 
     let wallet = await Wallet.findOne({ user: userId });
@@ -57,12 +56,12 @@ const updateProfile = async (req, res) => {
     if (!wallet) {
       wallet = await Wallet.create({ user: userId });
     }
-    res.status(200).json({ message: "Profile updated successfully" });
+    res.status(STATUS_CODES.OK).json({ message: "Profile updated successfully" });
 
     // res.render("./users/userProfile", { user, wallet });
   } catch (error) {
     console.error("Error updating user data:  ", error);
-    res.status(500).render("users/500");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("users/500");
   }
 };
 
@@ -70,12 +69,11 @@ const updateProfile = async (req, res) => {
 const checkPassword = async (req, res) => {
   try {
     const { currentPassword } = req.body;
-
     const userId = req.session.user_id;
 
     if (!userId) {
       return res
-        .status(404)
+        .status(STATUS_CODES.NOT_FOUND)
         .json({ success: false, message: "User not found" });
     }
 
@@ -93,7 +91,7 @@ const checkPassword = async (req, res) => {
     }
   } catch (error) {
     console.log("error in userprofile chechpasswordc:", error);
-    res.status(500).render("users/500");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("users/500");
   }
 };
 
@@ -106,7 +104,7 @@ const changePassword = async (req, res) => {
 
     if (!userId) {
       return res
-        .status(404)
+        .status(STATUS_CODES.NOT_FOUND)
         .json({ success: false, message: "User not found" });
     }
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -115,7 +113,7 @@ const changePassword = async (req, res) => {
     return res.json({ success: true });
   } catch (error) {
     console.log("error in user profile changepassword: ", error);
-    res.status(500).render("users/500");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("users/500");
   }
 };
 
@@ -130,7 +128,7 @@ const addAddress = async (req, res) => {
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ error: "User not found" });
     }
 
     user.address.push({
@@ -144,10 +142,10 @@ const addAddress = async (req, res) => {
     });
 
     await user.save();
-    res.status(200).json({ message: "Address added successfully", user });
+    res.status(STATUS_CODES.OK).json({ message: "Address added successfully", user });
   } catch (error) {
     console.error(error);
-    res.status(500).render("users/500");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("users/500");
   }
 };
 
@@ -165,15 +163,15 @@ const deleteAddress = async (req, res) => {
     );
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ error: "User not found" });
     }
 
     await user.save();
 
-    return res.status(200).json({ message: "Address deleted successfully" });
+    return res.status(STATUS_CODES.OK).json({ message: "Address deleted successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).render("users/500");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("users/500");
   }
 };
 
@@ -233,7 +231,7 @@ const loadCheckOutPage = async (req, res) => {
     }
   } catch (error) {
     console.error("Checkout Load Error:", error.message);
-    res.status(500).render("users/500");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("users/500");
   }
 };
 
@@ -256,7 +254,7 @@ const loadViewItems = async (req, res) => {
     }
   } catch (error) {
     console.log(error.message);
-    res.status(500).render("users/500");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("users/500");
   }
 };
 
@@ -291,7 +289,7 @@ const downloadInvoice = async (req, res) => {
         return ejs.render(invoiceTemplate, { orders, user });
       } catch (err) {
         console.error("Error rendering EJS template:", err);
-        res.status(500).send("Error rendering sales report");
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send("Error rendering sales report");
       }
     };
 
@@ -319,7 +317,7 @@ const downloadInvoice = async (req, res) => {
     await browser.close();
   } catch (error) {
     console.error("Error generating sales report:", error);
-    res.status(500).render("users/500");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("users/500");
   }
 };
 
@@ -332,11 +330,11 @@ const editAddress = async (req, res) => {
     const address = user.address.id(addressId);
 
     if (!address) {
-      return res.status(404).json({ message: "Address not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ message: "Address not found" });
     }
     res.json(address);
   } catch (error) {
-    res.status(500).render("users/500");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("users/500");
   }
 };
 
@@ -349,21 +347,21 @@ const saveEditAddress = async (req, res) => {
 
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ message: "User not found" });
     }
 
     const addressIndex = user.address.findIndex(
       (addr) => addr._id.toString() === addressId
     );
     if (addressIndex === -1) {
-      return res.status(404).json({ message: "Address not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ message: "Address not found" });
     }
     user.address[addressIndex] = updatedAddress;
     await user.save();
-    res.json({ message: "Address updated successfully" });
+    res.status(STATUS_CODES.OK).json({ message: "Address updated successfully" });
   } catch (error) {
     console.error("Server error:", error);
-    res.status(500).render("users/500");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("users/500");
   }
 };
 

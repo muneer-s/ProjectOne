@@ -4,6 +4,7 @@ const session = require("express-session");
 const Cart = require("../models/cartModel");
 const mongoose = require("mongoose");
 const Offer = require("../models/offerModel");
+const STATUS_CODES = require("../utils/statusCodes");
 
 //admin load offer list
 const loadOfferPage = async (req, res) => {
@@ -11,6 +12,9 @@ const loadOfferPage = async (req, res) => {
     res.render("./adminSide/addOffer");
   } catch (error) {
     console.log(error.message);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -31,8 +35,8 @@ const saveOffer = async (req, res) => {
     const existingOffer = await Offer.findOne({ offerName: addOffer });
 
     if (existingOffer) {
-      req.flash("error", "Offer with the same name already exists.");
-      return res.redirect("/addoffer");
+      // return res.redirect("/addoffer");
+      return res.render("adminSide/addOffer", { duplicate: true });
     }
 
     const newOffers = new Offer({
@@ -73,25 +77,25 @@ const viewOffer = async (req, res) => {
 const deleteOffer = async (req, res) => {
   try {
     const id = req.query.id;
+    console.log("offer id : ", id);
 
     const productsWithOffer = await products.find({
       offer: new mongoose.Types.ObjectId(id),
     });
-    
-    if (productsWithOffer.length === 0) {
+    console.log("products with offer : ", productsWithOffer);
+
+    if (productsWithOffer.length) {
       console.log("Product with this offer ID not found");
-      // return res.status(404).send("Product with this offer ID not found");
+      for (const product of productsWithOffer) {
+        product.offer = null;
+        product.offerApplied = false;
+        product.offerPrice = 0;
+
+        await product.save();
+      }
     }
 
-    for (const product of productsWithOffer) {
-      product.offer = null;
-      product.offerApplied = false;
-      product.offerPrice = 0;
-
-      await product.save();
-    }
-
-    const deleteItem = await Offer.deleteOne({
+    await Offer.deleteOne({
       _id: new mongoose.Types.ObjectId(id),
     });
 

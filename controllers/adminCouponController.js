@@ -27,8 +27,8 @@ const saveCoupon = async (req, res) => {
     const existingCoupon = await Coupon.findOne({ Code: coupon_code });
 
     if (existingCoupon) {
-      req.flash("error", "Coupon with the same name already exists.");
-      return res.redirect("/Coupon");
+            return res.redirect('/Coupon?error=Coupon%20already%20exists');
+
     }
 
     const newCoupon = new Coupon({
@@ -42,6 +42,8 @@ const saveCoupon = async (req, res) => {
     res.redirect("/couponList");
   } catch (error) {
     console.log(error.message);
+        res.redirect('/Coupon?error=Something%20went%20wrong');
+
   }
 };
 

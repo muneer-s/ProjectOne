@@ -8,6 +8,8 @@ const session = require("express-session");
 const flash = require("connect-flash");
 const Offer = require("../models/offerModel");
 const Order = require("../models/orderModel");
+const STATUS_CODES = require("../utils/statusCodes");
+const { success } = require("toastr");
 
 //load productList
 const loadProductList = async (req, res) => {
@@ -20,6 +22,9 @@ const loadProductList = async (req, res) => {
     res.render("./adminSide/productList", { proDetails });
   } catch (error) {
     console.log(error.message);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send("Internal Server Error");
   }
 };
 
@@ -30,6 +35,9 @@ const loadCategory = async (req, res) => {
     res.render("./adminSide/addCategory", { catDetails });
   } catch (error) {
     console.log(error.message);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send("Internal Server Error");
   }
 };
 
@@ -37,17 +45,14 @@ const loadCategory = async (req, res) => {
 const addCategory = async (req, res) => {
   try {
     const { Name, Description } = req.body;
-    console.log(1, Name);
-    console.log(1, Description);
+
     const is_list = req.body.is_list === "true" ? true : false;
-    console.log(is_list);
 
     const regex = new RegExp(`^${Name}$`, "i");
 
     const existingCategory = await Category.findOne({
       Name: { $regex: regex },
     });
-    console.log(3, existingCategory);
 
     if (existingCategory) {
       req.flash("error", "Category with the same name already exists.");
@@ -58,10 +63,10 @@ const addCategory = async (req, res) => {
       Description,
       is_list,
     });
-    console.log(4, category);
+    // console.log(4, category);
 
     const categoryData = await category.save();
-    console.log(5, categoryData);
+    // console.log(5, categoryData);
 
     res.redirect("/addCategory");
   } catch (error) {
@@ -146,6 +151,9 @@ const adminLoadHome = async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send("Internal Server Error");
   }
 };
 
@@ -281,6 +289,9 @@ const getDetailsChart = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send("Internal Server Error");
   }
 };
 
@@ -290,6 +301,9 @@ const adminloadlogin = async (req, res) => {
     res.render("./adminSide/adminLogin");
   } catch (error) {
     console.log(error.message);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send("Internal Server Error");
   }
 };
 
@@ -318,6 +332,9 @@ const adminverify = (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send("Internal Server Error");
   }
 };
 
@@ -329,6 +346,9 @@ const userDetails = async (req, res) => {
     res.render("./adminSide/userdetails", { adminSideUserData });
   } catch (error) {
     console.log(error.message);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send("Internal Server Error");
   }
 };
 
@@ -346,7 +366,9 @@ const blockuser = async (req, res) => {
     // res.redirect("/userDetails");
   } catch (error) {
     console.error("Error in blockuser:", error.message);
-    res.status(500).json({ success: false, error: error.message });
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, error: error.message });
   }
 };
 
@@ -360,11 +382,11 @@ const unBlockuser = async (req, res) => {
     console.log("Updated user:", result);
 
     res.json({ success: true });
-
-    // res.redirect("/userDetails");
   } catch (error) {
     console.error("Error in unBlockuser:", error.message);
-    res.status(500).json({ success: false, error: error.message });
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, error: error.message });
   }
 };
 
@@ -372,13 +394,13 @@ const unBlockuser = async (req, res) => {
 const editCategory = async (req, res) => {
   try {
     const { id } = req.params;
-
     const category = await Category.findById(id);
-
     res.render("./adminSide/editCategory", { category });
   } catch (error) {
     console.error("Error fetching category:   ", error);
-    res.status(500).send("Internal Server Error");
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send("Internal Server Error");
   }
 };
 
@@ -387,7 +409,12 @@ const updateCategory = async (req, res) => {
   try {
     const categoryId = req.params.id;
 
-    let existData = await Category.findOne({ Name: req.body.Name });
+    // let existData = await Category.findOne({ Name: req.body.Name });
+
+    let existData = await Category.findOne({
+      Name: req.body.Name,
+      _id: { $ne: categoryId },
+    });
 
     if (!existData) {
       const updatedCategoryData = {
@@ -409,6 +436,9 @@ const updateCategory = async (req, res) => {
     }
   } catch (error) {
     console.error("error in update", error);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send("Internal Server Error");
   }
 };
 
@@ -430,11 +460,13 @@ const deleteCategory = async (req, res) => {
 //add a new product
 const adminAddProduct = async (req, res) => {
   try {
-    const categories = await Category.find();
-
+    const categories = await Category.find({ is_list: true });
     res.render("./adminSide/addProduct", { categories });
   } catch (error) {
     console.log(error.message);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send("Internal Server Error");
   }
 };
 
@@ -506,7 +538,9 @@ const updateProductStatus = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
   }
 };
 
@@ -587,6 +621,9 @@ const postEditProduct = async (req, res) => {
     }
   } catch (error) {
     console.log(error.message);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -604,6 +641,9 @@ const deleteProductImage = async (req, res) => {
     }
   } catch (error) {
     console.log(error.message);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -616,6 +656,9 @@ const loadOfferForProducts = async (req, res) => {
     res.render("./adminSide/addOfferforProduct", { productId, offer });
   } catch (error) {
     console.log(error.message);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -642,7 +685,9 @@ const applyOffer = async (req, res) => {
     res.redirect("/loadOfferForProducts");
   } catch (error) {
     console.error("Error applying offer:", error.message);
-    res.status(500).send("An error occurred while applying the offer");
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send("An error occurred while applying the offer");
   }
 };
 
@@ -654,6 +699,9 @@ const loadOfferForCategory = async (req, res) => {
     res.render("./adminSide/addOfferforCategory", { categoryId, offer });
   } catch (error) {
     console.log(error.message);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -666,7 +714,7 @@ const applyOfferForCategory = async (req, res) => {
     const Products = await product.find({ category: categoryId });
 
     if (!Category) {
-      return res.status(404).send("Category not found");
+      return res.status(STATUS_CODES.NOT_FOUND).send("Category not found");
     }
 
     for (let product of Products) {
@@ -692,7 +740,9 @@ const applyOfferForCategory = async (req, res) => {
     res.send("Offer applied successfully");
   } catch (error) {
     console.error("Error applying offer:", error.message);
-    res.status(500).send("An error occurred while applying the offer");
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send("An error occurred while applying the offer");
   }
 };
 
@@ -702,7 +752,9 @@ const deleteOfferFromProduct = async (req, res) => {
     const productId = req.body.productId;
     const Product = await product.findById(productId);
     if (!Product) {
-      return res.status(404).send({ message: "Product not found" });
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .send({ message: "Product not found" });
     }
     Product.offer = null;
     Product.offerApplied = false;
@@ -710,40 +762,46 @@ const deleteOfferFromProduct = async (req, res) => {
     await Product.save();
     res.send({ message: "Offer deleted successfully" });
   } catch (error) {
-    res.status(500).send({ message: "Error deleting offer", error: error });
+    console.log("Error deleting offer from product: ", error);
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send({ message: "Error deleting offer", error: error });
   }
 };
 
 const deleteOfferFromCategory = async (req, res) => {
   try {
     const categoryId = req.params.categoryId;
-
     const category = await categories.findById(req.params.categoryId);
+
     if (!category) {
-      return res.status(404).send({ message: "Category not found" });
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ success: false, message: "Category not found" });
     }
 
     const products = await product.find({ category: categoryId });
-    if (!products || products.length === 0) {
-      return res.status(404).send({ message: "Products not found" });
-    }
 
-    for (let product of products) {
-      product.categoryOfferPrice = 0;
-      product.categoryOffer = null;
-      product.categoryOfferApplied = false;
-      await product.save();
+    if (products || products.length) {
+      for (let product of products) {
+        product.categoryOfferPrice = 0;
+        product.categoryOffer = null;
+        product.categoryOfferApplied = false;
+        await product.save();
+      }
     }
 
     category.offer = null;
     category.offerApplied = false;
     await category.save();
-    res.send({ message: "Offer deleted successfully" });
+    return res
+      .status(STATUS_CODES.OK)
+      .json({ success: true, message: "Offer Removed successfully" });
   } catch (error) {
-    console.error("Error deleting offer:", error.message);
-    res
-      .status(500)
-      .send({ message: "Error deleting offer", error: error.message });
+    console.error("Error Removing Offer:", error);
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 

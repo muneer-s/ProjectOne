@@ -3,6 +3,7 @@ const products = require("../models/addproductModel");
 const path = require("path");
 const session = require("express-session");
 const wishlist = require("../models/wishlistModel");
+const  STATUS_CODES  = require("../utils/statusCodes");
 
 //load wishlist page
 const loadWishlist = async (req, res) => {
@@ -23,7 +24,7 @@ const loadWishlist = async (req, res) => {
     }
   } catch (error) {
     console.log("wishlist catch error founded " + error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: "Internal server error" });
 
   }
 };
@@ -57,7 +58,7 @@ const addToWishlist = async (req, res) => {
     res.redirect(`/singleProductPage/${queryId}`);
   } catch (error) {
     console.log("Error adding product to wishlist:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: "Internal server error" });
   }
 };
 
@@ -75,7 +76,7 @@ const deleteProductFromWishlist = async (req, res) => {
     res.redirect("/wishlist");
   } catch (error) {
     console.log("Error deleting wishlist item:", error);
-    res.status(500).send("Error deleting wishlist item");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send("Error deleting wishlist item");
   }
 };
 
