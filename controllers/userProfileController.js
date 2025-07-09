@@ -8,7 +8,7 @@ const Coupon = require("../models/couponModel");
 const Wallet = require("../models/walletModel");
 const ejs = require("ejs");
 const path = require("path");
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer"); // instead of puppeteer-core
 const fs = require("fs");
 const STATUS_CODES = require("../utils/statusCodes");
 
@@ -298,11 +298,12 @@ const downloadInvoice = async (req, res) => {
     if (!htmlContent) {
       return;
     }
+    const browser = await puppeteer.launch({ headless: "new" });
 
-    const browser = await puppeteer.launch({
-      headless: "new",
-      executablePath: "/snap/bin/chromium",
-    });
+    // const browser = await puppeteer.launch({
+    //   headless: "new",
+    //   executablePath: "/snap/bin/chromium",
+    // });
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
     await page.setContent(htmlContent);

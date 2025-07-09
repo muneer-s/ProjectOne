@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
     <title>Sales Report</title>
@@ -107,5 +107,50 @@
     <p>Total Sale Amount: <%= orderTotalAmt %></p>
     <p>Total sales: <%= orderData.length %></p>
     <p>Discount Amount: <%= discountAmount %></p>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sales Report</title>
+  <style>
+    body { font-family: Arial; font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #000; padding: 5px; text-align: left; }
+  </style>
+</head>
+<body>
+  <h1>Sales Report</h1>
+  <p>Total Sales: <%= orderData.length %></p>
+  <p>Total Sale Amount: ₹<%= orderTotalAmt.toFixed(2) %></p>
+  <p>Discount Amount: ₹<%= discountAmount.toFixed(2) %></p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#ID</th>
+        <th>Name</th>
+        <th>Product</th>
+        <th>Qty</th>
+        <th>Total</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% orderData.forEach(order => { %>
+        <% order.products.forEach(product => { %>
+          <tr>
+            <td><%= order.orderId %></td>
+            <td><%= order.userId.name %></td>
+            <td><%= product.productId.name %></td>
+            <td><%= product.quantity %></td>
+            <td>₹<%= product.total %></td>
+            <td><%= order.createdAt.toLocaleDateString() %></td>
+          </tr>
+        <% }) %>
+      <% }) %>
+    </tbody>
+  </table>
 </body>
 </html>

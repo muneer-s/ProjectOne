@@ -1,7 +1,5 @@
 <%- include("../adminLayout/adminHeader") %>
 
-
-
     <section class="content-main">
         <div class="content-header">
             <div>
@@ -26,7 +24,6 @@
                             onkeyup="filterOrders()" />
                     </div>
 
-
                     <div id="startDate&endDate" class="col-lg-3 col-md-6 me-auto">
                         <label for="startDate">Start Date:</label>
                         <input type="date" id="startDate" class="form-control">
@@ -36,8 +33,6 @@
                     <div id="checkId" class="col-lg-3 col-md-6 me-auto">
                         <button id="checkButton" class="btn btn-info btn-sm">check</button>
                     </div>
-
-
 
                     <div id="filterBy" class="col-lg-3 col-6 col-md-3">
                         <p>Filter By</p>
@@ -78,8 +73,6 @@
 
                             <% orders.reverse().forEach((item)=>{ %>
                                 <% item.products.forEach(product=> { %>
-
-
                                     <tr>
                                         <td>
                                             <%= item.orderId %>
@@ -109,9 +102,6 @@
                                     </tr>
                                     <% }) %>
                                         <% }) %>
-
-
-
                         </tbody>
                     </table>
                 </div>
@@ -134,20 +124,28 @@
 
     <%- include("../adminLayout/adminFooter") %>
         <!--pdf download-->
-
         <script>
 
             function downloadSalesReport(event) {
                 event.preventDefault()
-                fetch('/download-salesreport')
+
+                const url = new URL(window.location.href);
+                const filter = url.searchParams.get("filter") || "all";
+                const startDate = url.searchParams.get("startDate");
+                const endDate = url.searchParams.get("endDate");
+
+                let downloadUrl = `/download-salesreport?filter=${filter}`;
+                if (startDate && endDate) {
+                    downloadUrl += `&startDate=${startDate}&endDate=${endDate}`;
+                }
+
+                fetch(downloadUrl)
                     .then(response => response.blob())
                     .then(blob => {
                         const url = window.URL.createObjectURL(blob);
                         const a = document.createElement('a');
-                        a.style.display = 'none';
                         a.href = url;
                         a.download = 'sales.pdf';
-                        document.body.appendChild(a);
                         a.click();
                         window.URL.revokeObjectURL(url);
                     })
@@ -155,8 +153,8 @@
             }
 
         </script>
-        <!-- pagination -->
 
+        <!-- pagination -->
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const tableRows = document.querySelectorAll(".table tbody tr");
@@ -208,9 +206,7 @@
 
         </script>
 
-
         <!-- searching -->
-
         <script>
             function searchOrders() {
                 var input, filter, table, tr, td, i, txtValue;
@@ -251,9 +247,7 @@
             }
         </script>
 
-
         <!--filter daily ,weekly,monthly-->
-
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const filterSelect = document.querySelector(".form-select");
@@ -265,14 +259,12 @@
                 });
             });
         </script>
-        <!--strt date edn date -->
 
         <script>
             document.getElementById('checkButton').addEventListener('click', function () {
                 const startDate = document.getElementById('startDate').value;
                 const endDate = document.getElementById('endDate').value;
                 if (startDate && endDate) {
-                    // Redirect to the same page with the dates as query parameters
                     window.location.href = `/SalesReport?startDate=${startDate}&endDate=${endDate}`;
                 } else {
                     alert('Please select both start and end dates.');
@@ -282,17 +274,13 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                // Function to get query parameters from the URL
                 function getQueryParam(param) {
                     const urlParams = new URLSearchParams(window.location.search);
                     return urlParams.get(param);
                 }
-
-                // Get startDate and endDate from the URL
                 const startDate = getQueryParam('startDate');
                 const endDate = getQueryParam('endDate');
 
-                // Check if startDate and endDate are present and populate the input fields
                 if (startDate) {
                     document.getElementById('startDate').value = startDate;
                 }
